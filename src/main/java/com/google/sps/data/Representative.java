@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import com.google.sps.data.Post;
+import java.util.List;
 
 public class Representative{
     private final String name;

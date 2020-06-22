@@ -6,15 +6,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Webservlet ("/login")
-public class login extends HttpServlet{
+@Webservlet ("/feed")
+public class FeedServlet extends HttpServlet{
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
-
-    }
-    
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
 
     }
 }

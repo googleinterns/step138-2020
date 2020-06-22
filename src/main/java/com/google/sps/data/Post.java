@@ -1,5 +1,7 @@
 package com.google.sps.data;
 
+import java.util.List;
+
 public class Post{
     private final String question;
     private final String answer;
