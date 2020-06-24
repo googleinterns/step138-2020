@@ -3,6 +3,7 @@ package com.google.sps.servlets;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
@@ -44,13 +45,19 @@ public class FeedServlet extends HttpServlet{
         PreparedQuery results = datastore.prepare(query);
 
         Entity rep_entity = queryForRepresentative(results, rep_name); 
-        Representative rep = parseRepresentative(rep_entity); 
-
+        Representative rep = null; 
+        try {
+            rep = parseRepresentative(rep_entity); 
+        } 
+        catch(EntityNotFoundException e) {
+            System.out.println("Unable to parse representative from datastore"); 
+            System.exit(0);
+        }
         response.setContentType("application/json;");
         response.getWriter().println(new Gson().toJson(rep));
     }
 
-    private Entity queryForRepresentative(PreparedQuery results, String rep_name) {
+    protected Entity queryForRepresentative(PreparedQuery results, String rep_name) {
         for (Entity entity : results.asIterable()) {
             String name = (String) entity.getProperty(REP_NAME);
             if (name == rep_name) {
@@ -60,7 +67,7 @@ public class FeedServlet extends HttpServlet{
         return null; 
     }
 
-    private Representative parseRepresentative(Entity entity) {
+    protected Representative parseRepresentative(Entity entity) throws EntityNotFoundException{
         String name = (String) entity.getProperty(REP_NAME);
         String title = (String) entity.getProperty(REP_TITLE);
         List<Post> posts = parsePosts(entity); 
@@ -68,8 +75,8 @@ public class FeedServlet extends HttpServlet{
         return new Representative(name, title, posts, id);   
     }
 
-    private List<Post> parsePosts(Entity rep_entity) {
-        ArrayList<long> post_ids = (ArrayList<long>) rep_entity.getProperty(REP_POSTS); 
+    private List<Post> parsePosts(Entity rep_entity) throws EntityNotFoundException{
+        List<Long> post_ids = (ArrayList<Long>) rep_entity.getProperty(REP_POSTS); 
         List<Post> posts = new ArrayList<>(); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
@@ -82,7 +89,7 @@ public class FeedServlet extends HttpServlet{
         return posts; 
     }
 
-    private Post parsePost(Entity post_entity) {
+    private Post parsePost(Entity post_entity) throws EntityNotFoundException{
         String question = (String) post_entity.getProperty(POST_QUESTION);
         String answer = (String) post_entity.getProperty(POST_ANSWER);
         List<Comment> comments = parseComments(post_entity); 
@@ -90,8 +97,8 @@ public class FeedServlet extends HttpServlet{
         return new Post(question, answer, comments, id); 
     }
 
-    private List<Comment> parseComments(Entity post_entity) {
-        ArrayList<long> comment_ids = (ArrayList<long>) post_entity.getProperty(POST_REPLIES); 
+    private List<Comment> parseComments(Entity post_entity) throws EntityNotFoundException{
+        List<Long> comment_ids = (ArrayList<Long>) post_entity.getProperty(POST_REPLIES); 
         List<Comment> comments = new ArrayList<>(); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 

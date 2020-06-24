@@ -24,7 +24,7 @@ public class Post{
         return answer; 
     }
 
-    public List<String> getReplies(){
+    public List<Comment> getReplies(){
         return replies; 
     }
 
