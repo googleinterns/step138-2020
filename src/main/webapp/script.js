@@ -12,24 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+function displayFeed(rep_name){
+    fetch(`/feed?rep_name=${rep_name}`).then(response => response.json()).then((representative)=>{
+        postList = representative.getPosts();
+        postList.forEach((post) => {
+            var newQuestion = document.createElement("div");
+            newQuestion.setAttribute("class", "new_comment");
+            newQuestion.innerText = post.getQuestion();
+            var feed = document.getElementById("mid_col");
+            feed.appendChild(newQuestion);
+        })
+    });
 }
 
-function storeZipCode(){
+function storeZipCodeAndNickname(){
     event.preventDefault();
+    var nickname = document.getElementById("nickname").value;
     var zipcode = document.getElementById("zipcode").value;
+    localStorage.setItem("nickname", nickname);
     localStorage.setItem("zipcode", zipcode);
     window.location.href = "/repList.html";
 
@@ -45,14 +45,23 @@ function getRepList(){
         for (var i = 0; i < offices.length; i++) {
             for (number of offices[i]["officialIndices"]){
                 console.log("i: " + i + " number: " + number + " array: " + offices[i]["officialIndices"]);
-                representativeList.appendChild(createListElement(offices[i]["name"] + ": " + officials[number]["name"]));
+                representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
+                officials[number]["name"], officials[number]["name"]));
             }
         }
     });
 }
 
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+function displayRepList(text, name) {
+    const listElement = document.createElement('li')
+    const anchorElement = document.createElement('a');
+    anchorElement.href = `javascript:display_feed(${name})`;
+    anchorElement.innerText = text;
+    // anchorElement.addEventListener("click", displayFeed(name)); 
+    listElement.appendChild(anchorElement);
+    return listElement;
+}
+
+function newPost(){
+    var name = doc
 }

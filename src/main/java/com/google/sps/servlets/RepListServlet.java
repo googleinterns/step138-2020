@@ -59,7 +59,5 @@ public class RepListServlet extends HttpServlet{
         String json = new Gson().toJson(responseString);
         response.setContentType("application/json");
         response.getWriter().println(json);
-
-
     }
 }
