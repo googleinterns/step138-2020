@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 public class NewCommentServlet extends HttpServlet{    
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
-
+        long post_id = (long) request.getParameter("post_id");
+        String nick_name = request.getParameter("nick_name");
+        String comment = request.getParameter("comment");
+        
     }
 }
