@@ -16,11 +16,15 @@ import java.net.URISyntaxException;
 import java.net.URI;
 import org.apache.http.impl.client.HttpClients;
 import com.google.gson.Gson;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import io.github.cdimascio.dotenv.Dotenv;
 
 @WebServlet ("/rep_list")
 public class RepListServlet extends HttpServlet{
-
-    private final String API_KEY = "AIzaSyAHQRFZpZBZSOeUI-4pmfoHV4SM0eBSlS4";
+    Dotenv dotenv = Dotenv.load();
+    private final String API_KEY = dotenv.get("CIVIC_API_KEY");
+    private static final Logger logger = LogManager.getLogger("Errors");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -35,7 +39,7 @@ public class RepListServlet extends HttpServlet{
         try{
             uri = builder.build();
         } catch(URISyntaxException e){
-            //print some shit
+            logger.error(e);
         }
         HttpGet httpget = new HttpGet(uri);
 
@@ -45,14 +49,18 @@ public class RepListServlet extends HttpServlet{
         try {
             httpresponse = httpclient.execute(httpget);
         } catch (IOException e) {
-            //handle this IOException properly in the future
+            logger.error(e);
         } catch (Exception e) {
-            //handle this IOException properly in the future
+            logger.error(e);
         }
 
         HttpEntity responseEntity = httpresponse.getEntity();
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
+        }
+        else{
+            System.out.println("Response entity was null");
+            System.exit(0);
         }
         
         System.out.println(responseString);
