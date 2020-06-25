@@ -37,4 +37,12 @@ public class Comment{
         return c.getComment() == comment && 
                c.getDisplayName() == name; 
     } 
+
+    @Override 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Nickname: ").append(name).append(System.getProperty("line.separator")); 
+        sb.append("Message: ").append(comment).append(System.getProperty("line.separator")); 
+        return sb.toString();
+    }
 }

@@ -21,8 +21,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet ("/feed")
-public class FeedServlet extends HttpServlet{
+
+@WebServlet ("/reply_to_post")
+public class ReplyToPostServlet extends HttpServlet{ 
     private static final String REP_ENTITY_TYPE = "Representative";
     private static final String REP_NAME = "Name";
     private static final String REP_TITLE = "Official Title";
@@ -38,25 +39,21 @@ public class FeedServlet extends HttpServlet{
     private static final String COMMENT_MSG = "Message";
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        long rep_id = Long.parseLong(request.getParameter("rep_id"));
-        Entity rep_entity = null; 
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        long post_id = Long.parseLong(request.getParameter("post_id"));
+        String nick_name = request.getParameter("nick_name");
+        String comment = request.getParameter("comment");
+        Entity post_entity = null; 
         try {
-            rep_entity = Parse.queryForRepresentative(rep_id); 
+            post_entity = Parse.queryForPost(post_id); 
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to query representative from datastore"); 
+            System.out.println("Unable to query for post in datastore"); 
             System.exit(0);
         }
-        Representative rep = null; 
-        try {
-            rep = Parse.parseRepresentative(rep_entity); 
-        } 
-        catch(EntityNotFoundException e) {
-            System.out.println("Unable to parse representative from datastore"); 
-            System.exit(0);
-        }
-        response.setContentType("application/json;");
-        response.getWriter().println(new Gson().toJson(rep));
+        long comment_id = Parse.insertCommentDatastore(nick_name, comment); 
+        List<Long> comment_ids = (ArrayList<Long>) post_entity.getProperty(POST_REPLIES);  
+        comment_ids.add(comment_id); 
+        post_entity.setProperty(POST_REPLIES, comment_ids); 
     }
 }

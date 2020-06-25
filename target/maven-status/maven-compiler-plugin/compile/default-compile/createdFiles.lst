@@ -1,8 +1,9 @@
 com/google/sps/data/Representative.class
-com/google/sps/servlets/NewCommentServlet.class
 com/google/sps/data/Comment.class
 com/google/sps/servlets/LoginServlet.class
 com/google/sps/servlets/FeedServlet.class
+com/google/sps/servlets/ReplyToPostServlet.class
 com/google/sps/servlets/RepListServlet.class
 com/google/sps/data/Post.class
+com/google/sps/data/Parse.class
 com/google/sps/servlets/DataServlet.class

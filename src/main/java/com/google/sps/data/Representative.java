@@ -47,4 +47,16 @@ public class Representative{
                r.getTitle() == title && 
                r.getPosts().equals(posts); 
     } 
+
+    @Override 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Representative: ").append(System.getProperty("line.separator")); 
+        sb.append("Representative name: ").append(name).append(System.getProperty("line.separator")); 
+        sb.append("Representative title: ").append(title).append(System.getProperty("line.separator")); 
+        for (Post post : posts) {
+            sb.append(post.toString()); 
+        } 
+        return sb.toString();
+    }
 }
