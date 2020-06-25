@@ -32,13 +32,12 @@ function storeZipCode(){
     var zipcode = document.getElementById("zipcode").value;
     localStorage.setItem("zipcode", zipcode);
     window.location.href = "/repList.html";
-
 }
+
 function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
     fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
         representatives = JSON.parse(representatives);
-        console.log(representatives);
         var representativeList = document.getElementById("repList");
         var offices = representatives.offices;
         var officials = representatives.officials;
