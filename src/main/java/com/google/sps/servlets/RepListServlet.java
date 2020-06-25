@@ -63,7 +63,6 @@ public class RepListServlet extends HttpServlet{
             System.exit(0);
         }
         
-        System.out.println(responseString);
         String json = new Gson().toJson(responseString);
         response.setContentType("application/json");
         response.getWriter().println(json);

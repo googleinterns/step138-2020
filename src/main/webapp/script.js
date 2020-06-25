@@ -12,14 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-function displayFeed(rep_name){
-    fetch(`/feed?rep_name=${rep_name}`).then(response => response.json()).then((representative)=>{
+function displayFeed(repName){
+    fetch(`/feed?repName=${repName}`).then(response => response.json()).then((representative)=>{
         postList = representative.getPosts();
         postList.forEach((post) => {
             var newQuestion = document.createElement("div");
-            newQuestion.setAttribute("class", "new_comment");
+            newQuestion.setAttribute("class", "newComment");
             newQuestion.innerText = post.getQuestion();
-            var feed = document.getElementById("mid_col");
+            var feed = document.getElementById("midCol");
             feed.appendChild(newQuestion);
         })
     });
@@ -34,6 +34,7 @@ function storeZipCodeAndNickname(){
     window.location.href = "/repList.html";
 
 }
+
 function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
     fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
@@ -46,22 +47,25 @@ function getRepList(){
             for (number of offices[i]["officialIndices"]){
                 console.log("i: " + i + " number: " + number + " array: " + offices[i]["officialIndices"]);
                 representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
-                officials[number]["name"], officials[number]["name"]));
+                officials[number]["name"], officials[number]["name"], checkIfRepInDatastore(officials[number]["name"])));
             }
         }
     });
 }
 
-function displayRepList(text, name) {
+function displayRepList(text, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
-    anchorElement.href = `javascript:display_feed(${name})`;
+    if (inDatastore){
+        anchorElement.href = `javascript:display_feed(${name})`;
+    }
     anchorElement.innerText = text;
     // anchorElement.addEventListener("click", displayFeed(name)); 
     listElement.appendChild(anchorElement);
     return listElement;
 }
 
-function newPost(){
-    var name = doc
+function checkIfRepInDatastore(repName){
+    fetch(`/rep_in_datastore?repName=${repName}`).then(response => {return Boolean.parseBoolean(response)});
 }
+

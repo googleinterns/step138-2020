@@ -5,7 +5,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import com.google.sps.data.Parse;
+import com.google.sps.data.InsertAndUpdate;
+import com.google.sps.data.QueryDatastore;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -28,10 +29,10 @@ public class RepAnswerServlet extends HttpServlet{
         String repName = request.getParameter("repName");
         String answer = request.getParameter("answer");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        long commentId = Parse.insertCommentDatastore(repName, answer);
+        long commentId = InsertAndUpdate.insertCommentDatastore(repName, answer);
         Entity post = null;
         try {
-            post = Parse.queryForPost(postId);
+            post = QueryDatastore.queryForPost(postId);
         } 
         catch(EntityNotFoundException e) {
             System.out.println("Unable to query for post"); 

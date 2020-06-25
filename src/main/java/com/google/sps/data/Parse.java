@@ -29,18 +29,6 @@ public class Parse{
     private static final String COMMENT_NAME = "Nick Name";
     private static final String COMMENT_MSG = "Message";
 
-    public static Entity queryForRepresentative(String rep_name) {
-        Query query = new Query(REP_ENTITY_TYPE); 
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        PreparedQuery results = datastore.prepare(query);
-        for (Entity entity : results.asIterable()) {
-            String name = (String) entity.getProperty(REP_NAME);
-            if (name == rep_name) {
-                return entity; 
-            }
-        }
-        return null; 
-    }
 
     public static Representative parseRepresentative(Entity entity) throws EntityNotFoundException{
         String name = (String) entity.getProperty(REP_NAME);
@@ -94,38 +82,5 @@ public class Parse{
         String msg = (String) comment_entity.getProperty(COMMENT_MSG);
         long id = comment_entity.getKey().getId();
         return new Comment(name, msg, id); 
-    }
-
-    public static long insertCommentDatastore(String name, String message) {
-        Entity comment_entity = new Entity(COMMENT_ENTITY_TYPE); 
-        comment_entity.setProperty(COMMENT_MSG, message); 
-        comment_entity.setProperty(COMMENT_NAME, name); 
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        ds.put(comment_entity); 
-        return comment_entity.getKey().getId(); 
-    }
-
-    public static Entity queryForPost(long post_id) throws EntityNotFoundException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key post_entity_key = KeyFactory.createKey(POST_ENTITY_TYPE, post_id);
-        Entity post_entity = (Entity) datastore.get(post_entity_key); 
-        return post_entity; 
-    }
-
-    public static long insertPostDatastore(long question) {
-        Entity post_entity = new Entity(COMMENT_ENTITY_TYPE); 
-        post_entity.setProperty(POST_QUESTION, question); 
-        DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-        ds.put(post_entity); 
-        return post_entity.getKey().getId(); 
-    }
-
-    public static void updateRepresentativePostList(long rep_id, long post_id) throws EntityNotFoundException {
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key rep_entity_key = KeyFactory.createKey(REP_ENTITY_TYPE, rep_id);
-        Entity rep_entity = (Entity) datastore.get(rep_entity_key); 
-        List<Long> post_ids = (ArrayList<Long>) rep_entity.getProperty(REP_POSTS); 
-        post_ids.add(post_id); 
-        rep_entity.setProperty(REP_POSTS, post_ids); 
     }
 }
