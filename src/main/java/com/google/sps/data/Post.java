@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.google.sps.data.Comment;
 
-
 public final class Post{
     private final Comment question;
     private final Comment answer;
@@ -16,7 +15,9 @@ public final class Post{
         this.answer = answer;
         this.replies = replies;
         this.id = id;
+
     }
+
     public Comment getQuestion(){
         return question; 
     }
