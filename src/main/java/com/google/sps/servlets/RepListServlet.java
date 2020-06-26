@@ -1,10 +1,14 @@
 package com.google.sps.servlets;
 
+import com.google.gson.Gson;
+import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Scanner;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -12,13 +16,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.HttpEntity;
-import java.net.URISyntaxException;
-import java.net.URI;
 import org.apache.http.impl.client.HttpClients;
-import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import io.github.cdimascio.dotenv.Dotenv;
 
 @WebServlet ("/rep_list")
 public class RepListServlet extends HttpServlet{

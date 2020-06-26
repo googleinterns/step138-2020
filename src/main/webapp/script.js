@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//Displays the feed for a particular rep
 function displayFeed(repName){
     fetch(`/feed?repName=${repName}`).then(response => response.json()).then((representative)=>{
         postList = representative.getPosts();
@@ -25,6 +26,7 @@ function displayFeed(repName){
     });
 }
 
+//When user logins in, stores their zipcode and name in local storage and redirects to repList.html
 function storeZipCodeAndNickname(){
     event.preventDefault();
     var nickname = document.getElementById("nickname").value;
@@ -34,6 +36,7 @@ function storeZipCodeAndNickname(){
     window.location.href = "/repList.html";
 }
 
+//Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
     fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
@@ -52,6 +55,7 @@ function getRepList(){
     });
 }
 
+//Adds list element for each rep, anchor tag nested inside which links to rep's feed if account created
 function displayRepList(text, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
@@ -64,6 +68,7 @@ function displayRepList(text, name, inDatastore) {
     return listElement;
 }
 
+//Makes call to repInDatastoreServlet to check if rep has made an account
 function checkIfRepInDatastore(repName){
     fetch(`/rep_in_datastore?repName=${repName}`).then(response => {return Boolean.parseBoolean(response)});
 }

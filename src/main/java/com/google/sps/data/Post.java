@@ -1,8 +1,7 @@
 package com.google.sps.data;
 
-import java.util.List;
 import com.google.sps.data.Comment;
-
+import java.util.List;
 
 public class Post{
     private final Comment question;
@@ -16,6 +15,7 @@ public class Post{
         this.replies = replies;
         this.id = id;
     }
+    
     public Comment getQuestion(){
         return question; 
     }

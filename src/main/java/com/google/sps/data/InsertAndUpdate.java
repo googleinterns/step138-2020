@@ -1,18 +1,18 @@
 package com.google.sps.data;
 
-import java.util.List;
-import java.util.ArrayList;
 import com.google.sps.data.Comment;
-import com.google.sps.data.Post;
 import com.google.sps.data.Constants;
+import com.google.sps.data.Post;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.PreparedQuery;
+import com.google.appengine.api.datastore.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InsertAndUpdate{
     public static long insertCommentDatastore(String name, String message) {
