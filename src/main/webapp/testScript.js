@@ -1,7 +1,7 @@
 //button styling 
 mdc.ripple.MDCRipple.attachTo(document.querySelector('.foo-button'));
 
-function displayFeed(repName){
+window.onload = function displayFeed(repName){
     fetch(`/feed?rep_name=${repName}`).then(response => response.json()).then((representative)=>{
         postList = representative.getPosts();
         repName = representative.getName();
@@ -44,7 +44,7 @@ function displayFeed(repName){
         })
 
     });
-}
+};
 
 function createReplyForm(questionID){
     var question = document.getElementById(questionID);
@@ -85,3 +85,19 @@ function createReplyList(post){
         newReply.appendChild(namePara);
     })
 }
+
+window.onload = function(){
+    var feed = document.getElementByClass("newComment");
+    var newQuestionForm = document.createElement("form");
+    var nickname = localStorage.getItem("nickname");
+    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}`);
+    var inputForm = document.createElement("input");
+    inputForm.setAttribute("type", "text");
+    inputForm.setAttribute("name", "comment");
+    newQuestionForm.appendChild(inputForm);
+    var submitBtn = document.createElement("button");
+    submitBtn.setAttribute("class", "btn submit-btn");
+    newQuestionForm.appendChild(submitBtn);
+    feed.appendChild(newQuestionForm);
+
+};
