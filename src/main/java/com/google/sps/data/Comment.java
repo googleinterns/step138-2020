@@ -34,8 +34,8 @@ public class Comment{
         } 
          
         Comment c = (Comment) o; 
-        return c.getComment() == comment && 
-               c.getDisplayName() == name; 
+        return c.getComment().equals(comment) && 
+               c.getDisplayName().equals(name); 
     } 
 
     @Override 

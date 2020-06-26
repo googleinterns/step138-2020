@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import com.google.sps.data.Post;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Representative{
@@ -42,9 +43,9 @@ public class Representative{
             return false; 
         } 
          
-        Representative r = (Representative) o; 
-        return r.getName() == name && 
-               r.getTitle() == title && 
+        Representative r = (Representative) o;  
+        return r.getName().equals(name) && 
+               r.getTitle().equals(title) && 
                r.getPosts().equals(posts); 
     } 
 

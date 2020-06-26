@@ -10,7 +10,9 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory; 
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
-import com.google.sps.data.Parse;
+import com.google.sps.data.Constants;
+import com.google.sps.data.InsertAndUpdate;
+import com.google.sps.data.QueryDatastore;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.io.IOException;
@@ -23,37 +25,23 @@ import javax.servlet.http.HttpServletResponse;
 
 
 @WebServlet ("/reply_to_post")
-public class ReplyToPostServlet extends HttpServlet{ 
-    private static final String REP_ENTITY_TYPE = "Representative";
-    private static final String REP_NAME = "Name";
-    private static final String REP_TITLE = "Official Title";
-    private static final String REP_POSTS = "Posts";
-
-    private static final String POST_ENTITY_TYPE = "Post";
-    private static final String POST_QUESTION = "Question";
-    private static final String POST_ANSWER = "Answer";
-    private static final String POST_REPLIES = "Replies";
-
-    private static final String COMMENT_ENTITY_TYPE = "Comment";
-    private static final String COMMENT_NAME = "Nick Name";
-    private static final String COMMENT_MSG = "Message";
-
+public class ReplyToPostServlet extends HttpServlet { 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        long post_id = Long.parseLong(request.getParameter("post_id"));
-        String nick_name = request.getParameter("nick_name");
+        long postId = Long.parseLong(request.getParameter("post_id"));
+        String nickName = request.getParameter("nick_name");
         String comment = request.getParameter("comment");
-        Entity post_entity = null; 
+        Entity postEntity = null; 
         try {
-            post_entity = Parse.queryForPost(post_id); 
+            postEntity = QueryDatastore.queryForPost(postId); 
         } 
         catch(EntityNotFoundException e) {
             System.out.println("Unable to query for post in datastore"); 
             System.exit(0);
         }
-        long comment_id = Parse.insertCommentDatastore(nick_name, comment); 
-        List<Long> comment_ids = (ArrayList<Long>) post_entity.getProperty(POST_REPLIES);  
-        comment_ids.add(comment_id); 
-        post_entity.setProperty(POST_REPLIES, comment_ids); 
+        long commentId = InsertAndUpdate.insertCommentDatastore(nickName, comment); 
+        List<Long> commentIds = (ArrayList<Long>) postEntity.getProperty(Constants.POST_REPLIES);  
+        commentIds.add(commentId); 
+        postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
     }
 }

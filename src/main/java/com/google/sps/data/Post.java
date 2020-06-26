@@ -1,5 +1,6 @@
 package com.google.sps.data;
 
+import java.util.ArrayList;
 import java.util.List;
 import com.google.sps.data.Comment;
 
@@ -42,9 +43,9 @@ public class Post{
             return false; 
         } 
          
-        Post p = (Post) o; 
-        return p.getQuestion() == question && 
-               p.getAnswer() == answer && 
+        Post p = (Post) o;
+        return p.getQuestion().equals(question) && 
+               p.getAnswer().equals(answer) && 
                p.getReplies().equals(replies); 
     } 
 

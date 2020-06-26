@@ -12,7 +12,6 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
-import com.google.sps.data.InsertAndUpdate;
 import com.google.sps.data.Parse;
 import com.google.sps.data.QueryDatastore;
 import com.google.sps.data.Post;
@@ -28,20 +27,39 @@ import org.junit.runners.JUnit4;
 
 /** */
 @RunWith(JUnit4.class)
-public final class ParseTest {
+public final class QueryDatastoreTest {
     private final LocalServiceTestHelper helper =
         new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
     private DatastoreService ds; 
-    private Representative donaldTrump; 
 
     @Before
     public void setUp() {
         helper.setUp();
         ds = DatastoreServiceFactory.getDatastoreService();
+    }
 
-        long commentId = InsertAndUpdate.insertCommentDatastore("Anonymous", "Nice dude"); 
+    @After
+    public void tearDown() {
+        helper.tearDown();
+    }
+
+    @Test
+    public void testQueryForRepresentative() {
+        InsertAndUpdate.insertRepresentativeDatastore("Donald Trump", "President of the US");
+        Entity trumpEntity = QueryDatastore.queryForRepresentative("Donald Trump");
+        Assert.assertTrue(trumpEntity != null);
+        String name = (String) trumpEntity.getProperty(Constants.REP_NAME);
+        String title = (String) trumpEntity.getProperty(Constants.REP_TITLE);
+        Assert.assertTrue(name.equals("Donald Trump"));
+        Assert.assertTrue(title.equals("President of the US"));
+    }
+
+    @Test
+    public void testQueryForPost() throws EntityNotFoundException{
+        long commentId = InsertAndUpdate.insertCommentDatastore("Anonymous", "Nice dude");
         List<Long> commentIds = new ArrayList<>(); 
         commentIds.add(commentId); 
+
         long commentIdQuestion = InsertAndUpdate.insertCommentDatastore("Anonymous", "Why are you in office?");
         long commentIdAnswer = InsertAndUpdate.insertCommentDatastore("Donald Trump", "Because I want to be.");
 
@@ -51,37 +69,13 @@ public final class ParseTest {
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
         ds.put(postEntity); 
         long postId = postEntity.getKey().getId(); 
-        List<Long> postIds = new ArrayList<>(); 
-        postIds.add(postId); 
 
-        Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
-        repEntity.setProperty(Constants.REP_NAME, "Donald Trump"); 
-        repEntity.setProperty(Constants.REP_TITLE, "President of the US"); 
-        repEntity.setProperty(Constants.REP_POSTS, postIds); 
-        ds.put(repEntity);
-        long repId = repEntity.getKey().getId(); 
-
-        Comment comment = new Comment("Anonymous", "Nice dude", commentId); 
-        List<Comment> replies = new ArrayList<>();
-        replies.add(comment); 
-        Comment commentQuestion = new Comment("Anonymous", "Why are you in office?", commentIdQuestion); 
-        Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", commentIdAnswer); 
-        Post post = new Post(commentQuestion, commentAnswer, replies, postId); 
-        List<Post> posts = new ArrayList<>();
-        posts.add(post); 
-        donaldTrump = new Representative("Donald Trump", "President of the US", posts, repId); 
-    }
-
-    @After
-    public void tearDown() {
-        helper.tearDown();
-    }
-
-    @Test
-    public void testParseRepresentative() throws EntityNotFoundException{
-        Entity trumpEntity = QueryDatastore.queryForRepresentative("Donald Trump");
-        Assert.assertTrue(trumpEntity != null);
-        Representative actual = Parse.parseRepresentative(trumpEntity); 
-        Assert.assertTrue(actual.equals(donaldTrump));
+        Entity postEntityRetrived = QueryDatastore.queryForPost(postId);
+        Assert.assertTrue(postEntityRetrived != null);
+        Assert.assertTrue(postId == postEntityRetrived.getKey().getId()); 
+        long questionIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_QUESTION));
+        long answerIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_ANSWER));
+        Assert.assertTrue(questionIdActual == commentIdQuestion);
+        Assert.assertTrue(answerIdActual == commentIdAnswer);
     }
 }
