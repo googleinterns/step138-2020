@@ -14,7 +14,7 @@ body {
   background-color: aqua;
 }
 
-.navigation_bar {
+.navigationBar {
   width: 100%;
   height: 55px;
   overflow: hidden;
@@ -29,14 +29,14 @@ body {
   background-color: white;
 }
 
-.left_col {
+.leftCol {
   width: 23%;
   height: 300px;
   float: left;
   background-color: tomato;
 }
 
-.mid_col {
+.midCol {
   width: 50%;
   height: 100%;
   margin-left: 2%;
