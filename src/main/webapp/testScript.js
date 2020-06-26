@@ -48,7 +48,6 @@ function displayFeed(repName){
 
 function createReplyForm(questionID){
     var question = document.getElementById(questionID);
-    console.log(questionID);
     var replyForm = document.createElement("form");
     localStorage.getItem("nickname");
     replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}`);
