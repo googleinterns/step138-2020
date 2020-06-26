@@ -26,10 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet ("/reply_to_post")
 public class ReplyToPostServlet extends HttpServlet { 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
         long postId = Long.parseLong(request.getParameter("postId"));
-        String nickName = request.getParameter("nickName");
-        String comment = request.getParameter("comment");
+        String nickName = request.getParameter("name");
+        String comment = request.getParameter("reply");
+
         Entity postEntity = null; 
         try {
             postEntity = QueryDatastore.queryForPost(postId); 
