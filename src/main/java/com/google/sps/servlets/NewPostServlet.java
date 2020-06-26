@@ -30,7 +30,7 @@ question on a representative's feed
 public class NewPostServlet extends HttpServlet{    
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String repName = request.getParameter("repName");
         String name = request.getParameter("name");
         String comment = request.getParameter("comment");
