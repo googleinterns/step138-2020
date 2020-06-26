@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory; 
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
+import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
@@ -21,17 +22,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet ("/feed")
-public class FeedServlet extends HttpServlet {
+@WebServlet ("/reply_to_post")
+public class ReplyToPostServlet extends HttpServlet { 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String repName = request.getParameter("repName");
-        Representative rep = DatastoreManager.queryForRepresentative(repName); 
-        if (rep == null) {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        long postId = Long.parseLong(request.getParameter("postId"));
+        String nickName = request.getParameter("name");
+        String comment = request.getParameter("reply");
+        long commentId = DatastoreManager.insertCommentInDatastore(nickName, comment); 
+        try {
+            DatastoreManager.updatePostWithComment(postId, commentId); 
+        } 
+        catch(EntityNotFoundException e) {
             return; 
         }
-        
-        response.setContentType("application/json;");
-        response.getWriter().println(new Gson().toJson(rep));
     }
 }
