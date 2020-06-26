@@ -28,8 +28,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ReplyToPostServlet extends HttpServlet { 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        long postId = Long.parseLong(request.getParameter("post_id"));
-        String nickName = request.getParameter("nick_name");
+        long postId = Long.parseLong(request.getParameter("postId"));
+        String nickName = request.getParameter("nickName");
         String comment = request.getParameter("comment");
         Entity postEntity = null; 
         try {

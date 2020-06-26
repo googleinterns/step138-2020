@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FeedServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String repName = request.getParameter("rep_name");
+        String repName = request.getParameter("repName");
         Entity repEntity = QueryDatastore.queryForRepresentative(repName); 
         if (repEntity == null) {
             System.out.println("Unable to query representative from datastore"); 

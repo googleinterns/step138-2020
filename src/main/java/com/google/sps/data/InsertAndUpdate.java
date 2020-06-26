@@ -35,8 +35,10 @@ public class InsertAndUpdate {
     }
 
     public static long insertPostDatastore(long question) {
-        Entity postEntity = new Entity(Constants.COMMENT_ENTITY_TYPE); 
+        Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, question); 
+        postEntity.setProperty(Constants.POST_ANSWER, -1); 
+        postEntity.setProperty(Constants.POST_REPLIES, null); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
