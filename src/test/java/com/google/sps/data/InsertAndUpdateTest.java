@@ -48,8 +48,10 @@ public final class InsertAndUpdateTest {
         long commentId = InsertAndUpdate.insertCommentDatastore("Anonymous", "Nice dude"); 
         Key commentEntityKey = KeyFactory.createKey(Constants.COMMENT_ENTITY_TYPE, commentId);
         Entity commentEntity = (Entity) ds.get(commentEntityKey);
+        
         String name = (String) (commentEntity.getProperty(Constants.COMMENT_NAME));
         String msg = (String) (commentEntity.getProperty(Constants.COMMENT_MSG));
+
         Assert.assertTrue(name.equals("Anonymous")); 
         Assert.assertTrue(msg.equals("Nice dude")); 
     }
@@ -59,8 +61,10 @@ public final class InsertAndUpdateTest {
         long repId = InsertAndUpdate.insertRepresentativeDatastore("Donald Trump", "President of the US"); 
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) ds.get(repEntityKey);
+
         String name = (String) (repEntity.getProperty(Constants.REP_NAME));
         String title = (String) (repEntity.getProperty(Constants.REP_TITLE));
+
         Assert.assertTrue(name.equals("Donald Trump")); 
         Assert.assertTrue(title.equals("President of the US")); 
     }

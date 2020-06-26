@@ -80,8 +80,9 @@ public final class ParseTest {
     @Test
     public void testParseRepresentative() throws EntityNotFoundException{
         Entity trumpEntity = QueryDatastore.queryForRepresentative("Donald Trump");
-        Assert.assertTrue(trumpEntity != null);
+
         Representative actual = Parse.parseRepresentative(trumpEntity); 
+        
         Assert.assertTrue(actual.equals(donaldTrump));
     }
 }

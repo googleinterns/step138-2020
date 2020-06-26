@@ -46,10 +46,12 @@ public final class QueryDatastoreTest {
     @Test
     public void testQueryForRepresentative() {
         InsertAndUpdate.insertRepresentativeDatastore("Donald Trump", "President of the US");
+
         Entity trumpEntity = QueryDatastore.queryForRepresentative("Donald Trump");
-        Assert.assertTrue(trumpEntity != null);
         String name = (String) trumpEntity.getProperty(Constants.REP_NAME);
         String title = (String) trumpEntity.getProperty(Constants.REP_TITLE);
+
+        Assert.assertTrue(trumpEntity != null);
         Assert.assertTrue(name.equals("Donald Trump"));
         Assert.assertTrue(title.equals("President of the US"));
     }
@@ -59,22 +61,21 @@ public final class QueryDatastoreTest {
         long commentId = InsertAndUpdate.insertCommentDatastore("Anonymous", "Nice dude");
         List<Long> commentIds = new ArrayList<>(); 
         commentIds.add(commentId); 
-
         long commentIdQuestion = InsertAndUpdate.insertCommentDatastore("Anonymous", "Why are you in office?");
         long commentIdAnswer = InsertAndUpdate.insertCommentDatastore("Donald Trump", "Because I want to be.");
-
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
         postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
         ds.put(postEntity); 
-        long postId = postEntity.getKey().getId(); 
 
+        long postId = postEntity.getKey().getId(); 
         Entity postEntityRetrived = QueryDatastore.queryForPost(postId);
-        Assert.assertTrue(postEntityRetrived != null);
-        Assert.assertTrue(postId == postEntityRetrived.getKey().getId()); 
         long questionIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_QUESTION));
         long answerIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_ANSWER));
+
+        Assert.assertTrue(postEntityRetrived != null);
+        Assert.assertTrue(postId == postEntityRetrived.getKey().getId()); 
         Assert.assertTrue(questionIdActual == commentIdQuestion);
         Assert.assertTrue(answerIdActual == commentIdAnswer);
     }
