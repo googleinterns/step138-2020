@@ -15,11 +15,8 @@ public class RepInDatastoreServlet extends HttpServlet{
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
         String repName = request.getParameter("repName");
         Entity representative = QueryDatastore.queryForRepresentative(repName);
-        boolean output = false;
-        if (representative != null){
-            output = true;
-        }
         response.setContentType("text/html");
-        response.getWriter().println(output);
+        response.getWriter().println(representative != null);
+
     }
 }

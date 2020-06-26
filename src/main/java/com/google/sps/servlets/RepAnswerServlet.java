@@ -15,13 +15,10 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.sps.data.Constants;
 
 @WebServlet ("/rep_answer")
 public class RepAnswerServlet extends HttpServlet{
-    private static final String POST_ENTITY_TYPE = "Post";
-    private static final String POST_QUESTION = "Question";
-    private static final String POST_ANSWER = "Answer";
-    private static final String POST_REPLIES = "Replies";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
@@ -38,6 +35,6 @@ public class RepAnswerServlet extends HttpServlet{
             System.out.println("Unable to query for post"); 
             System.exit(0);
         }
-        post.setProperty(POST_ANSWER, commentId);
+        post.setProperty(Constants.POST_ANSWER, commentId);
     }
 }

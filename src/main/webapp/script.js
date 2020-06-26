@@ -32,7 +32,6 @@ function storeZipCodeAndNickname(){
     localStorage.setItem("nickname", nickname);
     localStorage.setItem("zipcode", zipcode);
     window.location.href = "/repList.html";
-
 }
 
 function getRepList(){

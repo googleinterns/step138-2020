@@ -40,6 +40,7 @@ public class RepListServlet extends HttpServlet{
             uri = builder.build();
         } catch(URISyntaxException e){
             logger.error(e);
+            System.exit(0);
         }
         HttpGet httpget = new HttpGet(uri);
 
@@ -50,8 +51,10 @@ public class RepListServlet extends HttpServlet{
             httpresponse = httpclient.execute(httpget);
         } catch (IOException e) {
             logger.error(e);
+            System.exit(0);
         } catch (Exception e) {
             logger.error(e);
+            System.exit(0);
         }
 
         HttpEntity responseEntity = httpresponse.getEntity();
