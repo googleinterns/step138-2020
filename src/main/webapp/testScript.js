@@ -75,21 +75,14 @@ function createAnswerForm(questionID, repName){
     ansForm.appendChild(submitBtn);
     question.appendChild(ansForm);
 }
-//todo add function to build a mini-feed for each question
-//maybe build separate html for each question to display or make a dropdown/drop_to_the_side functionality.
-//post.getReplies()
-//list<comments>
-//Comment: getMessage(); getName();
-//
-// Work in progress.
 
-// function createReplyList(post){
-//     replyList = post.getReplies();//getReplies retuns a list of Comment objects -- getName(), getMessage()
-//     replyList.forEach((reply)=>{
-//         newReply = document.createElement("div");
-//         //divs on a new html to display;
-//         //paragaphs in a drop down display
-//         //set a side a part of the screen - [post]---[replies:
-//         //                                             nice question!]
-//     })
-// }
+function createReplyList(post){
+    replyList = post.getReplies();//getReplies retuns a list of Comment objects -- getName(), getMessage()
+    replyList.forEach((reply)=>{
+        var newReply = document.createElement("div");
+        newReply.innerText = reply;
+        var namePara = document.createElement("p");
+        namePara = localStorage.getItem("nickname");
+        newReply.appendChild(namePara);
+    })
+}
