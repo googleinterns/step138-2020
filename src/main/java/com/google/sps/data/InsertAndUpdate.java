@@ -46,7 +46,7 @@ public class InsertAndUpdate{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) datastore.get(repEntityKey); 
-        List<Long> postIds = (ArrayList<Long>) rep_entity.getProperty(Constants.REP_POSTS); 
+        List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         postIds.add(postId); 
         repEntity.setProperty(Constants.REP_POSTS, postIds); 
     }

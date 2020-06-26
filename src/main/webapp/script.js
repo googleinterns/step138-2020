@@ -56,7 +56,7 @@ function displayRepList(text, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
     if (inDatastore){
-        anchorElement.href = `javascript:display_feed(${name})`;
+        anchorElement.href = `javascript:displayFeed(${name})`;
     }
     anchorElement.innerText = text;
     // anchorElement.addEventListener("click", displayFeed(name)); 

@@ -31,7 +31,7 @@ public class Parse{
 
         for (long postId : postIds) {
             Key postEntityKey = KeyFactory.createKey(Constants.POST_ENTITY_TYPE, postId);
-            Entity post_entity = (Entity) datastore.get(postEntityKey); 
+            Entity postEntity = (Entity) datastore.get(postEntityKey); 
             Post post = parsePost(postEntity); 
             posts.add(post); 
         }

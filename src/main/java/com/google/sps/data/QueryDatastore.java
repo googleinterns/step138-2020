@@ -21,7 +21,7 @@ public class QueryDatastore{
         PreparedQuery results = datastore.prepare(query);
         for (Entity entity : results.asIterable()) {
             String name = (String) entity.getProperty(Constants.REP_NAME);
-            if (name == rep_name) {
+            if (name == repName) {
                 return entity; 
             }
         }
