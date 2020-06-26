@@ -18,12 +18,19 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+
+/* 
+The NewPostServlet class inserts a comment entity and a post entity into datastore 
+and updates the list of posts associated with a representative when a user enters a 
+question on a representative's feed
+*/
 
 @WebServlet ("/new_post")
 public class NewPostServlet extends HttpServlet{    
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String repName = request.getParameter("repName");
         String name = request.getParameter("name");
         String comment = request.getParameter("comment");
@@ -35,8 +42,10 @@ public class NewPostServlet extends HttpServlet{
             rep = Parse.parseRepresentative(repEntity); 
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to parse representative from datastore"); 
-            System.exit(0);
+            System.out.println("Unable to parse representative from datastore");
+            e.printStackTrace(); 
+            throw new ServletException("Error: " + e.getMessage(), e);
+            
         }
         long repId = rep.getID();
         //Insert comment and pull commentId
@@ -51,7 +60,8 @@ public class NewPostServlet extends HttpServlet{
         } 
         catch(EntityNotFoundException e) {
             System.out.println("Unable to update representative post list"); 
-            System.exit(0);
+            e.printStackTrace(); 
+            throw new ServletException("Error: " + e.getMessage(), e);
         }
 
         response.sendRedirect("feed.html");
