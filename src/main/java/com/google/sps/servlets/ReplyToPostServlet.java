@@ -11,8 +11,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
-import com.google.sps.data.InsertAndUpdate;
-import com.google.sps.data.QueryDatastore;
+import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.io.IOException;
@@ -30,18 +29,12 @@ public class ReplyToPostServlet extends HttpServlet {
         long postId = Long.parseLong(request.getParameter("postId"));
         String nickName = request.getParameter("name");
         String comment = request.getParameter("reply");
-
-        Entity postEntity = null; 
+        long commentId = DatastoreManager.insertCommentInDatastore(nickName, comment); 
         try {
-            postEntity = QueryDatastore.queryForPost(postId); 
+            DatastoreManager.updatePostWithComment(postId, commentId); 
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to query for post in datastore"); 
-            System.exit(0);
+            return; 
         }
-        long commentId = InsertAndUpdate.insertCommentDatastore(nickName, comment); 
-        List<Long> commentIds = (ArrayList<Long>) postEntity.getProperty(Constants.POST_REPLIES);  
-        commentIds.add(commentId); 
-        postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
     }
 }

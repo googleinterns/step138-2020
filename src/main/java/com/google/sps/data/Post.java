@@ -5,7 +5,7 @@ import java.util.List;
 import com.google.sps.data.Comment;
 
 
-public class Post{
+public final class Post{
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
@@ -35,18 +35,14 @@ public class Post{
 
     @Override
     public boolean equals(Object o) {   
-        if (o == this) { 
-            return true; 
-        } 
-  
         if (!(o instanceof Post)) { 
             return false; 
         } 
          
-        Post p = (Post) o;
-        return p.getQuestion().equals(question) && 
-               p.getAnswer().equals(answer) && 
-               p.getReplies().equals(replies); 
+        Post that = (Post) o;
+        return that.getQuestion().equals(this.question) && 
+               that.getAnswer().equals(this.answer) && 
+               that.getReplies().equals(this.replies); 
     } 
 
     @Override 

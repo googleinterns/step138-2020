@@ -4,7 +4,7 @@ import com.google.sps.data.Post;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Representative{
+public final class Representative{
     private final String name;
     private final String title;
     private final List<Post> posts;
@@ -35,18 +35,14 @@ public class Representative{
 
     @Override
     public boolean equals(Object o) {   
-        if (o == this) { 
-            return true; 
-        } 
-  
         if (!(o instanceof Representative)) { 
             return false; 
         } 
          
-        Representative r = (Representative) o;  
-        return r.getName().equals(name) && 
-               r.getTitle().equals(title) && 
-               r.getPosts().equals(posts); 
+        Representative that = (Representative) o;  
+        return that.getName().equals(this.name) && 
+               that.getTitle().equals(this.title) && 
+               that.getPosts().equals(this.posts); 
     } 
 
     @Override 

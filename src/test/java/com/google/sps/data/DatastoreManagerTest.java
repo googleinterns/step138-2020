@@ -12,8 +12,7 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
-import com.google.sps.data.Parse;
-import com.google.sps.data.QueryDatastore;
+import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.util.ArrayList;
@@ -27,7 +26,7 @@ import org.junit.runners.JUnit4;
 
 /** */
 @RunWith(JUnit4.class)
-public final class InsertAndUpdateTest {
+public final class DatastoreManagerTest {
     private final LocalServiceTestHelper helper =
         new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
     private DatastoreService ds; 
@@ -44,8 +43,8 @@ public final class InsertAndUpdateTest {
     }
 
     @Test
-    public void testInsertCommentDatastore() throws EntityNotFoundException{
-        long commentId = InsertAndUpdate.insertCommentDatastore("Anonymous", "Nice dude"); 
+    public void testInsertCommentInDatastore() throws EntityNotFoundException{
+        long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude"); 
         Key commentEntityKey = KeyFactory.createKey(Constants.COMMENT_ENTITY_TYPE, commentId);
         Entity commentEntity = (Entity) ds.get(commentEntityKey);
         
@@ -57,8 +56,8 @@ public final class InsertAndUpdateTest {
     }
 
     @Test
-    public void testInsertRepresentativeDatastore() throws EntityNotFoundException{
-        long repId = InsertAndUpdate.insertRepresentativeDatastore("Donald Trump", "President of the US"); 
+    public void testInsertRepresentativeInDatastore() throws EntityNotFoundException{
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President of the US"); 
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) ds.get(repEntityKey);
 
@@ -67,5 +66,39 @@ public final class InsertAndUpdateTest {
 
         Assert.assertTrue(name.equals("Donald Trump")); 
         Assert.assertTrue(title.equals("President of the US")); 
+    }
+
+    @Test
+    public void testQueryForRepresentative() {
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President of the US");
+
+        Representative actualRep = DatastoreManager.queryForRepresentative("Donald Trump");
+        Representative expectedRep = new Representative("Donald Trump", "President of the US", new ArrayList<>(), repId);
+
+        Assert.assertTrue(actualRep.equals(expectedRep));
+    }
+
+    @Test
+    public void testQueryForPost() throws EntityNotFoundException{
+        long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude");
+        List<Long> commentIds = new ArrayList<>(); 
+        commentIds.add(commentId); 
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore("Anonymous", "Why are you in office?");
+        long commentIdAnswer = DatastoreManager.insertCommentInDatastore("Donald Trump", "Because I want to be.");
+        Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
+        postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
+        postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
+        postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
+        ds.put(postEntity); 
+
+        long postId = postEntity.getKey().getId(); 
+        Entity postEntityRetrived = DatastoreManager.queryForPost(postId);
+        long questionIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_QUESTION));
+        long answerIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_ANSWER));
+
+        Assert.assertTrue(postEntityRetrived != null);
+        Assert.assertTrue(postId == postEntityRetrived.getKey().getId()); 
+        Assert.assertTrue(questionIdActual == commentIdQuestion);
+        Assert.assertTrue(answerIdActual == commentIdAnswer);
     }
 }

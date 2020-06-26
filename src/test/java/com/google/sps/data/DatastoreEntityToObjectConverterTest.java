@@ -12,9 +12,8 @@ import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestC
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
-import com.google.sps.data.InsertAndUpdate;
-import com.google.sps.data.Parse;
-import com.google.sps.data.QueryDatastore;
+import com.google.sps.data.DatastoreEntityToObjectConverter;
+import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.util.ArrayList;
@@ -28,22 +27,23 @@ import org.junit.runners.JUnit4;
 
 /** */
 @RunWith(JUnit4.class)
-public final class ParseTest {
+public final class DatastoreEntityToObjectConverterTest {
     private final LocalServiceTestHelper helper =
         new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
     private DatastoreService ds; 
     private Representative donaldTrump; 
+    private Entity repEntity; 
 
     @Before
     public void setUp() {
         helper.setUp();
         ds = DatastoreServiceFactory.getDatastoreService();
 
-        long commentId = InsertAndUpdate.insertCommentDatastore("Anonymous", "Nice dude"); 
+        long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude"); 
         List<Long> commentIds = new ArrayList<>(); 
         commentIds.add(commentId); 
-        long commentIdQuestion = InsertAndUpdate.insertCommentDatastore("Anonymous", "Why are you in office?");
-        long commentIdAnswer = InsertAndUpdate.insertCommentDatastore("Donald Trump", "Because I want to be.");
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore("Anonymous", "Why are you in office?");
+        long commentIdAnswer = DatastoreManager.insertCommentInDatastore("Donald Trump", "Because I want to be.");
 
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
@@ -54,7 +54,7 @@ public final class ParseTest {
         List<Long> postIds = new ArrayList<>(); 
         postIds.add(postId); 
 
-        Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
+        this.repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, "Donald Trump"); 
         repEntity.setProperty(Constants.REP_TITLE, "President of the US"); 
         repEntity.setProperty(Constants.REP_POSTS, postIds); 
@@ -78,10 +78,8 @@ public final class ParseTest {
     }
 
     @Test
-    public void testParseRepresentative() throws EntityNotFoundException{
-        Entity trumpEntity = QueryDatastore.queryForRepresentative("Donald Trump");
-
-        Representative actual = Parse.parseRepresentative(trumpEntity); 
+    public void testConvertRepresentative() throws EntityNotFoundException{
+        Representative actual = DatastoreEntityToObjectConverter.convertRepresentative(repEntity); 
         
         Assert.assertTrue(actual.equals(donaldTrump));
     }
