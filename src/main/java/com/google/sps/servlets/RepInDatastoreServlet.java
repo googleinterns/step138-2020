@@ -17,6 +17,5 @@ public class RepInDatastoreServlet extends HttpServlet{
         Entity representative = QueryDatastore.queryForRepresentative(repName);
         response.setContentType("text/html");
         response.getWriter().println(representative != null);
-
     }
 }
