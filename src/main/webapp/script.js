@@ -14,6 +14,7 @@
 
 //Displays the feed for a particular rep
 function displayFeed(repName){
+    window.location.href = "feed.html";
     fetch(`/feed?repName=${repName}`).then(response => response.json()).then((representative)=>{
         postList = representative.getPosts();
         postList.forEach((post) => {
@@ -37,35 +38,30 @@ function storeZipCodeAndNickname(){
 }
 
 //Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
-function getRepList(){
+async function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
-    fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
-        representatives = JSON.parse(representatives);
-        console.log(representatives);
-        var representativeList = document.getElementById("repList");
-        var offices = representatives.offices;
-        var officials = representatives.officials;
-        for (var i = 0; i < offices.length; i++) {
-            for (number of offices[i]["officialIndices"]){
-                console.log("i: " + i + " number: " + number + " array: " + offices[i]["officialIndices"]);
-                console.log("This is check: " + checkIfRepInDatastore(officials[number]["name"].trim()));
-                console.log("Name: " + officials[number]["name"].trim());
-                console.log("Type of: " + typeof(officials[number]["name"].trim()));
-                representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
-                officials[number]["name"], officials[number]["name"], checkIfRepInDatastore(officials[number]["name"].trim())));
-            }
+    var response = await fetch(`/rep_list?zipcode=${zipcode}`)
+    var representatives = await response.json();
+    representatives = JSON.parse(representatives);
+    console.log(representatives);
+    var representativeList = document.getElementById("repList");
+    var offices = representatives.offices;
+    var officials = representatives.officials;
+    for (var i = 0; i < offices.length; i++) {
+        for (number of offices[i]["officialIndices"]){
+            var bool = await checkIfRepInDatastore(officials[number]["name"]);
+            representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
+            officials[number]["name"], officials[number]["name"], bool));
         }
-    });
+    }
 }
 
 //Adds list element for each rep, anchor tag nested inside which links to rep's feed if account created
 function displayRepList(text, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
-    console.log("This is boolean: " + inDatastore);
     if (inDatastore){
-        // anchorElement.href = `javascript:displayFeed(${name})`;
-        anchorElement.href="google.com";
+        anchorElement.href = `javascript:displayFeed('${name}')`;
     }
     anchorElement.innerText = text;
     // anchorElement.addEventListener("click", displayFeed(name)); 
@@ -74,17 +70,14 @@ function displayRepList(text, name, inDatastore) {
 }
 
 //Makes call to repInDatastoreServlet to check if rep has made an account
-function checkIfRepInDatastore(repName){
+async function checkIfRepInDatastore(repName){
     console.log("repName: " +  repName);
-    fetch(`/rep_in_datastore?repName=${repName}`).then(response => response.text()).then(resp => {
-        console.log("check if in datastore response: " + resp + repName);
-        console.log(typeof(resp));
-        console.log("Bool Answer: " + (resp == true));
-        console.log("String answer: " + (resp == "true"));
-        return ("Resp typeof: " + resp === "true")});
+    var response = await fetch(`/rep_in_datastore?repName=${repName}`)
+    var json = await response.json();
+    return (json === true);
 }
 
 function insertRepDatastore(){
-    fetch("/insert_rep_datastore").then(c)
+    fetch("/insert_rep_datastore");
 }
     
