@@ -30,7 +30,7 @@ public class FeedServlet extends HttpServlet {
         if (rep == null) {
             return; 
         }
-        
+        System.out.println("This is the json object: " + rep);
         response.setContentType("application/json;");
         response.getWriter().println(new Gson().toJson(rep));
     }

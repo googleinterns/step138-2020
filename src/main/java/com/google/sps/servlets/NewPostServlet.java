@@ -34,24 +34,28 @@ public class NewPostServlet extends HttpServlet{
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 
         Representative rep = DatastoreManager.queryForRepresentative(repName); 
+        System.out.println("Rep before: " + rep);
         long repId = rep.getID();
 
         //Insert comment and pull commentId
         long commentId = DatastoreManager.insertCommentInDatastore(name, comment);
+        System.out.println("This is the comment id: " + commentId);
 
         //Insert post and pull postId
         long postId = DatastoreManager.insertPostInDatastore(commentId);
+        System.out.println("This is the post id: " + postId);
 
         //Add the post to the representative's post list 
         try {
-            DatastoreManager.updateRepresentativePostList(postId, repId);
+            DatastoreManager.updateRepresentativePostList(repId, postId);
+            System.out.println("Rep After: " + DatastoreManager.queryForRepresentative(repName));
         } 
         catch(EntityNotFoundException e) {
             System.out.println("Unable to update representative post list"); 
             e.printStackTrace(); 
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-
-        response.sendRedirect("feed.html");
+        String redirect = "feed.html?name=" + repName;
+        response.sendRedirect(redirect);
     }
 }

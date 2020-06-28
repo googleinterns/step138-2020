@@ -82,8 +82,10 @@ public class DatastoreManager {
         if (postIds == null) {
             postIds = new ArrayList<>(); 
         }
-        postIds.add(postId); 
+        postIds.add(postId);
+        System.out.println("These are the new post ids: " + postIds); 
         repEntity.setProperty(Constants.REP_POSTS, postIds); 
+        datastore.put(repEntity);
     }
 
     /**
@@ -100,6 +102,7 @@ public class DatastoreManager {
         }
         commentIds.add(commentId); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
+        datastore.put(postEntity);
     }
 
     /**
@@ -120,17 +123,18 @@ public class DatastoreManager {
             }
         }
         if (repEntity == null) {
-            System.out.println("retugning null 1"); 
             return null; 
         }
         else {
+            System.out.println(repEntity);
             Representative rep = null; 
             try {
                 rep = DatastoreEntityToObjectConverter.convertRepresentative(repEntity); 
                 return rep; 
             } 
             catch(EntityNotFoundException e) {
-                System.out.println("retugning null 2"); 
+                e.printStackTrace();
+                System.out.println("returning null 2"); 
                 return null; 
             }
         }

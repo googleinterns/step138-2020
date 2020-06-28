@@ -53,7 +53,7 @@ public final class Post{
         sb.append("Question: ").append(System.getProperty("line.separator")); 
         sb.append(question.toString()); 
         sb.append("Answer: ").append(System.getProperty("line.separator")); 
-        sb.append(answer.toString()); 
+        sb = (answer == null) ? sb.append("") : sb.append(answer.toString()); 
         sb.append("Replies: ").append(System.getProperty("line.separator")); 
         for (Comment reply : replies) {
             sb.append(reply.toString()); 

@@ -29,6 +29,7 @@ public class ReplyToPostServlet extends HttpServlet {
         long postId = Long.parseLong(request.getParameter("postId"));
         String nickName = request.getParameter("name");
         String comment = request.getParameter("reply");
+        String repName = request.getParameter("repName");
         long commentId = DatastoreManager.insertCommentInDatastore(nickName, comment); 
         try {
             DatastoreManager.updatePostWithComment(postId, commentId); 
@@ -36,5 +37,7 @@ public class ReplyToPostServlet extends HttpServlet {
         catch(EntityNotFoundException e) {
             return; 
         }
+        String redirect = "feed.html?name=" + repName;
+        response.sendRedirect(redirect);
     }
 }

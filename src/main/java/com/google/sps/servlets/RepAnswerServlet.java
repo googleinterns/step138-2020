@@ -42,6 +42,8 @@ public class RepAnswerServlet extends HttpServlet{
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         post.setProperty(Constants.POST_ANSWER, commentId);
-        response.sendRedirect("feed.html");
+        datastore.put(post);
+        String redirect = "feed.html?name=" + repName;
+        response.sendRedirect(redirect);
     }
 }
