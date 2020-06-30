@@ -38,13 +38,17 @@ function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
     fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
         representatives = JSON.parse(representatives);
+        if (representatives["error"]){
+            window.location.href = "zipcodeNotFound.html";
+            return;
+        }
         var representativeList = document.getElementById("repList");
         var offices = representatives.offices;
         var officials = representatives.officials;
         for (var i = 0; i < offices.length; i++) {
             for (number of offices[i]["officialIndices"]){
                 console.log("i: " + i + " number: " + number + " array: " 
-                + offices[i]["officialIndices"]);
+                    + offices[i]["officialIndices"]);
                 representativeList.appendChild(createListElement(
                     offices[i]["name"] + ": " + officials[number]["name"]));
             }

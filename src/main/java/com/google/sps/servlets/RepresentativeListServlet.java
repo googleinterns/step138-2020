@@ -22,19 +22,24 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/* 
-The RepListServlet class takes in an address from the user and call the Google Civic
+/** 
+The RepresentativeListServlet class takes in an address from the user and call the Google Civic
 Info API to pull the list of representatives relevant for that zipcode and returns
 a json formatted objects which contains corresponding offices and officials
 */
 
 @WebServlet ("/rep_list")
 public class RepresentativeListServlet extends HttpServlet{
-    Dotenv dotenv = Dotenv.load();
-    private final String API_KEY = dotenv.get("CIVIC_API_KEY");
+    private final String API_KEY;
+    private static final Logger logger = LogManager.getLogger("RepListServlet");
+
+    public RepresentativeListServlet() {
+        API_KEY = Dotenv.load().get(Constants.CIVIC_API_KEY);
+    }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
+    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    throws IOException, ServletException{
         String zipcode = request.getParameter("zipcode");
         HttpClient httpclient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder();
@@ -46,32 +51,30 @@ public class RepresentativeListServlet extends HttpServlet{
         try{
             uri = builder.build();
         } catch(URISyntaxException e){
-            Constants.logger.error(e);
+            logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        HttpGet httpget = new HttpGet(uri);
-        HttpResponse httpresponse = null;
+        HttpGet httpGet = new HttpGet(uri);
         String responseString = null;
-
+        HttpResponse httpResponse = null;
         try{
-            httpresponse = httpclient.execute(httpget);
+            httpResponse = httpclient.execute(httpGet);
         } catch (IOException e) {
-            Constants.logger.error(e);
+            logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         } catch (Exception e) {
-            Constants.logger.error(e);
+            logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
 
-        HttpEntity responseEntity = httpresponse.getEntity();
+        HttpEntity responseEntity = httpResponse.getEntity();
 
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
         }
         else{
-            Constants.logger.debug("Response entity was null.");
+            throw new ServletException("Could not get response from Civic Info API");
         }
-
         String json = new Gson().toJson(responseString);
         response.setContentType("application/json");
         response.getWriter().println(json);
