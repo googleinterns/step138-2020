@@ -46,6 +46,11 @@ public final class Post{
                that.getReplies().equals(this.replies); 
     } 
 
+    @Override
+    public int hashCode(){
+        //TODO
+    }
+
     @Override 
     public String toString() {
         StringBuilder sb = new StringBuilder();

@@ -45,6 +45,11 @@ public final class Representative{
                that.getPosts().equals(this.posts); 
     } 
 
+    @Override
+    public int hashCode(){
+        //TODO
+    }
+
     @Override 
     public String toString() {
         StringBuilder sb = new StringBuilder();

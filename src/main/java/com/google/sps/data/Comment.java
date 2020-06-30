@@ -33,6 +33,11 @@ public final class Comment{
             && that.getDisplayName().equals(this.name);
     } 
 
+    @Override
+    public int hashCode(){
+        //TODO
+    }
+    
     @Override 
     public String toString() {
         StringBuilder sb = new StringBuilder();
