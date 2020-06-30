@@ -46,7 +46,7 @@ public class RepresentativeListServlet extends HttpServlet{
         try{
             uri = builder.build();
         } catch(URISyntaxException e){
-            logger.error(e);
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         HttpGet httpget = new HttpGet(uri);
@@ -56,20 +56,20 @@ public class RepresentativeListServlet extends HttpServlet{
         try{
             httpresponse = httpclient.execute(httpget);
         } catch (IOException e) {
-            logger.error(e);
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         } catch (Exception e) {
-            logger.error(e);
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
 
         HttpEntity responseEntity = httpresponse.getEntity();
-        
+
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
         }
         else{
-            logger.debug("Response entity was null.");
+            Constants.logger.debug("Response entity was null.");
         }
 
         String json = new Gson().toJson(responseString);
