@@ -8,6 +8,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.sps.data.Comment;
+import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Representative;
 import java.io.IOException;
@@ -37,28 +38,18 @@ public class NewPostServlet extends HttpServlet {
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Cannot find representative"); 
-            e.printStackTrace(); 
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        System.out.println("Rep before: " + rep);
         long repId = rep.getKey().getId();
-
-        //Insert comment and pull commentId
         long commentId = DatastoreManager.insertCommentInDatastore(name, comment);
-        System.out.println("This is the comment id: " + commentId);
-
-        //Insert post and pull postId
         long postId = DatastoreManager.insertPostInDatastore(commentId);
-        System.out.println("This is the post id: " + postId);
 
-        //Add the post to the representative's post list 
         try {
             DatastoreManager.updateRepresentativePostList(repId, postId);
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to update representative post list"); 
-            e.printStackTrace(); 
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         String redirect = "feed.html?name=" + repName;

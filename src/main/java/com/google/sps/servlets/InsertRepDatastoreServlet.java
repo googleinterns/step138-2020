@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory; 
 import com.google.gson.Gson;
 import com.google.sps.data.Comment;
+import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
@@ -34,8 +35,7 @@ public class InsertRepDatastoreServlet extends HttpServlet {
             rep = DatastoreManager.queryForRepresentativeEntityWithName(name); 
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Cannot find representative"); 
-            e.printStackTrace(); 
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         if (rep == null){

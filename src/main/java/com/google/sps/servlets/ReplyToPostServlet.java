@@ -21,11 +21,12 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 @WebServlet ("/reply_to_post")
 public class ReplyToPostServlet extends HttpServlet { 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         long postId = Long.parseLong(request.getParameter("postId"));
         String nickName = request.getParameter("name");
         String comment = request.getParameter("reply");
@@ -35,7 +36,8 @@ public class ReplyToPostServlet extends HttpServlet {
             DatastoreManager.updatePostWithComment(postId, commentId); 
         } 
         catch(EntityNotFoundException e) {
-            return; 
+            Constants.logger.error(e);
+            throw new ServletException("Error: " + e.getMessage(), e);
         }
         String redirect = "feed.html?name=" + repName;
         response.sendRedirect(redirect);
