@@ -36,7 +36,8 @@ function storeZipCode(){
 
 function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
-    fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
+    fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json())
+    .then((representatives) => {
         representatives = JSON.parse(representatives);
         if (representatives["error"]){
             window.location.href = "zipcodeNotFound.html";
