@@ -2,7 +2,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import final com.google.sps.data.Comment;
+import com.google.sps.data.Comment;
 
 public final class Post{
     private final Comment question;
