@@ -32,6 +32,7 @@ a json formatted objects which contains corresponding offices and officials
 public class RepresentativeListServlet extends HttpServlet{
     private final String API_KEY;
     private static final Logger logger = LogManager.getLogger("RepListServlet");
+    private static final String ZIPCODE = "zipcode";
 
     public RepresentativeListServlet() {
         API_KEY = Dotenv.load().get(Constants.CIVIC_API_KEY);
@@ -40,12 +41,12 @@ public class RepresentativeListServlet extends HttpServlet{
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException{
-        String zipcode = request.getParameter("zipcode");
+        String zipcode = request.getParameter(ZIPCODE);
         HttpClient httpclient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder();
         URI uri = null;
 
-        builder.setScheme("https").setHost("www.googleapis.com/civicinfo/v2/representatives")
+        builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
         .setParameter("key", API_KEY)
         .setParameter("address", zipcode);
         try{
@@ -68,7 +69,6 @@ public class RepresentativeListServlet extends HttpServlet{
         }
 
         HttpEntity responseEntity = httpResponse.getEntity();
-
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
         }
