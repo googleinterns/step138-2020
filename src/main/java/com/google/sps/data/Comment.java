@@ -35,7 +35,8 @@ public final class Comment{
 
     @Override
     public int hashCode(){
-        //TODO
+        return 42;
+        //TODO(swetha-gangu): implement hashCode()
     }
     
     @Override 

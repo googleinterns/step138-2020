@@ -15,7 +15,7 @@ public final class Constants {
     public static final String COMMENT_NAME = "Nick Name";
     public static final String COMMENT_MSG = "Message";
 
-    private static final Logger logger = LogManager.getLogger("Errors");
+    public static final String CIVIC_API_KEY = "CIVIC_API_KEY";
 
     private Constants() {}
 } 

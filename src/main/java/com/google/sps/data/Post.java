@@ -2,7 +2,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.google.sps.data.Comment;
+import final com.google.sps.data.Comment;
 
 public final class Post{
     private final Comment question;
@@ -15,7 +15,6 @@ public final class Post{
         this.answer = answer;
         this.replies = replies;
         this.id = id;
-
     }
 
     public Comment getQuestion(){
@@ -27,7 +26,7 @@ public final class Post{
     }
 
     public List<Comment> getReplies(){
-        return replies; 
+        return new ArrayList<Comment>(replies);
     }
 
     public long getID() {
@@ -48,7 +47,8 @@ public final class Post{
 
     @Override
     public int hashCode(){
-        //TODO
+        return 42;
+        //TODO(swetha-gangu): implement hashCode()
     }
 
     @Override 

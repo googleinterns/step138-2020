@@ -26,7 +26,7 @@ public final class Representative{
     }
 
     public List<Post> getPosts(){
-        return posts; 
+        return new ArrayList<Post>(posts);
     }
 
     public long getID() {
@@ -47,7 +47,8 @@ public final class Representative{
 
     @Override
     public int hashCode(){
-        //TODO
+        return 42;
+        //TODO(swetha-gangu): implement hashCode()
     }
 
     @Override 
