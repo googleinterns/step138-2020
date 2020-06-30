@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Representative;
 import java.io.IOException;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+
 
 /* 
 The RepInDatastore Servlet class checks to see whether or not a particular
@@ -21,8 +23,16 @@ public class RepInDatastoreServlet extends HttpServlet{
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String repName = request.getParameter("repName");
-        Representative representative = DatastoreManager.queryForRepresentative(repName);
+        Entity rep = null;
+        try {
+            rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
+        } 
+        catch(EntityNotFoundException e) {
+            System.out.println("Cannot find representative"); 
+            e.printStackTrace(); 
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
         response.setContentType("text/html");
-        response.getWriter().println(Boolean.toString(representative != null));
+        response.getWriter().println(Boolean.toString(rep != null));
     }
 }

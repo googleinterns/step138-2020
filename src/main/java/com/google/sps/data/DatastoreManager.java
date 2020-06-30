@@ -83,7 +83,6 @@ public class DatastoreManager {
             postIds = new ArrayList<>(); 
         }
         postIds.add(postId);
-        System.out.println("These are the new post ids: " + postIds); 
         repEntity.setProperty(Constants.REP_POSTS, postIds); 
         datastore.put(repEntity);
     }
@@ -95,7 +94,7 @@ public class DatastoreManager {
      */ 
     public static void updatePostWithComment(long postId, long commentId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Entity postEntity = DatastoreManager.queryForPost(postId); 
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
         List<Long> commentIds = (ArrayList<Long>) postEntity.getProperty(Constants.POST_REPLIES); 
         if (commentIds == null) {
             commentIds = new ArrayList<>(); 
@@ -106,12 +105,24 @@ public class DatastoreManager {
     }
 
     /**
+     * Updates a post entity with a comment in the replies list 
+     * @param postId ID of the post entity 
+     * @param commentId ID of the comment being added as a reply 
+     */ 
+    public static void updatePostWithAnswer(long postId, long answerId) throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        postEntity.setProperty(Constants.POST_ANSWER, answerId); 
+        datastore.put(postEntity);
+    }
+
+    /**
      * Searches datastore for a particular representative and converts the entity 
      * to a Representative instance 
      * @param repName name of the representative to search datastore for 
      * @return the representative object, or null if it was not found in datastore 
      */ 
-    public static @Nullable Representative queryForRepresentative(String repName) {
+    public static @Nullable Representative queryForRepresentativeObjectWithName(String repName) {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -126,7 +137,6 @@ public class DatastoreManager {
             return null; 
         }
         else {
-            System.out.println(repEntity);
             Representative rep = null; 
             try {
                 rep = DatastoreEntityToObjectConverter.convertRepresentative(repEntity); 
@@ -134,18 +144,46 @@ public class DatastoreManager {
             } 
             catch(EntityNotFoundException e) {
                 e.printStackTrace();
-                System.out.println("returning null 2"); 
                 return null; 
             }
         }
     }
 
     /**
-     * Searches datastore for a particular post 
+     * Searches datastore for a particular representative and returns entity
+     * @param repName name of the representative to search datastore for 
+     * @return the representative entity, or null if it was not found in datastore 
+     */ 
+    public static Entity queryForRepresentativeEntityWithName(String repName) throws EntityNotFoundException{
+        Query query = new Query(Constants.REP_ENTITY_TYPE); 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+        Entity repEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String name = (String) entity.getProperty(Constants.REP_NAME);
+            if (name.equals(repName)) {
+                repEntity = entity; 
+            }
+        }
+        return repEntity; 
+    }
+
+    /**
+     * Searches datastore for a particular post and returns post object
+     * @param postId ID of the post to search datastore for 
+     * @return the post object found in datastore 
+     */ 
+    public static Post queryForPostObjectWithId(long postId) throws EntityNotFoundException {
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        return DatastoreEntityToObjectConverter.convertPost(postEntity);
+    }
+
+    /**
+     * Searches datastore for a particular post entity
      * @param postId ID of the post to search datastore for 
      * @return the post entity found in datastore 
      */ 
-    public static Entity queryForPost(long postId) throws EntityNotFoundException {
+    public static Entity queryForPostEntityWithId(long postId) throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Key postEntityKey = KeyFactory.createKey(Constants.POST_ENTITY_TYPE, postId);
         Entity postEntity = (Entity) datastore.get(postEntityKey); 

@@ -52,7 +52,7 @@ public class DatastoreEntityToObjectConverter {
         return posts; 
     }
 
-    private static Post convertPost(Entity postEntity) throws EntityNotFoundException{
+    protected static Post convertPost(Entity postEntity) throws EntityNotFoundException{
         long questionId = (long) (postEntity.getProperty(Constants.POST_QUESTION));
         Comment question = convertComment(questionId);
         System.out.println("This is the question: " + question);

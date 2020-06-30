@@ -34,7 +34,7 @@ public class RepAnswerServlet extends HttpServlet{
         long commentId = DatastoreManager.insertCommentInDatastore(repName, answer);
         Entity post = null;
         try {
-            post = DatastoreManager.queryForPost(postId);
+            post = DatastoreManager.queryForPostEntityWithId(postId);
         } 
         catch(EntityNotFoundException e) {
             System.out.println("Unable to query for post"); 

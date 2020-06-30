@@ -72,7 +72,7 @@ public final class DatastoreManagerTest {
     public void testQueryForRepresentative() {
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President of the US");
 
-        Representative actualRep = DatastoreManager.queryForRepresentative("Donald Trump");
+        Representative actualRep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
         Representative expectedRep = new Representative("Donald Trump", "President of the US", new ArrayList<>(), repId);
 
         Assert.assertTrue(actualRep.equals(expectedRep));
@@ -92,7 +92,7 @@ public final class DatastoreManagerTest {
         ds.put(postEntity); 
 
         long postId = postEntity.getKey().getId(); 
-        Entity postEntityRetrived = DatastoreManager.queryForPost(postId);
+        Entity postEntityRetrived = DatastoreManager.queryForPostEntityWithId(postId);
         long questionIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_QUESTION));
         long answerIdActual = (long)(postEntityRetrived.getProperty(Constants.POST_ANSWER));
 

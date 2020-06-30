@@ -20,6 +20,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.client.RestTemplate;
 
 /* 
 The RepListServlet class takes in an address from the user and call the Google Civic
@@ -75,8 +76,7 @@ public class RepListServlet extends HttpServlet{
             System.out.println("Response entity was null");
             System.exit(0);
         }
-        
-        String json = new Gson().toJson(responseString);
+        System.out.println("This is the response string: " + responseString);
         response.setContentType("application/json");
         response.getWriter().println(json);
     }

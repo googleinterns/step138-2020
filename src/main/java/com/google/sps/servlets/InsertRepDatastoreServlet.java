@@ -21,14 +21,24 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 @WebServlet ("/insert_rep_datastore")
 public class InsertRepDatastoreServlet extends HttpServlet {
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String name = "Donald J. Trump";
         String title = "President of the United States";
-        if (DatastoreManager.queryForRepresentative(name) == null){
+        Entity rep = null;
+        try {
+            rep = DatastoreManager.queryForRepresentativeEntityWithName(name); 
+        } 
+        catch(EntityNotFoundException e) {
+            System.out.println("Cannot find representative"); 
+            e.printStackTrace(); 
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
+        if (rep == null){
             DatastoreManager.insertRepresentativeInDatastore(name, title);
         }
     }

@@ -24,7 +24,7 @@ question on a representative's feed
 */
 
 @WebServlet ("/new_post")
-public class NewPostServlet extends HttpServlet{    
+public class NewPostServlet extends HttpServlet {    
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
@@ -32,10 +32,17 @@ public class NewPostServlet extends HttpServlet{
         String name = request.getParameter("name");
         String comment = request.getParameter("comment");
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
-        Representative rep = DatastoreManager.queryForRepresentative(repName); 
+        Entity rep = null;
+        try {
+            rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
+        } 
+        catch(EntityNotFoundException e) {
+            System.out.println("Cannot find representative"); 
+            e.printStackTrace(); 
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
         System.out.println("Rep before: " + rep);
-        long repId = rep.getID();
+        long repId = rep.getKey().getId();
 
         //Insert comment and pull commentId
         long commentId = DatastoreManager.insertCommentInDatastore(name, comment);
@@ -48,7 +55,6 @@ public class NewPostServlet extends HttpServlet{
         //Add the post to the representative's post list 
         try {
             DatastoreManager.updateRepresentativePostList(repId, postId);
-            System.out.println("Rep After: " + DatastoreManager.queryForRepresentative(repName));
         } 
         catch(EntityNotFoundException e) {
             System.out.println("Unable to update representative post list"); 
