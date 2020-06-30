@@ -9,6 +9,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.sps.data.Comment;
+import com.google.sps.data.Constants;
 import com.google.sps.data.InsertAndUpdate;
 import com.google.sps.data.Parse;
 import com.google.sps.data.QueryDatastore;
@@ -20,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-/* 
+/**
 The NewPostServlet class inserts a comment entity and a post entity into datastore 
 and updates the list of posts associated with a representative when a user enters a 
 question on a representative's feed
@@ -42,28 +43,21 @@ public class NewPostServlet extends HttpServlet{
             rep = Parse.parseRepresentative(repEntity); 
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to parse representative from datastore");
-            e.printStackTrace(); 
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
             
         }
         long repId = rep.getID();
-        //Insert comment and pull commentId
         long commentId = InsertAndUpdate.insertCommentDatastore(name, comment);
-
-        //Insert post and pull postId
         long postId = InsertAndUpdate.insertPostDatastore(commentId);
-
-        //Add the post to the representative's post list 
         try {
             InsertAndUpdate.updateRepresentativePostList(postId, repId);
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to update representative post list"); 
-            e.printStackTrace(); 
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-
+        
         response.sendRedirect("feed.html");
     }
 }

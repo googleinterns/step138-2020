@@ -1,9 +1,10 @@
 package com.google.sps.data;
 
-import com.google.sps.data.Comment;
+import java.util.ArrayList;
 import java.util.List;
+import com.google.sps.data.Comment;
 
-public class Post{
+public final class Post{
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
@@ -14,8 +15,9 @@ public class Post{
         this.answer = answer;
         this.replies = replies;
         this.id = id;
+
     }
-    
+
     public Comment getQuestion(){
         return question; 
     }
@@ -34,17 +36,28 @@ public class Post{
 
     @Override
     public boolean equals(Object o) {   
-        if (o == this) { 
-            return true; 
-        } 
-  
         if (!(o instanceof Post)) { 
             return false; 
         } 
          
-        Post p = (Post) o; 
-        return p.getQuestion() == question && 
-               p.getAnswer() == answer && 
-               p.getReplies().equals(replies); 
+        Post that = (Post) o;
+        return that.getQuestion().equals(this.question) && 
+               that.getAnswer().equals(this.answer) && 
+               that.getReplies().equals(this.replies); 
     } 
+
+    @Override 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Post: ").append(System.getProperty("line.separator")); 
+        sb.append("Question: ").append(System.getProperty("line.separator")); 
+        sb.append(question.toString()); 
+        sb.append("Answer: ").append(System.getProperty("line.separator")); 
+        sb = (answer == null) ? sb.append("") : sb.append(answer.toString()); 
+        sb.append("Replies: ").append(System.getProperty("line.separator")); 
+        for (Comment reply : replies) {
+            sb.append(reply.toString()); 
+        } 
+        return sb.toString();
+    }
 }

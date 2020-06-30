@@ -1,7 +1,6 @@
 package com.google.sps.data;
 
 public final class Constants {
-    private Constants() {}
     public static final String REP_ENTITY_TYPE = "Representative";
     public static final String REP_NAME = "Name";
     public static final String REP_TITLE = "Official Title";
@@ -15,4 +14,8 @@ public final class Constants {
     public static final String COMMENT_ENTITY_TYPE = "Comment";
     public static final String COMMENT_NAME = "Nick Name";
     public static final String COMMENT_MSG = "Message";
+
+    private static final Logger logger = LogManager.getLogger("Errors");
+
+    private Constants() {}
 } 

@@ -1,9 +1,10 @@
 package com.google.sps.data;
 
 import com.google.sps.data.Post;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Representative{
+public final class Representative{
     private final String name;
     private final String title;
     private final List<Post> posts;
@@ -13,7 +14,7 @@ public class Representative{
         this.name = name;
         this.title = title;
         this.posts = posts;
-        this.id = id;
+        this.id = id; 
     }
 
     public String getName(){
@@ -34,17 +35,25 @@ public class Representative{
 
     @Override
     public boolean equals(Object o) {   
-        if (o == this) { 
-            return true; 
-        } 
-  
         if (!(o instanceof Representative)) { 
             return false; 
         } 
          
-        Representative r = (Representative) o; 
-        return r.getName() == name && 
-               r.getTitle() == title && 
-               r.getPosts().equals(posts); 
+        Representative that = (Representative) o;  
+        return that.getName().equals(this.name) && 
+               that.getTitle().equals(this.title) && 
+               that.getPosts().equals(this.posts); 
     } 
+
+    @Override 
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Representative: ").append(System.getProperty("line.separator")); 
+        sb.append("Representative name: ").append(name).append(System.getProperty("line.separator")); 
+        sb.append("Representative title: ").append(title).append(System.getProperty("line.separator")); 
+        for (Post post : posts) {
+            sb.append(post.toString()); 
+        } 
+        return sb.toString();
+    }
 }

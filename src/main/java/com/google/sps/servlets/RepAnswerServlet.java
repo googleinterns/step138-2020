@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
-/* 
+/**
 The RepAnswerServlet class inserts a comment entity into datastore and updates
 the answer property of the post that the representative is responding to
 */
@@ -38,8 +38,7 @@ public class RepAnswerServlet extends HttpServlet{
             post = QueryDatastore.queryForPost(postId);
         } 
         catch(EntityNotFoundException e) {
-            System.out.println("Unable to query for post"); 
-            e.printStackTrace(); 
+            Constants.logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         post.setProperty(Constants.POST_ANSWER, commentId);
