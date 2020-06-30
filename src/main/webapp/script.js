@@ -43,8 +43,10 @@ function getRepList(){
         var officials = representatives.officials;
         for (var i = 0; i < offices.length; i++) {
             for (number of offices[i]["officialIndices"]){
-                console.log("i: " + i + " number: " + number + " array: " + offices[i]["officialIndices"]);
-                representativeList.appendChild(createListElement(offices[i]["name"] + ": " + officials[number]["name"]));
+                console.log("i: " + i + " number: " + number + " array: " 
+                + offices[i]["officialIndices"]);
+                representativeList.appendChild(createListElement(
+                    offices[i]["name"] + ": " + officials[number]["name"]));
             }
         }
     });

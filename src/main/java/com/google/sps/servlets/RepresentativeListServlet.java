@@ -1,6 +1,7 @@
 package com.google.sps.servlets;
 
 import com.google.gson.Gson;
+import com.google.sps.data.Constants;
 import io.github.cdimascio.dotenv.Dotenv;
 import java.io.IOException;
 import javax.servlet.annotation.WebServlet;
@@ -28,55 +29,49 @@ a json formatted objects which contains corresponding offices and officials
 */
 
 @WebServlet ("/rep_list")
-public class RepListServlet extends HttpServlet{
+public class RepresentativeListServlet extends HttpServlet{
     Dotenv dotenv = Dotenv.load();
     private final String API_KEY = dotenv.get("CIVIC_API_KEY");
-    private static final Logger logger = LogManager.getLogger("Errors");
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
         String zipcode = request.getParameter("zipcode");
         HttpClient httpclient = HttpClients.createDefault();
-
         URIBuilder builder = new URIBuilder();
+        URI uri = null;
+
         builder.setScheme("https").setHost("www.googleapis.com/civicinfo/v2/representatives")
         .setParameter("key", API_KEY)
         .setParameter("address", zipcode);
-        URI uri = null;
         try{
             uri = builder.build();
         } catch(URISyntaxException e){
             logger.error(e);
-            e.printStackTrace(); 
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         HttpGet httpget = new HttpGet(uri);
-
         HttpResponse httpresponse = null;
         String responseString = null;
 
-        try {
+        try{
             httpresponse = httpclient.execute(httpget);
         } catch (IOException e) {
             logger.error(e);
-            e.printStackTrace(); 
             throw new ServletException("Error: " + e.getMessage(), e);
         } catch (Exception e) {
             logger.error(e);
-            e.printStackTrace(); 
             throw new ServletException("Error: " + e.getMessage(), e);
         }
 
         HttpEntity responseEntity = httpresponse.getEntity();
+        
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
         }
         else{
-            System.out.println("Response entity was null");
-            e.printStackTrace(); 
-            throw new ServletException("Error: " + e.getMessage(), e);
+            logger.debug("Response entity was null.");
         }
-        
+
         String json = new Gson().toJson(responseString);
         response.setContentType("application/json");
         response.getWriter().println(json);
