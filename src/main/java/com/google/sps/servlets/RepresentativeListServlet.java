@@ -31,7 +31,7 @@ a json formatted objects which contains corresponding offices and officials
 @WebServlet ("/rep_list")
 public class RepresentativeListServlet extends HttpServlet{
     private final String API_KEY;
-    private static final Logger logger = LogManager.getLogger("RepListServlet");
+    private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");
     private static final String ZIPCODE = "zipcode";
 
     public RepresentativeListServlet() {
