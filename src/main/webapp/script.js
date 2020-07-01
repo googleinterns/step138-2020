@@ -39,17 +39,23 @@ function storeZipCodeAndNickname(){
 //Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
-    fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json()).then((representatives) => {
+    fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json())
+    .then((representatives) => {
         representatives = JSON.parse(representatives);
-        console.log(representatives);
+        if (representatives["error"]){
+            window.location.href = "zipcodeNotFound.html";
+            return;
+        }
         var representativeList = document.getElementById("repList");
         var offices = representatives.offices;
         var officials = representatives.officials;
         for (var i = 0; i < offices.length; i++) {
             for (number of offices[i]["officialIndices"]){
-                console.log("i: " + i + " number: " + number + " array: " + offices[i]["officialIndices"]);
-                representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
-                officials[number]["name"], officials[number]["name"], checkIfRepInDatastore(officials[number]["name"])));
+                console.log("i: " + i + " number: " + number + " array: " 
+                    + offices[i]["officialIndices"]);
+                representativeList.appendChild(displayRepList(offices[i]["name"] 
+                    + ": " + officials[number]["name"], officials[number]["name"], 
+                    checkIfRepInDatastore(officials[number]["name"])));
             }
         }
     });

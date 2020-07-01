@@ -30,9 +30,9 @@ a json formatted objects which contains corresponding offices and officials
 
 @WebServlet ("/rep_list")
 public class RepresentativeListServlet extends HttpServlet{
-    private final String API_KEY;
     private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");
     private static final String ZIPCODE = "zipcode";
+    private final String API_KEY;
 
     public RepresentativeListServlet() {
         API_KEY = Dotenv.load().get(Constants.CIVIC_API_KEY);
@@ -46,7 +46,7 @@ public class RepresentativeListServlet extends HttpServlet{
         URIBuilder builder = new URIBuilder();
         URI uri = null;
 
-        builder.setScheme("https").setHost("www.googleapis.com/civicinfo/v2/representatives")
+        builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
         .setParameter("key", API_KEY)
         .setParameter("address", zipcode);
         try{
@@ -69,7 +69,6 @@ public class RepresentativeListServlet extends HttpServlet{
         }
 
         HttpEntity responseEntity = httpResponse.getEntity();
-
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
         }
