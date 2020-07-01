@@ -47,7 +47,6 @@ public class NewPostServletTest{
         servlet.doPost(request, response);
     
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        System.out.println(rep);
         List<Post> posts = rep.getPosts();
         Assert.assertTrue(posts.get(0).getQuestion().getDisplayName().equals("Bob"));
         Assert.assertTrue(posts.get(0).getQuestion().getComment().equals("Why are you president?"));

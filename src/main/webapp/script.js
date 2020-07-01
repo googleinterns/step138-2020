@@ -22,7 +22,6 @@ window.onload = function displayFeed(){
     var repName = urlParams.get('name'); 
     fetch(`/feed?repName=${repName}`).then(response => response.json())
     .then((representative)=>{
-        console.log(representative);
         postList = representative.posts;
         repName = representative.name;
         var feed = document.getElementById("mid_col");
@@ -41,13 +40,8 @@ window.onload = function displayFeed(){
             qText.innerText = post.question.name + ": " + post.question.comment;
             newQuestion.appendChild(qText);
             feed.appendChild(newQuestion);
-            //username added
-            // var username = document.createElement("p");
-            // username.setAttribute("class", "username");
-            // username.innerText = "John Smith";
-            // newQuestion.appendChild(username);
             var question = document.getElementById(post.id);
-            //reply/answer buttons
+            //reply button
             var replyBtn = document.createElement("button");
             replyBtn.addEventListener("click", createReplyForm(post.id, repName));
             replyBtn.setAttribute("class", "btn");
@@ -124,7 +118,6 @@ function displayRepAnswer(post, repName){
 function createQuestionForm(repName){
     var feed = document.getElementsByClassName("newComment");
     feed = feed[0];
-    console.log("This is feed: " + feed);
     var newQuestionForm = document.createElement("form");
     var nickname = localStorage.getItem("nickname");
     newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}`);
@@ -155,7 +148,10 @@ async function getRepList(){
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
-    console.log(representatives);
+    if (representatives["error"]){
+            window.location.href = "zipcodeNotFound.html";
+            return;
+        }
     var representativeList = document.getElementById("repList");
     var offices = representatives.offices;
     var officials = representatives.officials;
@@ -182,7 +178,6 @@ function displayRepList(text, name, inDatastore) {
 
 //Makes call to repInDatastoreServlet to check if rep has made an account
 async function checkIfRepInDatastore(repName){
-    console.log("repName: " +  repName);
     var response = await fetch(`/rep_in_datastore?repName=${repName}`)
     var json = await response.json();
     return (json === true);
