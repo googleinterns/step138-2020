@@ -62,8 +62,6 @@ public class ReplyToPostServletTest{
         servlet.doPost(request, response);
     
         Representative actualRep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        System.out.println("This is the actual rep: " + actualRep);
-        System.out.println("THis is the expected rep: " + expectedRep);
         Assert.assertTrue(actualRep.equals(expectedRep)); 
     }
 }

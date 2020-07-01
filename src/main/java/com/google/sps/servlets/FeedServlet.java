@@ -21,6 +21,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet for fetching a representative object used to create the feed page 
+ * for a particular representative 
+ */ 
 @WebServlet ("/feed")
 public class FeedServlet extends HttpServlet {
     private static final String REP_NAME = "repName";

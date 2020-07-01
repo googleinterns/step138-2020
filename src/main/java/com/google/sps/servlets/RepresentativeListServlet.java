@@ -28,7 +28,6 @@ The RepresentativeListServlet class takes in an address from the user and call t
 Info API to pull the list of representatives relevant for that zipcode and returns
 a json formatted objects which contains corresponding offices and officials
 */
-
 @WebServlet ("/rep_list")
 public class RepresentativeListServlet extends HttpServlet{
     private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");

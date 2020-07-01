@@ -60,7 +60,7 @@ public final class Post{
     @Override
     public int hashCode() {
         int questionCode = question.hashCode(); 
-        int answerCode = answer.hashCode();
+        int answerCode = (answer != null) ? answer.hashCode() : 0;
         int repliesCode = 0; 
         for (Comment reply : replies) {
             repliesCode += reply.hashCode(); 

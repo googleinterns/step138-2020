@@ -26,6 +26,11 @@ import javax.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/** 
+InsertRepDatastoreServlet currently inserts the representative Donald
+Trump into the datastore as a hard code for the MVP.
+*/
+
 @WebServlet ("/insert_rep_datastore")
 public class InsertRepDatastoreServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("InsertRepDatastoreServlet");

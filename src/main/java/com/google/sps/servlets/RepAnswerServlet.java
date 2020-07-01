@@ -23,7 +23,6 @@ import org.apache.logging.log4j.Logger;
 The RepAnswerServlet class inserts a comment entity into datastore and updates
 the answer property of the post that the representative is responding to
 */
-
 @WebServlet ("/rep_answer")
 public class RepAnswerServlet extends HttpServlet{
     private static final Logger logger = LogManager.getLogger("RepAnswerServlet");

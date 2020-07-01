@@ -24,7 +24,6 @@ The NewPostServlet class inserts a comment entity and a post entity into datasto
 and updates the list of posts associated with a representative when a user enters a 
 question on a representative's feed
 */
-
 @WebServlet ("/new_post")
 public class NewPostServlet extends HttpServlet{    
     private static final Logger logger = LogManager.getLogger("NewPostServlet");

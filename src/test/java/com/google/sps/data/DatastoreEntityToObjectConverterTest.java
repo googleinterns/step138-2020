@@ -32,7 +32,9 @@ public final class DatastoreEntityToObjectConverterTest {
         new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
     private DatastoreService ds; 
     private Representative donaldTrump; 
+    private Post post; 
     private Entity repEntity; 
+    private Entity postEntity; 
 
     @Before
     public void setUp() {
@@ -45,7 +47,7 @@ public final class DatastoreEntityToObjectConverterTest {
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore("Anonymous", "Why are you in office?");
         long commentIdAnswer = DatastoreManager.insertCommentInDatastore("Donald Trump", "Because I want to be.");
 
-        Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
+        this.postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
         postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
@@ -66,7 +68,7 @@ public final class DatastoreEntityToObjectConverterTest {
         replies.add(comment); 
         Comment commentQuestion = new Comment("Anonymous", "Why are you in office?", commentIdQuestion); 
         Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", commentIdAnswer); 
-        Post post = new Post(commentQuestion, commentAnswer, replies, postId); 
+        this.post = new Post(commentQuestion, commentAnswer, replies, postId); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", posts, repId); 
@@ -82,5 +84,12 @@ public final class DatastoreEntityToObjectConverterTest {
         Representative actual = DatastoreEntityToObjectConverter.convertRepresentative(repEntity); 
         
         Assert.assertTrue(actual.equals(donaldTrump));
+    }
+
+    @Test 
+    public void testConvertPost() throws EntityNotFoundException {
+        Post actual = DatastoreEntityToObjectConverter.convertPost(postEntity); 
+
+        Assert.assertTrue(actual.equals(post)); 
     }
 }
