@@ -34,6 +34,12 @@ public final class Comment{
     } 
 
     @Override 
+    public int hashCode() {
+        int prime = 31;
+        return prime + name.hashCode() + comment.hashCode();    
+    }
+    
+    @Override 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Nickname: ").append(name).append(System.getProperty("line.separator")); 

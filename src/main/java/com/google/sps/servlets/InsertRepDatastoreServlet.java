@@ -23,19 +23,24 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @WebServlet ("/insert_rep_datastore")
 public class InsertRepDatastoreServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger("InsertRepDatastoreServlet");
+
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    throws IOException, ServletException {
         String name = "Donald J. Trump";
         String title = "President of the United States";
-        Entity rep = null;
+        Entity rep;
         try {
             rep = DatastoreManager.queryForRepresentativeEntityWithName(name); 
         } 
         catch(EntityNotFoundException e) {
-            Constants.logger.error(e);
+            logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         if (rep == null){

@@ -22,18 +22,20 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Servlet for adding a comment to a post in datastore 
  */ 
 @WebServlet ("/reply_to_post")
 public class ReplyToPostServlet extends HttpServlet { 
+    private static final Logger logger = LogManager.getLogger("ReplyToPostServlet");
     private static final String POST_ID = "postId";
     private static final String NICKNAME = "name";
     private static final String REPLY = "reply";
     private static final String REP_NAME = "repName";
     
-
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException{
@@ -46,7 +48,7 @@ public class ReplyToPostServlet extends HttpServlet {
             DatastoreManager.updatePostWithComment(postId, commentId); 
         } 
         catch(EntityNotFoundException e) {
-            Constants.logger.error(e);
+            logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         String redirect = "feed.html?name=" + repName;

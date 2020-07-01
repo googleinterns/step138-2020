@@ -23,9 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 
 @WebServlet ("/feed")
 public class FeedServlet extends HttpServlet {
+    private static final String REP_NAME = "repName";
+    
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String repName = request.getParameter("repName");
+    public void doGet(HttpServletRequest request, HttpServletResponse response) 
+    throws IOException {
+        String repName = request.getParameter(REP_NAME);
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName(repName); 
         if (rep == null) {
             return; 

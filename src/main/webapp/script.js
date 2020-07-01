@@ -191,4 +191,3 @@ async function checkIfRepInDatastore(repName){
 function insertRepDatastore(){
     fetch("/insert_rep_datastore");
 }
-    

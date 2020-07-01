@@ -27,24 +27,46 @@ public final class Post{
     }
 
     public List<Comment> getReplies(){
-        return replies; 
+        return new ArrayList<Comment>(replies);
     }
 
     public long getID() {
         return id; 
     }
 
-    @Override
+@Override
     public boolean equals(Object o) {   
         if (!(o instanceof Post)) { 
             return false; 
         } 
          
         Post that = (Post) o;
+
+        // answer might be null if rep hasn't yet answered 
+        boolean answerEquality = false; 
+        if (that.getAnswer() == null && this.answer == null) {
+            answerEquality = true; 
+        }
+        if (that.getAnswer() != null && this.answer != null 
+            && that.getAnswer().equals(this.answer)) {
+                answerEquality = true; 
+        }
+        
         return that.getQuestion().equals(this.question) && 
-               that.getAnswer().equals(this.answer) && 
+               answerEquality && 
                that.getReplies().equals(this.replies); 
     } 
+
+    @Override
+    public int hashCode() {
+        int questionCode = question.hashCode(); 
+        int answerCode = answer.hashCode();
+        int repliesCode = 0; 
+        for (Comment reply : replies) {
+            repliesCode += reply.hashCode(); 
+        }
+        return questionCode + answerCode + repliesCode; 
+    }
 
     @Override 
     public String toString() {

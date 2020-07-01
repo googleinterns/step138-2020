@@ -26,7 +26,7 @@ public final class Representative{
     }
 
     public List<Post> getPosts(){
-        return posts; 
+        return new ArrayList<Post>(posts);
     }
 
     public long getID() {
@@ -44,6 +44,17 @@ public final class Representative{
                that.getTitle().equals(this.title) && 
                that.getPosts().equals(this.posts); 
     } 
+
+    @Override 
+    public int hashCode() {
+        int nameCode = name.hashCode();
+        int titleCode = title.hashCode();
+        int postsCode = 0; 
+        for (Post post : posts) {
+            postsCode += post.hashCode(); 
+        }
+        return nameCode + titleCode + postsCode; 
+    }
 
     @Override 
     public String toString() {
