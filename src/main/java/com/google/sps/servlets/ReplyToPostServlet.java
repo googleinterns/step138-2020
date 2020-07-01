@@ -23,14 +23,24 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.ServletException;
 
+/**
+ * Servlet for adding a comment to a post in datastore 
+ */ 
 @WebServlet ("/reply_to_post")
 public class ReplyToPostServlet extends HttpServlet { 
+    private static final String POST_ID = "postId";
+    private static final String NICKNAME = "name";
+    private static final String REPLY = "reply";
+    private static final String REP_NAME = "repName";
+    
+
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException{
-        long postId = Long.parseLong(request.getParameter("postId"));
-        String nickName = request.getParameter("name");
-        String comment = request.getParameter("reply");
-        String repName = request.getParameter("repName");
+    public void doPost(HttpServletRequest request, HttpServletResponse response) 
+    throws IOException, ServletException{
+        long postId = Long.parseLong(request.getParameter(POST_ID));
+        String nickName = request.getParameter(NICKNAME);
+        String comment = request.getParameter(REPLY);
+        String repName = request.getParameter(REP_NAME);
         long commentId = DatastoreManager.insertCommentInDatastore(nickName, comment); 
         try {
             DatastoreManager.updatePostWithComment(postId, commentId); 
