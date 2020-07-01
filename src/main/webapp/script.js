@@ -12,28 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/**
- * Adds a random greeting to the page.
- */
-function addRandomGreeting() {
-  const greetings =
-      ['Hello world!', '¡Hola Mundo!', '你好，世界！', 'Bonjour le monde!'];
-
-  // Pick a random greeting.
-  const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-
-  // Add it to the page.
-  const greetingContainer = document.getElementById('greeting-container');
-  greetingContainer.innerText = greeting;
+//Displays the feed for a particular rep
+function displayFeed(repName){
+    fetch(`/feed?repName=${repName}`).then(response => response.json()).then((representative)=>{
+        postList = representative.getPosts();
+        postList.forEach((post) => {
+            var newQuestion = document.createElement("div");
+            newQuestion.setAttribute("class", "newComment");
+            newQuestion.innerText = post.getQuestion();
+            var feed = document.getElementById("midCol");
+            feed.appendChild(newQuestion);
+        })
+    });
 }
 
-function storeZipCode(){
+//When user logins in, stores their zipcode and name in local storage and redirects to repList.html
+function storeZipCodeAndNickname(){
     event.preventDefault();
+    var nickname = document.getElementById("nickname").value;
     var zipcode = document.getElementById("zipcode").value;
+    localStorage.setItem("nickname", nickname);
     localStorage.setItem("zipcode", zipcode);
     window.location.href = "/repList.html";
 }
 
+//Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
     fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json())
@@ -50,15 +53,28 @@ function getRepList(){
             for (number of offices[i]["officialIndices"]){
                 console.log("i: " + i + " number: " + number + " array: " 
                     + offices[i]["officialIndices"]);
-                representativeList.appendChild(createListElement(
-                    offices[i]["name"] + ": " + officials[number]["name"]));
+                representativeList.appendChild(displayRepList(offices[i]["name"] 
+                    + ": " + officials[number]["name"], officials[number]["name"], 
+                    checkIfRepInDatastore(officials[number]["name"])));
             }
         }
     });
 }
 
-function createListElement(text) {
-  const liElement = document.createElement('li');
-  liElement.innerText = text;
-  return liElement;
+//Adds list element for each rep, anchor tag nested inside which links to rep's feed if account created
+function displayRepList(text, name, inDatastore) {
+    const listElement = document.createElement('li')
+    const anchorElement = document.createElement('a');
+    if (inDatastore){
+        anchorElement.href = `javascript:displayFeed(${name})`;
+    }
+    anchorElement.innerText = text;
+    // anchorElement.addEventListener("click", displayFeed(name)); 
+    listElement.appendChild(anchorElement);
+    return listElement;
+}
+
+//Makes call to repInDatastoreServlet to check if rep has made an account
+function checkIfRepInDatastore(repName){
+    fetch(`/rep_in_datastore?repName=${repName}`).then(response => {return Boolean.parseBoolean(response)});
 }

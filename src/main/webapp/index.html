@@ -7,9 +7,11 @@
     <script src="script.js"></script>
   </head>
   <body>
-    <form onsubmit="storeZipCode();" method="POST">
+    <form onsubmit="storeZipCodeAndNickname();" method="POST">
+        <label for="nickname">Nickname: </label>
+        <input type="text" id="nickname" name="nickname" value="Bob"><br><br>
         <label for="zipcode">Zipcode: </label>
-        <input type="text" id="zipcode" name="zipcode" value="00000"><br><br>
+        <input type="text" id="zipcode" name="zipcode" value="80124"><br><br>
         <input type="submit">
     <form>
   </body>
