@@ -13,10 +13,6 @@
 // limitations under the License.
 
 //Displays the feed for a particular rep
-
-//button styling 
-// mdc.ripple.MDCRipple.attachTo(document.querySelector('.foo-button'));
-
 window.onload = function displayFeed(){
     var urlParams = new URLSearchParams(window.location.search);
     var repName = urlParams.get('name'); 
@@ -25,22 +21,26 @@ window.onload = function displayFeed(){
         postList = representative.posts;
         repName = representative.name;
         var feed = document.getElementById("mid_col");
+
         //display rep name 
         var displayRepName = document.createElement("div");
         displayRepName.innerText = repName;
         feed.appendChild(displayRepName);
         createQuestionForm(repName);
+
         postList.forEach((post) => {
             //new questions div
             var newQuestion = document.createElement("div");
             newQuestion.setAttribute("class", "newComment");
             newQuestion.setAttribute("id", post.id);
+
             //question text added to div
             var qText = document.createElement("p");
             qText.innerText = post.question.name + ": " + post.question.comment;
             newQuestion.appendChild(qText);
             feed.appendChild(newQuestion);
             var question = document.getElementById(post.id);
+
             //reply button
             var replyBtn = document.createElement("button");
             replyBtn.addEventListener("click", createReplyForm(post.id, repName));
@@ -48,15 +48,17 @@ window.onload = function displayFeed(){
             var replyIcon = document.createElement("i");
             replyIcon.setAttribute("class", "fa fa-comments");
             replyBtn.appendChild(replyIcon);
+
+            //answer button
             var repAnswer = document.createElement("button");
             repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
             repAnswer.setAttribute("class", "btn");
             var repAnswerIcon = document.createElement("i");
             repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
             repAnswer.appendChild(repAnswerIcon);
+
             question.appendChild(replyBtn);
             question.appendChild(repAnswer);
-            //whole question added to feed
             displayRepAnswer(post, repName);
             displayReplyList(post);
         })
@@ -96,7 +98,7 @@ function createAnswerForm(questionID, repName){
 }
 
 function displayReplyList(post){
-    replyList = post.replies;//getReplies retuns a list of Comment objects -- getName(), getMessage()
+    replyList = post.replies;
     replyList.forEach((reply)=>{
         var postElement = document.getElementById(post.id);
         var newReply = document.createElement("div");

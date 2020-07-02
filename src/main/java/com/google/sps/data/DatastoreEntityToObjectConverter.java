@@ -18,7 +18,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 /**
  * Converts entities from datastore into objects 
  */  
-public class DatastoreEntityToObjectConverter {
+public final class DatastoreEntityToObjectConverter {
     /**
      * Converts a representative entity into a Representative object 
      * @param entity of the representative 

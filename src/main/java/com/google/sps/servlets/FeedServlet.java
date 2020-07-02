@@ -20,6 +20,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 /**
  * Servlet for fetching a representative object used to create the feed page 
@@ -31,11 +32,11 @@ public class FeedServlet extends HttpServlet {
     
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException {
+    throws IOException, ServletException {
         String repName = request.getParameter(REP_NAME);
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName(repName); 
         if (rep == null) {
-            return; 
+            throw new ServletException("Rep was not found in the datastore"); 
         }
         response.setContentType("application/json;");
         response.getWriter().println(new Gson().toJson(rep));

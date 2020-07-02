@@ -1,5 +1,7 @@
 package com.google.sps.data;
 
+import java.util.Objects;
+
 public final class Comment{
     private final String name;
     private final String comment;
@@ -35,8 +37,7 @@ public final class Comment{
 
     @Override 
     public int hashCode() {
-        int prime = 31;
-        return prime + name.hashCode() + comment.hashCode();    
+        return Objects.hash(name, comment);
     }
     
     @Override 

@@ -3,6 +3,7 @@ package com.google.sps.data;
 import com.google.sps.data.Post;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public final class Representative{
     private final String name;
@@ -47,13 +48,7 @@ public final class Representative{
 
     @Override 
     public int hashCode() {
-        int nameCode = name.hashCode();
-        int titleCode = title.hashCode();
-        int postsCode = 0; 
-        for (Post post : posts) {
-            postsCode += post.hashCode(); 
-        }
-        return nameCode + titleCode + postsCode; 
+        return Objects.hash(name, title, posts);
     }
 
     @Override 

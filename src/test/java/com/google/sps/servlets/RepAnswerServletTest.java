@@ -1,7 +1,8 @@
 package com.google.sps.data;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -9,22 +10,26 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.servlets.RepAnswerServlet;
-import java.io.*;
-import javax.servlet.http.*;
+import java.io.StringWriter;
+import java.io.PrintWriter;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.mockito.junit.MockitoJUnitRunner;
 
-
+@RunWith(JUnit4.class)
 public class RepAnswerServletTest{
     private RepAnswerServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
-    private final LocalServiceTestHelper helper =
-        new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+    private LocalServiceTestHelper helper;
     private DatastoreService ds; 
 
     @Before
@@ -32,8 +37,14 @@ public class RepAnswerServletTest{
         servlet = new RepAnswerServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
+        helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
         helper.setUp();
         ds = DatastoreServiceFactory.getDatastoreService();
+    }
+
+    @After
+    public void tearDown() {
+        helper.tearDown();
     }
 
     @Test
@@ -53,7 +64,7 @@ public class RepAnswerServletTest{
     
         Post post = DatastoreManager.queryForPostObjectWithId(postId);
         Comment answer = post.getAnswer();
-        Assert.assertTrue(answer.getDisplayName().equals("Donald Trump"));
-        Assert.assertTrue(answer.getComment().equals("I am well"));
+        assertTrue(answer.getDisplayName().equals("Donald Trump"));
+        assertTrue(answer.getComment().equals("I am well"));
     }
 }

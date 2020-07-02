@@ -44,23 +44,20 @@ body {
   background-color: tomato;
 }
 
-
 .newComment {
   width: 90%;
   height: auto;
   margin: 7px;
   float: left;
   background-color: aqua;
-  
 }
-
 
 p {
   color: #383838;
   font-size: 1.5em;
   font-weight: 900;
-  
 }
+
 .btn {
   height: 5%;
   width: 5%;
@@ -72,24 +69,22 @@ p {
   /* font-size: 16px;  */
   cursor: pointer; 
 }
+
 .btn:hover {
   background-color: RoyalBlue;
 }
 
 i {
-    
     height: 5%;
-
 }
 
-.username{
+.username {
     font-size: .75em;
 }
 
-.submit-btn{
+.submit-btn {
     font-size: 1.2em;
     color: black;
     text-align: center;
     padding: 0px;
-
 }

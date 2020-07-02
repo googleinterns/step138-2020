@@ -1,5 +1,6 @@
 package com.google.sps.data;
 
+import static org.junit.Assert.assertTrue;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -18,18 +19,15 @@ import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-/** */
 @RunWith(JUnit4.class)
 public final class DatastoreEntityToObjectConverterTest {
-    private final LocalServiceTestHelper helper =
-        new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
+    private LocalServiceTestHelper helper;
     private DatastoreService ds; 
     private Representative donaldTrump; 
     private Post post; 
@@ -38,14 +36,17 @@ public final class DatastoreEntityToObjectConverterTest {
 
     @Before
     public void setUp() {
+        helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
         helper.setUp();
         ds = DatastoreServiceFactory.getDatastoreService();
 
         long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude"); 
         List<Long> commentIds = new ArrayList<>(); 
         commentIds.add(commentId); 
-        long commentIdQuestion = DatastoreManager.insertCommentInDatastore("Anonymous", "Why are you in office?");
-        long commentIdAnswer = DatastoreManager.insertCommentInDatastore("Donald Trump", "Because I want to be.");
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long commentIdAnswer = DatastoreManager.insertCommentInDatastore
+            ("Donald Trump", "Because I want to be.");
 
         this.postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
@@ -66,12 +67,15 @@ public final class DatastoreEntityToObjectConverterTest {
         Comment comment = new Comment("Anonymous", "Nice dude", commentId); 
         List<Comment> replies = new ArrayList<>();
         replies.add(comment); 
-        Comment commentQuestion = new Comment("Anonymous", "Why are you in office?", commentIdQuestion); 
-        Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", commentIdAnswer); 
+        Comment commentQuestion = new Comment("Anonymous", "Why are you in office?", 
+            commentIdQuestion); 
+        Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", 
+            commentIdAnswer); 
         this.post = new Post(commentQuestion, commentAnswer, replies, postId); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
-        donaldTrump = new Representative("Donald Trump", "President of the US", posts, repId); 
+        donaldTrump = new Representative("Donald Trump", "President of the US", 
+            posts, repId); 
     }
 
     @After
@@ -83,13 +87,13 @@ public final class DatastoreEntityToObjectConverterTest {
     public void testConvertRepresentative() throws EntityNotFoundException{
         Representative actual = DatastoreEntityToObjectConverter.convertRepresentative(repEntity); 
         
-        Assert.assertTrue(actual.equals(donaldTrump));
+        assertTrue(actual.equals(donaldTrump));
     }
 
     @Test 
     public void testConvertPost() throws EntityNotFoundException {
         Post actual = DatastoreEntityToObjectConverter.convertPost(postEntity); 
 
-        Assert.assertTrue(actual.equals(post)); 
+        assertTrue(actual.equals(post)); 
     }
 }

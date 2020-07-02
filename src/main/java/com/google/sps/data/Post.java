@@ -2,6 +2,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import com.google.sps.data.Comment;
 
 public final class Post{
@@ -15,7 +16,6 @@ public final class Post{
         this.answer = answer;
         this.replies = replies;
         this.id = id;
-
     }
 
     public Comment getQuestion(){
@@ -34,7 +34,7 @@ public final class Post{
         return id; 
     }
 
-@Override
+    @Override
     public boolean equals(Object o) {   
         if (!(o instanceof Post)) { 
             return false; 
@@ -59,13 +59,7 @@ public final class Post{
 
     @Override
     public int hashCode() {
-        int questionCode = question.hashCode(); 
-        int answerCode = (answer != null) ? answer.hashCode() : 0;
-        int repliesCode = 0; 
-        for (Comment reply : replies) {
-            repliesCode += reply.hashCode(); 
-        }
-        return questionCode + answerCode + repliesCode; 
+        return Objects.hash(question, answer, replies);
     }
 
     @Override 
