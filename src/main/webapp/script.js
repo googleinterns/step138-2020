@@ -13,9 +13,14 @@
 // limitations under the License.
 
 //Displays the feed for a particular rep
-window.onload = function displayFeed(){
+function displayFeed(){
+    var rep = localStorage.getItem("rep");
+    console.log(rep);
     var urlParams = new URLSearchParams(window.location.search);
     var repName = urlParams.get('name'); 
+    if (rep.trim() == "true"){
+        localStorage.setItem("nickname", repName);
+    }
     fetch(`/feed?repName=${repName}`).then(response => response.json())
     .then((representative)=>{
         postList = representative.posts;
@@ -26,8 +31,9 @@ window.onload = function displayFeed(){
         var displayRepName = document.createElement("div");
         displayRepName.innerText = repName;
         feed.appendChild(displayRepName);
-        createQuestionForm(repName);
-
+        if (rep.trim() != "true"){
+            createQuestionForm(repName);
+        }
         postList.forEach((post) => {
             //new questions div
             var newQuestion = document.createElement("div");
@@ -48,17 +54,19 @@ window.onload = function displayFeed(){
             var replyIcon = document.createElement("i");
             replyIcon.setAttribute("class", "fa fa-comments");
             replyBtn.appendChild(replyIcon);
+            question.appendChild(replyBtn);
 
             //answer button
-            var repAnswer = document.createElement("button");
-            repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
-            repAnswer.setAttribute("class", "btn");
-            var repAnswerIcon = document.createElement("i");
-            repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
-            repAnswer.appendChild(repAnswerIcon);
+            if (rep.trim() == "true"){
+                var repAnswer = document.createElement("button");
+                repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
+                repAnswer.setAttribute("class", "btn");
+                var repAnswerIcon = document.createElement("i");
+                repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
+                repAnswer.appendChild(repAnswerIcon);
+                question.appendChild(repAnswer);
+            }
 
-            question.appendChild(replyBtn);
-            question.appendChild(repAnswer);
             displayRepAnswer(post, repName);
             displayReplyList(post);
         })
@@ -141,11 +149,27 @@ function storeZipCodeAndNickname(){
     var zipcode = document.getElementById("zipcode").value;
     localStorage.setItem("nickname", nickname);
     localStorage.setItem("zipcode", zipcode);
+    localStorage.setItem("rep", false);
     window.location.href = "/repList.html";
+}
+
+function storeRepBooleanAndRedirect(redirect){
+    event.preventDefault();
+    localStorage.setItem("rep", true);
+    console.log("I Stored rep boolean");
+    if (redirect){
+        window.location.href = "/repListCreateAccount.html";
+    }
+    else{
+        document.getElementById("loginRep").submit();
+    }
 }
 
 //Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList(){
+    var rep = localStorage.getItem("rep");
+    var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
+    console.log(displayFunction);
     var zipcode = localStorage.getItem("zipcode");
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
@@ -160,14 +184,14 @@ async function getRepList(){
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]){
             var bool = await checkIfRepInDatastore(officials[number]["name"]);
-            representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
-            officials[number]["name"], officials[number]["name"], bool));
+            representativeList.appendChild(displayFunction(offices[i]["name"] + ": " + 
+            officials[number]["name"], offices[i]["name"], officials[number]["name"], bool));
         }
     }
 }
 
 //Adds list element for each rep, anchor tag nested inside which links to rep's feed if account created
-function displayRepList(text, name, inDatastore) {
+function displayRepListUser(text, title, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
     if (inDatastore){
@@ -178,6 +202,30 @@ function displayRepList(text, name, inDatastore) {
     return listElement;
 }
 
+function displayRepListLogin(text, title, name, inDatastore) {
+    const listElement = document.createElement('li')
+    const anchorElement = document.createElement('a');
+    if (inDatastore == false){
+        anchorElement.href = `createRepAccount.html?name=${name}&title=${title}`;
+    }
+    anchorElement.innerText = text;
+    listElement.appendChild(anchorElement);
+    return listElement;
+}
+
+function createRepAccount(){
+    var urlParams = new URLSearchParams(window.location.search);
+
+    var repName = urlParams.get('name'); 
+    var repNameElement = document.getElementById("repName");
+    repNameElement.value = repName;
+    repNameElement.innerText = repName;
+
+    var title = urlParams.get('title');
+    var titleElement = document.getElementById("title");
+    titleElement.value = title;
+}
+
 //Makes call to repInDatastoreServlet to check if rep has made an account
 async function checkIfRepInDatastore(repName){
     var response = await fetch(`/rep_in_datastore?repName=${repName}`)
@@ -186,5 +234,11 @@ async function checkIfRepInDatastore(repName){
 }
 
 function insertRepDatastore(){
-    fetch("/insert_rep_datastore");
+    event.preventDefault();
+    var username = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+    var repName = document.getElementById("repName").value;
+    var title = document.getElementById("title").value;
+    fetch(`/insert_rep_datastore?username=${username}&password=
+    ${password}&repName=${repName}&title=${title}`).then(window.location.href = "loginRep.html");
 }

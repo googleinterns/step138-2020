@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Representative Login Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <form id="loginRep" action="/validate_rep" method='POST'>
+        <label for="username">Username: </label>
+        <input type="text" id="username" name="username"><br><br>
+        <label for="password">Password: </label>
+        <input type="text" id="password" name="password"><br><br>
+        <input onclick="storeRepBooleanAndRedirect(false);" type="submit">
+    <form>
+    <a href='repZipcode.html'> Don't have an account? Sign up here </a>
+  </body>
+</html>

@@ -29,9 +29,11 @@ public final class DatastoreEntityToObjectConverter {
     throws EntityNotFoundException{
         String name = (String) entity.getProperty(Constants.REP_NAME);
         String title = (String) entity.getProperty(Constants.REP_TITLE);
+        String username = (String) entity.getProperty(Constants.REP_USERNAME);
+        String password = (String) entity.getProperty(Constants.REP_PASSWORD);
         List<Post> posts = convertPostsFromRep(entity); 
         long id = entity.getKey().getId();
-        return new Representative(name, title, posts, id);   
+        return new Representative(name, title, username, password, posts, id);   
     }
     
     /**

@@ -4,6 +4,8 @@ public final class Constants {
     public static final String REP_ENTITY_TYPE = "Representative";
     public static final String REP_NAME = "Name";
     public static final String REP_TITLE = "Official Title";
+    public static final String REP_USERNAME = "Username";
+    public static final String REP_PASSWORD = "Password";
     public static final String REP_POSTS = "Posts";
 
     public static final String POST_ENTITY_TYPE = "Post";

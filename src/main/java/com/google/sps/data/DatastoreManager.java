@@ -46,10 +46,13 @@ public class DatastoreManager {
      * @param title of representative  
      * @return ID of entity inserted into datastore
      */ 
-    public static long insertRepresentativeInDatastore(String name, String title) {
+    public static long insertRepresentativeInDatastore(String name, String title, 
+    String username, String password) {
         Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, name); 
         repEntity.setProperty(Constants.REP_TITLE, title); 
+        repEntity.setProperty(Constants.REP_USERNAME, username);
+        repEntity.setProperty(Constants.REP_PASSWORD, password);
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -153,6 +156,29 @@ public class DatastoreManager {
                 return null; 
             }
         }
+    }
+
+    /**
+     * Searches datastore for a particular representative with username 
+     * and password and returns the representative's name
+     * @param repUsername username of the representative to search datastore for 
+     * @param repPassword password of the representative to search datastore for
+     * @return the representative's name as string, or null if it was not found in datastore 
+     */ 
+    public static String queryForRepresentativeNameWithLogin(String repUsername, 
+    String repPassword) throws EntityNotFoundException{
+        Query query = new Query(Constants.REP_ENTITY_TYPE); 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+        Entity repEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String username = ((String) entity.getProperty(Constants.REP_USERNAME)).trim();
+            String password = ((String) entity.getProperty(Constants.REP_PASSWORD)).trim();
+            if (username.equals(repUsername) && password.equals(repPassword)) {
+                repEntity = entity; 
+            }
+        }
+        return (repEntity != null) ? (String) repEntity.getProperty(Constants.REP_NAME) : null;
     }
 
     /**

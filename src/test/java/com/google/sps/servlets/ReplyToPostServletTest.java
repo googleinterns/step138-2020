@@ -57,7 +57,8 @@ public class ReplyToPostServletTest{
         when(request.getParameter("name")).thenReturn("Alice");
         when(request.getParameter("reply")).thenReturn("Yeah bro, why are you?");
         when(request.getParameter("repName")).thenReturn("Donald Trump");
-        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President");
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password");
         DatastoreManager.updateRepresentativePostList(repId, postId); 
         
         // make Representative object for comparison purposes 
@@ -68,7 +69,8 @@ public class ReplyToPostServletTest{
         List<Post> posts = new ArrayList<>(); 
         Post post = new Post(question, null, replies, postId); 
         posts.add(post); 
-        Representative expectedRep = new Representative("Donald Trump", "President", posts, repId);
+        Representative expectedRep = new Representative("Donald Trump", 
+        "President", "username", "password", posts, repId);
 
         servlet.doPost(request, response);
     

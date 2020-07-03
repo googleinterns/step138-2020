@@ -53,7 +53,8 @@ public class NewPostServletTest{
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(request.getParameter("name")).thenReturn("Bob");
         when(request.getParameter("comment")).thenReturn("Why are you president?");
-        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President");
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password");
 
         servlet.doPost(request, response);
     
