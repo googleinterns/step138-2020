@@ -53,10 +53,17 @@ public class InsertRepDatastoreServletTest{
         when(request.getParameter("repName")).thenReturn("Donald J. Trump");
         when(request.getParameter("title")).thenReturn("President of the United States");
 
+        StringWriter stringWriter = new StringWriter();
+        PrintWriter writer = new PrintWriter(stringWriter);
+        when(response.getWriter()).thenReturn(writer);
+
         servlet.doGet(request, response);
+
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald J. Trump");
-        
         assertTrue(rep.getName().equals("Donald J. Trump"));
         assertTrue(rep.getTitle().equals("President of the United States"));
+        assertTrue(rep.getUsername().equals("username"));
+        assertTrue(rep.getPassword().equals("password"));
+        assertTrue(stringWriter.toString().contains("false"));
     }
 }

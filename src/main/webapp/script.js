@@ -15,7 +15,6 @@
 //Displays the feed for a particular rep
 function displayFeed(){
     var rep = localStorage.getItem("rep");
-    console.log(rep);
     var urlParams = new URLSearchParams(window.location.search);
     var repName = urlParams.get('name'); 
     if (rep.trim() == "true"){
@@ -33,6 +32,13 @@ function displayFeed(){
         feed.appendChild(displayRepName);
         if (rep.trim() != "true"){
             createQuestionForm(repName);
+        }
+        else{
+            if (postList.length == 0){
+                var emptyFeed = document.createElement("p");
+                emptyFeed.innerText = "There are currently no questions on your feed."
+                feed.appendChild(emptyFeed);
+            }
         }
         postList.forEach((post) => {
             //new questions div
@@ -74,37 +80,48 @@ function displayFeed(){
     });
 };
 
+//Creates a reply form
 function createReplyForm(questionID, repName){
     var question = document.getElementById(questionID);
-    var replyForm = document.createElement("form");
     var nickname = localStorage.getItem("nickname");
+
+    var replyForm = document.createElement("form");
     replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}&repName=${repName}`);
     replyForm.setAttribute("method", "post");
+
     var inputForm = document.createElement("input");
     inputForm.setAttribute("type", "text");
     inputForm.setAttribute("name", "reply");
     replyForm.appendChild(inputForm);
+
     var submitBtn = document.createElement("button");
     submitBtn.setAttribute("class", "btn submit-btn");
+
     replyForm.appendChild(submitBtn);
     question.appendChild(replyForm);       
 }
 
+//Creates an answer form 
 function createAnswerForm(questionID, repName){
     var question = document.getElementById(questionID);
+
     var ansForm = document.createElement("form");
     ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${repName}`);
     ansForm.setAttribute("method", "post");
+
     var inputForm = document.createElement("input");
     inputForm.setAttribute("type", "text");
     inputForm.setAttribute("name", "answer");
     ansForm.appendChild(inputForm);
+
     var submitBtn = document.createElement("button");
     submitBtn.setAttribute("class", "btn submit-btn");
     ansForm.appendChild(submitBtn);
+
     question.appendChild(ansForm);
 }
 
+//Displays the list of replies for a particular post
 function displayReplyList(post){
     replyList = post.replies;
     replyList.forEach((reply)=>{
@@ -115,6 +132,7 @@ function displayReplyList(post){
     })
 }
 
+//Displays the representative's answer to a particular post
 function displayRepAnswer(post, repName){
     var answer = post.answer;
     if (answer != undefined){    
@@ -125,20 +143,24 @@ function displayRepAnswer(post, repName){
     }
 }
 
+//Creates form for user to ask a new question on rep's feed
 function createQuestionForm(repName){
-    var feed = document.getElementsByClassName("newComment");
-    feed = feed[0];
-    var newQuestionForm = document.createElement("form");
+    var feed = document.getElementsByClassName("newComment")[0];
     var nickname = localStorage.getItem("nickname");
+    
+    var newQuestionForm = document.createElement("form");
     newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}`);
     newQuestionForm.setAttribute("method", "post");
+
     var inputForm = document.createElement("input");
     inputForm.setAttribute("type", "text");
     inputForm.setAttribute("name", "comment");
     newQuestionForm.appendChild(inputForm);
+
     var submitBtn = document.createElement("button");
     submitBtn.setAttribute("class", "btn submit-btn");
     newQuestionForm.appendChild(submitBtn);
+
     feed.appendChild(newQuestionForm);
 };
 
@@ -153,31 +175,32 @@ function storeZipCodeAndNickname(){
     window.location.href = "/repList.html";
 }
 
-function storeRepBooleanAndRedirect(redirect){
+//Stores boolean property "rep" in localStorage when rep enters zipcode and redirects to create account html
+function storeRepBooleanAndSubmit(){
     event.preventDefault();
     localStorage.setItem("rep", true);
-    console.log("I Stored rep boolean");
-    if (redirect){
-        window.location.href = "/repListCreateAccount.html";
-    }
-    else{
-        document.getElementById("loginRep").submit();
-    }
+    document.getElementById("loginRep").submit();
+}
+
+//Stores boolean property "rep" in localStorage when rep enters zipcode and redirects to create account html 
+function storeRepBooleanAndRedirect(){ 
+    event.preventDefault(); 
+    localStorage.setItem("rep", true);
+    window.location.href = "/repListCreateAccount.html";
 }
 
 //Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList(){
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
-    console.log(displayFunction);
     var zipcode = localStorage.getItem("zipcode");
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
     if (representatives["error"]){
-            window.location.href = "zipcodeNotFound.html";
-            return;
-        }
+        window.location.href = "zipcodeNotFound.html";
+        return;
+    }
     var representativeList = document.getElementById("repList");
     var offices = representatives.offices;
     var officials = representatives.officials;
@@ -190,7 +213,7 @@ async function getRepList(){
     }
 }
 
-//Adds list element for each rep, anchor tag nested inside which links to rep's feed if account created
+//Adds list element for each rep with link to rep's feed if account created
 function displayRepListUser(text, title, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
@@ -202,21 +225,23 @@ function displayRepListUser(text, title, name, inDatastore) {
     return listElement;
 }
 
+//Displays rep list and adds href linking to create account html if rep not already in datastore
 function displayRepListLogin(text, title, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
     if (inDatastore == false){
-        anchorElement.href = `createRepAccount.html?name=${name}&title=${title}`;
+        anchorElement.href = `repUsernamePassword.html?name=${name}&title=${title}`;
     }
     anchorElement.innerText = text;
     listElement.appendChild(anchorElement);
     return listElement;
 }
 
+//Displays the rep name and title from Civic Info API while the rep enters username/password for new account 
 function createRepAccount(){
     var urlParams = new URLSearchParams(window.location.search);
-
     var repName = urlParams.get('name'); 
+
     var repNameElement = document.getElementById("repName");
     repNameElement.value = repName;
     repNameElement.innerText = repName;
@@ -233,6 +258,8 @@ async function checkIfRepInDatastore(repName){
     return (json === true);
 }
 
+//Sends rep info as query parameters to the insertRepDatastoreServlet and 
+//redirects depending on if rep's username was already taken 
 function insertRepDatastore(){
     event.preventDefault();
     var username = document.getElementById("username").value;
@@ -240,5 +267,14 @@ function insertRepDatastore(){
     var repName = document.getElementById("repName").value;
     var title = document.getElementById("title").value;
     fetch(`/insert_rep_datastore?username=${username}&password=
-    ${password}&repName=${repName}&title=${title}`).then(window.location.href = "loginRep.html");
+    ${password}&repName=${repName}&title=${title}`).then(response => response.text())
+    .then((usernameTaken) => {
+        window.location.href = (usernameTaken.trim() == "true") ?  
+        "usernameTaken.html" : "loginRep.html"
+    });
+}
+
+//Go to previous page
+function goBack() {
+    window.history.back();
 }

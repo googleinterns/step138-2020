@@ -182,6 +182,26 @@ public class DatastoreManager {
     }
 
     /**
+     * Searches datastore to check if username already taken
+     * @param repUsername username of the representative to search datastore for 
+     * @return the rep entity with a particular username
+     */ 
+    public static Entity queryForRepresentativeUsername(String repUsername) 
+    throws EntityNotFoundException{
+        Query query = new Query(Constants.REP_ENTITY_TYPE); 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+        Entity repEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String username = ((String) entity.getProperty(Constants.REP_USERNAME)).trim();
+            if (username.equals(repUsername)) {
+                repEntity = entity; 
+            }
+        }
+        return repEntity;
+    }
+
+    /**
      * Searches datastore for a particular representative and returns entity
      * @param repName name of the representative to search datastore for 
      * @return the representative entity, or null if it was not found in datastore 

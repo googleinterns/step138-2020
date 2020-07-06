@@ -48,15 +48,16 @@ public class InsertRepDatastoreServlet extends HttpServlet {
         String title = request.getParameter(TITLE);
         Entity rep;
         try {
-            rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
+            rep = DatastoreManager.queryForRepresentativeUsername(username.trim()); 
         } 
         catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         if (rep == null){
-            System.out.println("I am inserting");
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);
+            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);   
         }
+        response.setContentType("text/html");
+        response.getWriter().println(Boolean.toString(rep != null));
     }
 }

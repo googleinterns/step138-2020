@@ -41,7 +41,7 @@ public class ValidateRepresentativeServlet extends HttpServlet {
         String password = request.getParameter(PASSWORD);
         String repName;
         try {
-            repName = DatastoreManager.queryForRepresentativeNameWithLogin(username, password); 
+            repName = DatastoreManager.queryForRepresentativeNameWithLogin(username.trim(), password); 
         } catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
