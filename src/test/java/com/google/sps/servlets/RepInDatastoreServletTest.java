@@ -49,7 +49,8 @@ public class RepInDatastoreServletTest{
 
     @Test
     public void testRepInDatastore() throws Exception {
-        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President of the U.S.");
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President of the U.S.", "username", "password");
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);

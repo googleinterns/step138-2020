@@ -60,15 +60,19 @@ public final class DatastoreManagerTest {
     public void testInsertRepresentativeInDatastore() 
     throws EntityNotFoundException{
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US"); 
+            "President of the US", "username", "password"); 
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) ds.get(repEntityKey);
 
         String name = (String) (repEntity.getProperty(Constants.REP_NAME));
         String title = (String) (repEntity.getProperty(Constants.REP_TITLE));
+        String username = (String) (repEntity.getProperty(Constants.REP_USERNAME));
+        String password = (String) (repEntity.getProperty(Constants.REP_PASSWORD));
 
         assertTrue(name.equals("Donald Trump")); 
         assertTrue(title.equals("President of the US")); 
+        assertTrue(username.equals("username"));
+        assertTrue(password.equals("password"));
     }
 
     @Test 
@@ -97,7 +101,7 @@ public final class DatastoreManagerTest {
     public void testUpdateRepresentativePostList() 
     throws EntityNotFoundException{
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US");
+            "President of the US", "username", "password");
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
         long postId = DatastoreManager.insertPostInDatastore(questionId); 
@@ -149,12 +153,12 @@ public final class DatastoreManagerTest {
     @Test
     public void testQueryForRepresentativeObjectWithName() {
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US");
+            "President of the US", "username", "password");
 
         Representative actualRep = DatastoreManager.
             queryForRepresentativeObjectWithName("Donald Trump");
         Representative expectedRep = new Representative("Donald Trump", 
-            "President of the US", new ArrayList<>(), repId);
+            "President of the US", "username", "password", new ArrayList<>(), repId);
 
         assertTrue(actualRep.equals(expectedRep));
     }
@@ -163,7 +167,7 @@ public final class DatastoreManagerTest {
     public void testQueryForRepresentativeEntityWithName() 
     throws EntityNotFoundException{
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US");
+            "President of the US", "username", "password");
 
         Entity repEntity = DatastoreManager.queryForRepresentativeEntityWithName("Donald Trump");
         String name = (String) repEntity.getProperty(Constants.REP_NAME); 
