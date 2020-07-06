@@ -185,6 +185,7 @@ async function checkIfRepInDatastore(repName){
     return (json === true);
 }
 
+//Insert representative into datastore
 function insertRepDatastore(){
     fetch("/insert_rep_datastore");
 }
