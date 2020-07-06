@@ -20,9 +20,10 @@ import com.google.appengine.api.datastore.KeyFactory;
  */  
 public final class DatastoreEntityToObjectConverter {
     /**
-     * Converts a representative entity into a representative object 
+     * Converts a representative entity into a Representative object 
      * @param entity of the representative 
-     * @return the representative object 
+     * @throws EntityNotFoundException
+     * @return the Representative object 
      */  
     protected static Representative convertRepresentative(Entity entity) 
     throws EntityNotFoundException{
@@ -31,6 +32,23 @@ public final class DatastoreEntityToObjectConverter {
         List<Post> posts = convertPostsFromRep(entity); 
         long id = entity.getKey().getId();
         return new Representative(name, title, posts, id);   
+    }
+    
+    /**
+     * Converts a post entity into a Post object 
+     * @param postEntity entity of the post 
+     * @throws EntityNotFoundException
+     * @return the Post object 
+     */ 
+    protected static Post convertPost(Entity postEntity) 
+    throws EntityNotFoundException{
+        long questionId = (long) (postEntity.getProperty(Constants.POST_QUESTION));
+        Comment question = convertComment(questionId);
+        long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
+        Comment answer = convertComment(answerId);
+        List<Comment> comments = convertCommentsFromPost(postEntity); 
+        long id = postEntity.getKey().getId();
+        return new Post(question, answer, comments, id); 
     }
 
     private static List<Post> convertPostsFromRep(Entity repEntity) 
@@ -48,17 +66,6 @@ public final class DatastoreEntityToObjectConverter {
             posts.add(post); 
         }
         return posts; 
-    }
-
-    protected static Post convertPost(Entity postEntity) 
-    throws EntityNotFoundException{
-        long questionId = (long) (postEntity.getProperty(Constants.POST_QUESTION));
-        Comment question = convertComment(questionId);
-        long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
-        Comment answer = convertComment(answerId);
-        List<Comment> comments = convertCommentsFromPost(postEntity); 
-        long id = postEntity.getKey().getId();
-        return new Post(question, answer, comments, id); 
     }
 
     private static List<Comment> convertCommentsFromPost(Entity postEntity) 

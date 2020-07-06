@@ -13,18 +13,126 @@
 // limitations under the License.
 
 //Displays the feed for a particular rep
-function displayFeed(repName){
-    fetch(`/feed?repName=${repName}`).then(response => response.json()).then((representative)=>{
-        postList = representative.getPosts();
+window.onload = function displayFeed(){
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = urlParams.get('name'); 
+    fetch(`/feed?repName=${repName}`).then(response => response.json())
+    .then((representative)=>{
+        postList = representative.posts;
+        repName = representative.name;
+        var feed = document.getElementById("mid_col");
+
+        //display rep name 
+        var displayRepName = document.createElement("div");
+        displayRepName.innerText = repName;
+        feed.appendChild(displayRepName);
+        createQuestionForm(repName);
+
         postList.forEach((post) => {
+            //new questions div
             var newQuestion = document.createElement("div");
             newQuestion.setAttribute("class", "newComment");
-            newQuestion.innerText = post.getQuestion();
-            var feed = document.getElementById("midCol");
+            newQuestion.setAttribute("id", post.id);
+
+            //question text added to div
+            var qText = document.createElement("p");
+            qText.innerText = post.question.name + ": " + post.question.comment;
+            newQuestion.appendChild(qText);
             feed.appendChild(newQuestion);
+            var question = document.getElementById(post.id);
+
+            //reply button
+            var replyBtn = document.createElement("button");
+            replyBtn.addEventListener("click", createReplyForm(post.id, repName));
+            replyBtn.setAttribute("class", "btn");
+            var replyIcon = document.createElement("i");
+            replyIcon.setAttribute("class", "fa fa-comments");
+            replyBtn.appendChild(replyIcon);
+
+            //answer button
+            var repAnswer = document.createElement("button");
+            repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
+            repAnswer.setAttribute("class", "btn");
+            var repAnswerIcon = document.createElement("i");
+            repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
+            repAnswer.appendChild(repAnswerIcon);
+
+            question.appendChild(replyBtn);
+            question.appendChild(repAnswer);
+            displayRepAnswer(post, repName);
+            displayReplyList(post);
         })
+
     });
+};
+
+function createReplyForm(questionID, repName){
+    var question = document.getElementById(questionID);
+    var replyForm = document.createElement("form");
+    var nickname = localStorage.getItem("nickname");
+    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}&repName=${repName}`);
+    replyForm.setAttribute("method", "post");
+    var inputForm = document.createElement("input");
+    inputForm.setAttribute("type", "text");
+    inputForm.setAttribute("name", "reply");
+    replyForm.appendChild(inputForm);
+    var submitBtn = document.createElement("button");
+    submitBtn.setAttribute("class", "btn submit-btn");
+    replyForm.appendChild(submitBtn);
+    question.appendChild(replyForm);       
 }
+
+function createAnswerForm(questionID, repName){
+    var question = document.getElementById(questionID);
+    var ansForm = document.createElement("form");
+    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${repName}`);
+    ansForm.setAttribute("method", "post");
+    var inputForm = document.createElement("input");
+    inputForm.setAttribute("type", "text");
+    inputForm.setAttribute("name", "answer");
+    ansForm.appendChild(inputForm);
+    var submitBtn = document.createElement("button");
+    submitBtn.setAttribute("class", "btn submit-btn");
+    ansForm.appendChild(submitBtn);
+    question.appendChild(ansForm);
+}
+
+function displayReplyList(post){
+    replyList = post.replies;
+    replyList.forEach((reply)=>{
+        var postElement = document.getElementById(post.id);
+        var newReply = document.createElement("div");
+        newReply.innerText = reply.name + ": " + reply.comment;
+        postElement.appendChild(newReply);
+    })
+}
+
+function displayRepAnswer(post, repName){
+    var answer = post.answer;
+    if (answer != undefined){    
+        var postElement = document.getElementById(post.id);
+        var repAnswer = document.createElement("div");
+        repAnswer.innerText = repName + ": " + answer.comment;
+        postElement.appendChild(repAnswer);
+    }
+}
+
+function createQuestionForm(repName){
+    var feed = document.getElementsByClassName("newComment");
+    feed = feed[0];
+    var newQuestionForm = document.createElement("form");
+    var nickname = localStorage.getItem("nickname");
+    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}`);
+    newQuestionForm.setAttribute("method", "post");
+    var inputForm = document.createElement("input");
+    inputForm.setAttribute("type", "text");
+    inputForm.setAttribute("name", "comment");
+    newQuestionForm.appendChild(inputForm);
+    var submitBtn = document.createElement("button");
+    submitBtn.setAttribute("class", "btn submit-btn");
+    newQuestionForm.appendChild(submitBtn);
+    feed.appendChild(newQuestionForm);
+};
 
 //When user logins in, stores their zipcode and name in local storage and redirects to repList.html
 function storeZipCodeAndNickname(){
@@ -37,28 +145,25 @@ function storeZipCodeAndNickname(){
 }
 
 //Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
-function getRepList(){
+async function getRepList(){
     var zipcode = localStorage.getItem("zipcode");
-    fetch(`/rep_list?zipcode=${zipcode}`).then(response => response.json())
-    .then((representatives) => {
-        representatives = JSON.parse(representatives);
-        if (representatives["error"]){
+    var response = await fetch(`/rep_list?zipcode=${zipcode}`)
+    var representatives = await response.json();
+    representatives = JSON.parse(representatives);
+    if (representatives["error"]){
             window.location.href = "zipcodeNotFound.html";
             return;
         }
-        var representativeList = document.getElementById("repList");
-        var offices = representatives.offices;
-        var officials = representatives.officials;
-        for (var i = 0; i < offices.length; i++) {
-            for (number of offices[i]["officialIndices"]){
-                console.log("i: " + i + " number: " + number + " array: " 
-                    + offices[i]["officialIndices"]);
-                representativeList.appendChild(displayRepList(offices[i]["name"] 
-                    + ": " + officials[number]["name"], officials[number]["name"], 
-                    checkIfRepInDatastore(officials[number]["name"])));
-            }
+    var representativeList = document.getElementById("repList");
+    var offices = representatives.offices;
+    var officials = representatives.officials;
+    for (var i = 0; i < offices.length; i++) {
+        for (number of offices[i]["officialIndices"]){
+            var bool = await checkIfRepInDatastore(officials[number]["name"]);
+            representativeList.appendChild(displayRepList(offices[i]["name"] + ": " + 
+            officials[number]["name"], officials[number]["name"], bool));
         }
-    });
+    }
 }
 
 //Adds list element for each rep, anchor tag nested inside which links to rep's feed if account created
@@ -66,15 +171,21 @@ function displayRepList(text, name, inDatastore) {
     const listElement = document.createElement('li')
     const anchorElement = document.createElement('a');
     if (inDatastore){
-        anchorElement.href = `javascript:displayFeed(${name})`;
+        anchorElement.href = `feed.html?name=${name}`;
     }
     anchorElement.innerText = text;
-    // anchorElement.addEventListener("click", displayFeed(name)); 
     listElement.appendChild(anchorElement);
     return listElement;
 }
 
 //Makes call to repInDatastoreServlet to check if rep has made an account
-function checkIfRepInDatastore(repName){
-    fetch(`/rep_in_datastore?repName=${repName}`).then(response => {return Boolean.parseBoolean(response)});
+async function checkIfRepInDatastore(repName){
+    var response = await fetch(`/rep_in_datastore?repName=${repName}`)
+    var json = await response.json();
+    return (json === true);
+}
+
+//Insert representative into datastore
+function insertRepDatastore(){
+    fetch("/insert_rep_datastore");
 }

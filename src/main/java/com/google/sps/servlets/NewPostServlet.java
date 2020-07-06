@@ -5,7 +5,6 @@ import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.PreparedQuery;
-import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.sps.data.Comment;
@@ -25,7 +24,6 @@ The NewPostServlet class inserts a comment entity and a post entity into datasto
 and updates the list of posts associated with a representative when a user enters a 
 question on a representative's feed
 */
-
 @WebServlet ("/new_post")
 public class NewPostServlet extends HttpServlet{    
     private static final Logger logger = LogManager.getLogger("NewPostServlet");
@@ -40,7 +38,6 @@ public class NewPostServlet extends HttpServlet{
         String name = request.getParameter(NAME);
         String comment = request.getParameter(COMMENT);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-
         Entity repEntity;
         try {
             repEntity = DatastoreManager.queryForRepresentativeEntityWithName(repName);         
@@ -48,18 +45,17 @@ public class NewPostServlet extends HttpServlet{
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        
         long repId = repEntity.getKey().getId();
         long commentId = DatastoreManager.insertCommentInDatastore(name, comment);
         long postId = DatastoreManager.insertPostInDatastore(commentId);
         try {
-            DatastoreManager.updateRepresentativePostList(postId, repId);
+            DatastoreManager.updateRepresentativePostList(repId, postId);
         } 
         catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        
-        response.sendRedirect("feed.html");
+        String redirect = "feed.html?name=" + repName;
+        response.sendRedirect(redirect);
     }
 }

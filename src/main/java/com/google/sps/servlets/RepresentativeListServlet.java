@@ -21,13 +21,13 @@ import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.web.client.RestTemplate;
 
 /** 
 The RepresentativeListServlet class takes in an address from the user and call the Google Civic
 Info API to pull the list of representatives relevant for that zipcode and returns
 a json formatted objects which contains corresponding offices and officials
 */
-
 @WebServlet ("/rep_list")
 public class RepresentativeListServlet extends HttpServlet{
     private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");

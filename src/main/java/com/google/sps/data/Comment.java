@@ -1,5 +1,7 @@
 package com.google.sps.data;
 
+import java.util.Objects;
+
 public final class Comment{
     private final String name;
     private final String comment;
@@ -33,10 +35,9 @@ public final class Comment{
             && that.getDisplayName().equals(this.name);
     } 
 
-    @Override
-    public int hashCode(){
-        return 42;
-        //TODO(swetha-gangu): implement hashCode()
+    @Override 
+    public int hashCode() {
+        return Objects.hash(name, comment);
     }
     
     @Override 

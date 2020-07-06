@@ -2,6 +2,7 @@ package com.google.sps.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import com.google.sps.data.Comment;
 
 public final class Post{
@@ -40,15 +41,25 @@ public final class Post{
         } 
          
         Post that = (Post) o;
+
+        // answer might be null if rep hasn't yet answered 
+        boolean answerEquality = false; 
+        if (that.getAnswer() == null && this.answer == null) {
+            answerEquality = true; 
+        }
+        if (that.getAnswer() != null && this.answer != null 
+            && that.getAnswer().equals(this.answer)) {
+                answerEquality = true; 
+        }
+        
         return that.getQuestion().equals(this.question) && 
-               that.getAnswer().equals(this.answer) && 
+               answerEquality && 
                that.getReplies().equals(this.replies); 
     } 
 
     @Override
-    public int hashCode(){
-        return 42;
-        //TODO(swetha-gangu): implement hashCode()
+    public int hashCode() {
+        return Objects.hash(question, answer, replies);
     }
 
     @Override 
