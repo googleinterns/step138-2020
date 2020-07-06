@@ -2,6 +2,9 @@
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <threadsafe>false</threadsafe>
   <sessions-enabled>true</sessions-enabled>
+  <env-variables>
+    <env-var name="CIVIC_API_KEY" value="AIzaSyAHQRFZpZBZSOeUI-4pmfoHV4SM0eBSlS4"/>
+  </env-variables>
   <runtime>java8</runtime>
   <static-files>
     <!-- prevent unwanted caching when accessing via the web preview server -->

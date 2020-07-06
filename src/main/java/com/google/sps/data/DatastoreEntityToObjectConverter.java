@@ -67,7 +67,7 @@ public final class DatastoreEntityToObjectConverter {
             Post post = convertPost(postEntity); 
             posts.add(post); 
         }
-        return posts; 
+        return new ArrayList<Post>(posts); 
     }
 
     private static List<Comment> convertCommentsFromPost(Entity postEntity) 
