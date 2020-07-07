@@ -45,13 +45,11 @@ public class ValidateRepresentativeServlet extends HttpServlet {
         try {
             repName = DatastoreManager.queryForRepresentativeNameWithLogin(
                 username.trim(), password); 
-            System.out.println(repName);
         } catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         String redirect =  (repName != null) ?  "feed.html?name=" + URLEncoder.encode(repName) : "invalidAuthRep.html";
-        System.out.println(redirect);
         response.sendRedirect(redirect);
     }
 }
