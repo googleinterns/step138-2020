@@ -65,11 +65,12 @@ public class DatastoreManager {
      * @param question ID of comment entity representing question made by the user 
      * @return ID of entity inserted into datastore
      */ 
-    public static long insertPostInDatastore(long question) {
+    public static long insertPostInDatastore(long question, String tab) {
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
         postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>()); 
+        postEntity.setProperty(Constants.POST_TAB, tab);
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
@@ -219,6 +220,27 @@ public class DatastoreManager {
             }
         }
         return repEntity; 
+    }
+
+    /**
+     * Searches datastore for a particular representative and returns entity
+     * @param repName name of the representative to search datastore for
+     * @param tab name of the tab that we want to categorize by 
+     * @return the list of posts under a representative that are associated with particular tab 
+     */ 
+    public static List<Post> queryForPostListWithTab(String repName, String tab){
+        List<Post> postListForTab = new ArrayList<>();
+        Representative rep = null;
+        rep = queryForRepresentativeObjectWithName(repName);
+        if (rep != null){
+            List<Post> postList= rep.getPosts();
+            for (Post post : postList){
+                if (post.getTab().equals(tab)){
+                    postListForTab.add(post);
+                }
+            }
+        }
+        return postListForTab; 
     }
 
     /**

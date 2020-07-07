@@ -49,8 +49,9 @@ public final class DatastoreEntityToObjectConverter {
         long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
+        String tab = (String) postEntity.getProperty(Constants.POST_TAB);
         long id = postEntity.getKey().getId();
-        return new Post(question, answer, comments, id); 
+        return new Post(question, answer, comments, tab, id); 
     }
 
     private static List<Post> convertPostsFromRep(Entity repEntity) 
