@@ -60,7 +60,7 @@ public class ValidateRepresentativeServletTest{
         servlet.doPost(request, response);
 
         verify(response).sendRedirect(captor.capture());
-        assertTrue(("feed.html?name=Donald Trump").equals(captor.getValue()));    
+        assertTrue(("feed.html?name=Donald+Trump").equals(captor.getValue()));    
     }
 
     @Test
