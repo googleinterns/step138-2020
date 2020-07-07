@@ -52,6 +52,7 @@ public final class DatastoreEntityToObjectConverterTest {
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
         postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
+        postEntity.setProperty(Constants.POST_TAB, "Education");
         ds.put(postEntity); 
         long postId = postEntity.getKey().getId(); 
         List<Long> postIds = new ArrayList<>(); 
@@ -73,7 +74,8 @@ public final class DatastoreEntityToObjectConverterTest {
             commentIdQuestion); 
         Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", 
             commentIdAnswer); 
-        this.post = new Post(commentQuestion, commentAnswer, replies, postId); 
+        String tab = "Education";
+        this.post = new Post(commentQuestion, commentAnswer, replies, tab, postId); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", "username", 

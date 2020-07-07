@@ -80,7 +80,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         Key postEntityKey = KeyFactory.createKey(Constants.POST_ENTITY_TYPE, postId); 
         Entity postEntity = (Entity) ds.get(postEntityKey); 
 
@@ -104,7 +104,7 @@ public final class DatastoreManagerTest {
             "President of the US", "username", "password");
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         
         DatastoreManager.updateRepresentativePostList(repId, postId); 
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump"); 
@@ -121,7 +121,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude."); 
 
         DatastoreManager.updatePostWithComment(postId, commentId);
@@ -138,7 +138,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         long answerId = DatastoreManager.insertCommentInDatastore("Donald Trump", 
             "Because I want to."); 
 

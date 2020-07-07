@@ -12,6 +12,79 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+//Displays the posts from a tab 
+function displayTab(){
+    var rep = localStorage.getItem("rep");
+    var urlParams = new URLSearchParams(window.location.search);
+    var tab = decodeURI(urlParams.get('tab'));
+    var repName = decodeURI(urlParams.get('name')); 
+    if (rep.trim() == "true"){
+        localStorage.setItem("nickname", repName);
+    }
+    fetch(`/tab?repName=${repName}&tab=${tab}`).then(response => response.json())
+    .then((posts)=>{
+        var feed = document.getElementById("mid_col");
+
+        //display rep name 
+        var displayRepName = document.createElement("div");
+        displayRepName.innerText = repName;
+        feed.appendChild(displayRepName);
+        if (rep.trim() != "true"){
+            createQuestionForm(repName);
+        }
+        else{
+            if (posts.length == 0){
+                var emptyFeed = document.createElement("p");
+                emptyFeed.innerText = "There are currently no questions on your feed."
+                feed.appendChild(emptyFeed);
+            }
+        }
+        posts.forEach((post) => {
+            //new questions div
+            var newQuestion = document.createElement("div");
+            newQuestion.setAttribute("class", "newComment");
+            newQuestion.setAttribute("id", post.id);
+
+            //question text added to div
+            var qText = document.createElement("p");
+            qText.innerText = post.question.name + ": " + post.question.comment;
+            newQuestion.appendChild(qText);
+            feed.appendChild(newQuestion);
+            var question = document.getElementById(post.id);
+
+            //reply button
+            var replyBtn = document.createElement("button");
+            replyBtn.addEventListener("click", createReplyForm(post.id, repName));
+            replyBtn.setAttribute("class", "btn");
+            var replyIcon = document.createElement("i");
+            replyIcon.setAttribute("class", "fa fa-comments");
+            replyBtn.appendChild(replyIcon);
+            question.appendChild(replyBtn);
+
+            //answer button
+            if (rep.trim() == "true"){
+                var repAnswer = document.createElement("button");
+                repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
+                repAnswer.setAttribute("class", "btn");
+                var repAnswerIcon = document.createElement("i");
+                repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
+                repAnswer.appendChild(repAnswerIcon);
+                question.appendChild(repAnswer);
+            }
+
+            displayRepAnswer(post, repName);
+            displayReplyList(post);
+
+            var returnHome = document.createElement("a");
+            returnHome.href = "index.html";
+            returnHome.innerText = "Return to Login";
+            feed.appendChild(returnHome);
+        })
+        
+    });
+    
+}
+
 //Displays the feed for a particular rep
 function displayFeed(){
     var rep = localStorage.getItem("rep");
@@ -75,10 +148,21 @@ function displayFeed(){
 
             displayRepAnswer(post, repName);
             displayReplyList(post);
-        })
 
+            var returnHome = document.createElement("a");
+            returnHome.href = "index.html";
+            returnHome.innerText = "Return to Login";
+            feed.appendChild(returnHome);
+        })
     });
 };
+
+//Navigate to a particular tab
+function getTab(tab){
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = decodeURI(urlParams.get('name')); 
+    window.location.href = `tab.html?name=${repName}&tab=${tab}`;
+}
 
 //Creates a reply form
 function createReplyForm(questionID, repName){
@@ -157,6 +241,26 @@ function createQuestionForm(repName){
     inputForm.setAttribute("name", "comment");
     newQuestionForm.appendChild(inputForm);
 
+    var tabLabel = document.createElement("label");
+    tabLabel.setAttribute("for", "tab");
+    tabLabel.innerText = "Choose a label: ";
+    newQuestionForm.appendChild(tabLabel);
+
+    var tabDropdown = document.createElement("select");
+    tabDropdown.name = "tab";
+    tabDropdown.id = "tab";
+
+    var educationTab = document.createElement("option");
+    educationTab.value = "Education";
+    educationTab.innerText = "Education";
+    tabDropdown.appendChild(educationTab);
+
+    var otherTab = document.createElement("option");
+    otherTab.value = "Other";
+    otherTab.innerText = "Other";
+    tabDropdown.appendChild(otherTab);
+    newQuestionForm.appendChild(tabDropdown);
+
     var submitBtn = document.createElement("button");
     submitBtn.setAttribute("class", "btn submit-btn");
     newQuestionForm.appendChild(submitBtn);
@@ -186,7 +290,7 @@ function storeRepBooleanAndSubmit(){
 function storeRepBooleanAndRedirect(){ 
     event.preventDefault(); 
     localStorage.setItem("rep", true);
-    window.location.href = "/repListCreateAccount.html";
+    window.location.href = "/repList.html";
 }
 
 //Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names

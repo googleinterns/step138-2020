@@ -12,6 +12,7 @@ public final class Constants {
     public static final String POST_QUESTION = "Question";
     public static final String POST_ANSWER = "Answer";
     public static final String POST_REPLIES = "Replies";
+    public static final String POST_TAB = "Tab";
 
     public static final String COMMENT_ENTITY_TYPE = "Comment";
     public static final String COMMENT_NAME = "Nick Name";

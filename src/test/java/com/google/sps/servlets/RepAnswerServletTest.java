@@ -50,7 +50,7 @@ public class RepAnswerServletTest{
     @Test
     public void testRepAnswerPostFound() throws Exception {
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "How are you doing?");
-        long postId = DatastoreManager.insertPostInDatastore(questionId);
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
         String postID = String.valueOf(postId);
         when(request.getParameter("postId")).thenReturn(postID);
         when(request.getParameter("repName")).thenReturn("Donald Trump");
