@@ -374,7 +374,7 @@ function insertRepDatastore(){
     ${password}&repName=${repName}&title=${title}`).then(response => response.text())
     .then((usernameTaken) => {
         window.location.href = (usernameTaken.trim() == "true") ?  
-        "usernameTaken.html" : "loginRep.html"
+        "usernameTaken.html" : `repQuestionnaire.html?name=${repName}`;
     });
 }
 
@@ -408,11 +408,19 @@ function addTopic(){
     additionalTopics.appendChild(inputPlatform);
 }
 
-//Grab tags from questionnaire
-function grabTags(){
+//Grab tabs from questionnaire
+function submitRepQuestionnaire(){
+    console.log("Made it here");
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = urlParams.get('name');
     var topics = document.getElementsByClassName("topic");
+    var platforms = document.getElementsByClassName("platform");
+    var intro = document.getElementById("intro").value;
     var listOfTopics = [];
+    var listOfPlatforms = [];
     for (var i = 0; i < topics.length; i++) {
         listOfTopics.push(topics[i].value);
+        listOfPlatforms.push(platforms[i].value + "|");
     }
+    fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=${listOfPlatforms}&intro=${intro}&repName=${repName}`).then(window.location.href="loginRep.html");
 }

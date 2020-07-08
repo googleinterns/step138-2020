@@ -54,6 +54,8 @@ public class DatastoreManager {
         repEntity.setProperty(Constants.REP_USERNAME, username);
         repEntity.setProperty(Constants.REP_PASSWORD, password);
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
+        repEntity.setProperty(Constants.REP_INTRO, "");
+        repEntity.setProperty(Constants.REP_TABS, new ArrayList<>());
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(repEntity); 
@@ -75,6 +77,24 @@ public class DatastoreManager {
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
     }
+    /**
+     * Inserts a tab entity into datastore 
+     * @param name name of the tab being inserted
+     * @param platform description of representative's platform for particular tab
+     * @return ID of entity inserted into datastore
+     */ 
+    public static List<Long> insertTabsInDatastore(List<String> names, List<String> platforms) {
+        List<Long> tabIds = new ArrayList<>();
+        for (int i = 0 ; i < names.size() ; i++) {
+            Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
+            tabEntity.setProperty(Constants.TAB_NAME, names.get(i)); 
+            tabEntity.setProperty(Constants.TAB_PLATFORM, platforms.get(i)); 
+            DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+            ds.put(tabEntity); 
+            tabIds.add(tabEntity.getKey().getId());
+        }
+        return tabIds;
+    }
 
     /**
      * Updates a representative entity with a new post entity 
@@ -92,6 +112,39 @@ public class DatastoreManager {
         }
         postIds.add(postId);
         repEntity.setProperty(Constants.REP_POSTS, postIds); 
+        datastore.put(repEntity);
+    }
+
+    /**
+     * Updates a representative entity with a new tab entity 
+     * @param repId ID of the representative entity 
+     * @param tabId ID of the tab entity 
+     */ 
+    public static void updateRepresentativeTabList(long repId, List<Long> tabIdList) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
+        if (tabIds == null) {
+            tabIds = new ArrayList<>(); 
+        }
+        tabIds.addAll(tabIdList);
+        repEntity.setProperty(Constants.REP_TABS, tabIds); 
+        datastore.put(repEntity);
+    }
+
+    /**
+     * Updates a representative entity with a new intro
+     * @param repId ID of the representative entity 
+     * @param intro a brief description of representative
+     */ 
+    public static void updateRepresentativeIntro(long repId, String intro) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        repEntity.setProperty(Constants.REP_INTRO, intro); 
         datastore.put(repEntity);
     }
 

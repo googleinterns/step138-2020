@@ -157,10 +157,11 @@ public final class DatastoreManagerTest {
 
         Representative actualRep = DatastoreManager.
             queryForRepresentativeObjectWithName("Donald Trump");
-        Representative expectedRep = new Representative("Donald Trump", 
-            "President of the US", "username", "password", new ArrayList<>(), repId);
 
-        assertTrue(actualRep.equals(expectedRep));
+        assertTrue(actualRep.getName().equals("Donald Trump"));
+        assertTrue(actualRep.getTitle().equals("President of the US"));
+        assertTrue(actualRep.getUsername().equals("username"));
+        assertTrue(actualRep.getPassword().equals("password"));
     }
 
     @Test

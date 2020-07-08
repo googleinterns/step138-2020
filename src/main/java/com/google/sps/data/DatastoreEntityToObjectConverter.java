@@ -32,8 +32,10 @@ public final class DatastoreEntityToObjectConverter {
         String username = (String) entity.getProperty(Constants.REP_USERNAME);
         String password = (String) entity.getProperty(Constants.REP_PASSWORD);
         List<Post> posts = convertPostsFromRep(entity); 
+        String intro = (String) entity.getProperty(Constants.REP_INTRO);
+        List<Tab> tabs = (ArrayList<Tab>) entity.getProperty(Constants.REP_TABS);
         long id = entity.getKey().getId();
-        return new Representative(name, title, username, password, posts, id);   
+        return new Representative(name, title, username, password, posts, intro, tabs, id);   
     }
     
     /**
