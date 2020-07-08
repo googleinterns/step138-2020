@@ -11,14 +11,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background-color: aqua;
-}
-
-.navigationBar {
-  width: 100%;
-  height: 55px;
-  overflow: hidden;
-  background-color: aquamarine;
+  background-color: #111;
 }
 
 .body_main {
@@ -29,12 +22,12 @@ body {
   background-color: white;
 }
 
-.leftCol {
+ .leftCol {
   width: 23%;
   height: 300px;
   float: left;
-  background-color: tomato;
-}
+ 
+} 
 
 .midCol {
   width: 50%;
@@ -85,4 +78,112 @@ i {
     color: black;
     text-align: center;
     padding: 0px;
+}
+
+.sidebar {
+  height: 100%;
+  width: 250px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  padding-top: 60px;
+}
+
+.sidebar a {
+  padding: 8px 8px 8px 32px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+main .sidebar{
+  position: absolute;
+  padding-top: 60px;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+  
+}
+
+.icon-text {
+  vertical-align: middle;
+}
+
+.material-icons {
+
+  margin-right: 30px
+}
+
+#main {
+  transition: margin-left 0.5s;
+  padding: 16px;
+  margin-left: 250px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {
+    padding-top: 15px;
+  }
+  .sidebar a {
+    font-size: 18px;
+  }
+}
+
+#eduButton{
+    width: 100%;
+    /* height: 10%; */
+    font-family: Lato;
+    /* font-size: 20px; */
+}
+
+#otherButton{
+    width: 100%;
+    /* height: 10%; */
+    font: Lato;
+}
+
+#repRetButton{
+    width: 100%;
+    /* height: 10%; */
+    font: Lato;
+    /* font-size: 17px; */
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  vertical-align: middle;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
+}
+
+.rep-name{
+    text-align: center;
+    font-family: Lato;
+    font-size: 25px;
+    color: white;
 }

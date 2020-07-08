@@ -9,11 +9,15 @@
   </head>
   <body onload="displayFeed()">
     <div class = "wrap">
-        <div class = "navigationBar" id="nav_bar"></div>
         <div class = "bodyMain" id= "body_main"></div>
             <div class = "leftCol" id = "left_col">
-                <input type="button" value="Education" onclick="getTab(this.value)">
-                <input type="button" value="Other" onclick="getTab(this.value)">
+                <div id="mySidebar" class="sidebar">
+                <p class="rep-name">null</p>
+                <a href = "/repList.html" id="repRetButton"><span><i class="material-icons">list</i><span class="repList-text icon-text">Other Representatives</span></a><br>
+                <a href="#" value="Education" id="eduButton" onclick="getTab(this.value)"><span><i class="material-icons">school</i><span class="edu-text icon-text">Education</span></a><br>
+                <a href="#" value="Other" id="otherButton" onclick="getTab(this.value)"><span><i class="material-icons">info</i><span class="other-text icon-text">Other</span></a><br>
+                <!-- <input type="button" id="otherButton" value="Other" onclick="getTab(this.value)"> -->
+                </div>
             </div>
             <div class = "midCol" id = "mid_col">
                 <div class="newComment">

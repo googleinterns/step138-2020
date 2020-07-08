@@ -24,11 +24,7 @@ function displayTab(){
     fetch(`/tab?repName=${repName}&tab=${tab}`).then(response => response.json())
     .then((posts)=>{
         var feed = document.getElementById("mid_col");
-
-        //display rep name 
-        var displayRepName = document.createElement("div");
-        displayRepName.innerText = repName;
-        feed.appendChild(displayRepName);
+        
         if (rep.trim() != "true"){
             createQuestionForm(repName);
         }
@@ -100,9 +96,8 @@ function displayFeed(){
         var feed = document.getElementById("mid_col");
 
         //display rep name 
-        var displayRepName = document.createElement("div");
+        var displayRepName = document.getElementsByClassName("rep-name");
         displayRepName.innerText = repName;
-        feed.appendChild(displayRepName);
         if (rep.trim() != "true"){
             createQuestionForm(repName);
         }
