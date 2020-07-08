@@ -47,7 +47,7 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertRepresentativeInDatastore(
-    String name, String title, String username, String password) {
+        String name, String title, String username, String password) {
         Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, name); 
         repEntity.setProperty(Constants.REP_TITLE, title); 
@@ -166,7 +166,7 @@ public class DatastoreManager {
      * @return the representative's name as string, or null if it was not found in datastore 
      */ 
     public static String queryForRepresentativeNameWithLogin(
-    String repUsername, String repPassword) throws EntityNotFoundException{
+        String repUsername, String repPassword) throws EntityNotFoundException{
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
