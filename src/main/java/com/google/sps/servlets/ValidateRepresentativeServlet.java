@@ -14,6 +14,8 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLEncoder; 
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -41,12 +43,13 @@ public class ValidateRepresentativeServlet extends HttpServlet {
         String password = request.getParameter(PASSWORD);
         String repName;
         try {
-            repName = DatastoreManager.queryForRepresentativeNameWithLogin(username.trim(), password); 
+            repName = DatastoreManager.queryForRepresentativeNameWithLogin(
+                username.trim(), password); 
         } catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = (repName != null) ? "feed.html?name=" + repName : "invalidAuthRep.html";
+        String redirect =  (repName != null) ?  "feed.html?name=" + URLEncoder.encode(repName) : "invalidAuthRep.html";
         response.sendRedirect(redirect);
     }
 }

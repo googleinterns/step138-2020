@@ -21,7 +21,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.web.client.RestTemplate;
 
 /** 
 The RepresentativeListServlet class takes in an address from the user and call the Google Civic
@@ -32,10 +31,10 @@ a json formatted objects which contains corresponding offices and officials
 public class RepresentativeListServlet extends HttpServlet{
     private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");
     private static final String ZIPCODE = "zipcode";
-    private final String API_KEY;
+    private final String apiKey;
 
     public RepresentativeListServlet() {
-        API_KEY = Dotenv.load().get(Constants.CIVIC_API_KEY);
+        apiKey = System.getenv(Constants.CIVIC_API_KEY);
     }
 
     @Override
@@ -47,7 +46,7 @@ public class RepresentativeListServlet extends HttpServlet{
         URI uri = null;
 
         builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
-        .setParameter("key", API_KEY)
+        .setParameter("key", apiKey)
         .setParameter("address", zipcode);
         try{
             uri = builder.build();

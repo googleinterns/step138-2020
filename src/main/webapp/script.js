@@ -16,7 +16,7 @@
 function displayFeed(){
     var rep = localStorage.getItem("rep");
     var urlParams = new URLSearchParams(window.location.search);
-    var repName = urlParams.get('name'); 
+    var repName = decodeURI(urlParams.get('name')); 
     if (rep.trim() == "true"){
         localStorage.setItem("nickname", repName);
     }
