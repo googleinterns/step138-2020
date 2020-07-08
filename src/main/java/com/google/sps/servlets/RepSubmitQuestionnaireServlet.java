@@ -46,14 +46,9 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         String repName = request.getParameter(REP_NAME);
         String topics = request.getParameter(TOPIC_LIST);
         List<String> topicList = new ArrayList<String>(Arrays.asList(topics.split(",")));
-        System.out.println("Topiclist: " + topicList);
-        for (String topic: topicList){
-            topic = repName + topic;
-        }
-        System.out.println("Updated Topiclist: " + topicList);
+        topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
         String platforms = request.getParameter(PLATFORM_LIST);
-        List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("|")));
-        System.out.println("Platformlist: " + platformList);
+        List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("\\*,")));
         String intro = request.getParameter(INTRO);
        
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
@@ -62,9 +57,7 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         long repId;
         try {
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
-            System.out.println("This is the rep: " + rep);
             repId = rep.getKey().getId(); 
-            System.out.println("THis is the key: " + repId);
             DatastoreManager.updateRepresentativeTabList(repId, tabIds);
             DatastoreManager.updateRepresentativeIntro(repId, intro);
         } 

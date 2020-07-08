@@ -297,6 +297,25 @@ public class DatastoreManager {
     }
 
     /**
+     * Searches datastore for list of tabs corresponding to a particular representative
+     * @param repName name of the representative to search datastore for
+     * @return the list of tabs under a representative
+     */ 
+    public static List<Tab> queryForTabListWithRepName(String repName)
+    throws EntityNotFoundException{
+        List<Tab> tabListForRep = new ArrayList<>();
+        Entity repEntity;
+        try{
+            repEntity = queryForRepresentativeEntityWithName(repName);
+        }
+        catch(EntityNotFoundException e) {
+            logger.error(e);
+            return null; 
+        }
+        return DatastoreEntityToObjectConverter.convertTabsFromRep(repEntity);
+    }
+
+    /**
      * Searches datastore for a particular post and returns post object
      * @param postId ID of the post to search datastore for 
      * @return the post object found in datastore 

@@ -38,8 +38,7 @@ public class NewPostServlet extends HttpServlet{
         String repName = request.getParameter(REP_NAME);
         String name = request.getParameter(NAME);
         String comment = request.getParameter(COMMENT);
-        String tab = request.getParameter(TAB);
-        System.out.println(tab);
+        String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
         try {

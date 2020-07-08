@@ -56,6 +56,37 @@ public final class DatastoreEntityToObjectConverter {
         return new Post(question, answer, comments, tab, id); 
     }
 
+    /**
+     * Converts a tab entity into a Tab object 
+     * @param tabEntity entity of the tab 
+     * @throws EntityNotFoundException
+     * @return the Tab object 
+     */ 
+    protected static Tab convertTab(Entity tabEntity) 
+    throws EntityNotFoundException{
+        String tabName = (String) (tabEntity.getProperty(Constants.TAB_NAME));
+        String platform = (String) (tabEntity.getProperty(Constants.TAB_PLATFORM));
+        long id = tabEntity.getKey().getId();
+        return new Tab(tabName, platform, id); 
+    }
+
+    protected static List<Tab> convertTabsFromRep(Entity repEntity) 
+    throws EntityNotFoundException{
+        List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
+        List<Tab> tabs = new ArrayList<>(); 
+        if (tabIds == null) {
+            return tabs; 
+        }
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        for (long tabId : tabIds) {
+            Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+            Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+            Tab tab = convertTab(tabEntity); 
+            tabs.add(tab); 
+        }
+        return new ArrayList<Tab>(tabs); 
+    }
+
     private static List<Post> convertPostsFromRep(Entity repEntity) 
     throws EntityNotFoundException{
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
