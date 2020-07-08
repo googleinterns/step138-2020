@@ -382,3 +382,37 @@ function insertRepDatastore(){
 function goBack() {
     window.history.back();
 }
+
+//Add another topic to the representative questionnaire
+function addTopic(){
+    var additionalTopics = document.getElementById("additionalTopics");
+
+    var paragraphTopic = document.createElement("p");
+    paragraphTopic.innerText = "Topic: ";
+
+    var input = document.createElement("input");
+    input.type = "text";
+    input.class = "topic";
+    input.value = "Additional Topic";
+
+    var paragraphPlatform = document.createElement("p");
+    paragraphPlatform.innerText = "Platform: "
+
+    var inputPlatform = document.createElement("input");
+    inputPlatform.type = "text";
+    inputPlatform.class = "platform";
+
+    additionalTopics.appendChild(paragraphTopic);
+    additionalTopics.appendChild(input);
+    additionalTopics.appendChild(paragraphPlatform);
+    additionalTopics.appendChild(inputPlatform);
+}
+
+//Grab tags from questionnaire
+function grabTags(){
+    var topics = document.getElementsByClassName("topic");
+    var listOfTopics = [];
+    for (var i = 0; i < topics.length; i++) {
+        listOfTopics.push(topics[i].value);
+    }
+}
