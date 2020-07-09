@@ -338,4 +338,17 @@ public class DatastoreManager {
         Entity postEntity = (Entity) datastore.get(postEntityKey); 
         return postEntity; 
     }
+
+    /**
+     * Searches datastore for a particular tab entity
+     * @param tabId ID of the tab to search datastore for 
+     * @return the tab entity found in datastore 
+     */ 
+    public static Entity queryForTabEntityWithId(long tabId) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+        Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+        return tabEntity; 
+    }
 }

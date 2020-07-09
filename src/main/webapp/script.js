@@ -18,6 +18,14 @@ async function displayTab(){
     var urlParams = new URLSearchParams(window.location.search);
     var tab = decodeURI(urlParams.get('tab'));
     var repName = decodeURI(urlParams.get('name')); 
+    var tabId = urlParams.get("tabId");
+    var tabName = tab.replace(repName.replace(/\s/g, ''), "");
+    document.getElementById("tabName").innerText = tabName;
+
+    var tabResponse = await fetch(`tab_entity?tabId=${tabId}`);
+    var tabEntity = await tabResponse.json();
+    document.getElementById("platform").innerText = tabEntity.propertyMap.Platform;
+
     if (rep.trim() == "true"){
         localStorage.setItem("nickname", repName);
     }
@@ -99,7 +107,7 @@ async function displayFeed(){
 
     var leftCol = document.getElementById("left_col");
     tabList.forEach((tab) => {
-        addTabButton(tab.name, leftCol, repName);
+        addTabButton(tab.name, tab.id, leftCol, repName);
     });
 
     var response = await fetch(`/feed?repName=${repName}`);
@@ -166,19 +174,19 @@ async function displayFeed(){
 };
 
 //Adds a tab button
-function addTabButton(tabName, leftCol, repName){
+function addTabButton(tabName, tabId, leftCol, repName){
     var inputElement = document.createElement("input");
     inputElement.type = "button";
     inputElement.value = tabName.replace(repName.replace(/\s/g, ''), "");
-    inputElement.onclick = function() {return getTab(tabName);} 
+    inputElement.onclick = function() {return getTab(tabName, tabId);} 
     leftCol.appendChild(inputElement);
 }
 
 //Navigate to a particular tab
-function getTab(tab){
+function getTab(tab, tabId){
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
-    window.location.href = `tab.html?name=${repName}&tab=${tab}`;
+    window.location.href = `tab.html?name=${repName}&tab=${tab}&tabId=${tabId}`;
 }
 
 //Creates a reply form
