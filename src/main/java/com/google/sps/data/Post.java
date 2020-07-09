@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import com.google.sps.data.Comment;
 
-public final class Post{
+public final class Post {
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
@@ -61,7 +61,7 @@ public final class Post{
         return that.getQuestion().equals(this.question) && 
                answerEquality && 
                that.getReplies().equals(this.replies) &&
-               that.getTab().equals(this.tab); 
+               that.getTab().equals(this.tab);
     } 
 
     @Override

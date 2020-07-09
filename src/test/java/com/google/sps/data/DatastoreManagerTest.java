@@ -17,6 +17,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -237,5 +238,71 @@ public final class DatastoreManagerTest {
         assertTrue(postId == postEntityRetrived.getKey().getId()); 
         assertTrue(questionIdActual == commentIdQuestion);
         assertTrue(answerIdActual == commentIdAnswer);
+    }
+
+    @Test
+    public void testqueryForTabListWithRepName() throws EntityNotFoundException {
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police")));
+        Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
+        Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));
+        List<Tab> tabList = new ArrayList<Tab> (Arrays.asList(tab1, tab2));
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password");
+        DatastoreManager.updateRepresentativeTabList(repId, tabIds);
+
+        List<Tab> tabListActual = DatastoreManager.queryForTabListWithRepName("Donald Trump");
+
+        assertTrue(tabListActual.equals(tabList));
+    }
+
+    @Test
+    public void testqueryForTabEntityWithName() throws EntityNotFoundException {
+        Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
+        tabEntity.setProperty(Constants.TAB_NAME, "Education");
+        tabEntity.setProperty(Constants.TAB_PLATFORM, "Platform");
+        ds.put(tabEntity);
+
+        Entity actualEntity = DatastoreManager.queryForTabEntityWithName("Education");
+
+        assertTrue(tabEntity.equals(actualEntity));
+    }
+
+    @Test
+    public void testInsertTabsInDatastore() 
+    throws EntityNotFoundException{
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
+        Key tabEntityKey1 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(0));
+        Entity tabEntity1 = (Entity) ds.get(tabEntityKey1);
+        Key tabEntityKey2 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(1));
+        Entity tabEntity2 = (Entity) ds.get(tabEntityKey2);
+        
+        String name1 = (String) (tabEntity1.getProperty(Constants.TAB_NAME));
+        String platform1 = (String) (tabEntity1.getProperty(Constants.TAB_PLATFORM));
+        String name2 = (String) (tabEntity2.getProperty(Constants.TAB_NAME));
+        String platform2 = (String) (tabEntity2.getProperty(Constants.TAB_PLATFORM));
+
+        assertTrue(name1.equals("Education")); 
+        assertTrue(name2.equals("Police"));         
+        assertTrue(platform1.equals("Platform on education")); 
+        assertTrue(platform2.equals("Platform on police"));
+    }
+
+    @Test
+    public void testUpdateRepresentativeTabList() 
+    throws EntityNotFoundException{
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
+        Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
+        Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));
+        List<Tab> tabList = new ArrayList<Tab> (Arrays.asList(tab1, tab2));
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+            "President of the US", "username", "password");
+
+        DatastoreManager.updateRepresentativeTabList(repId, tabIds);
+        List<Tab> actualTabList = DatastoreManager.queryForTabListWithRepName("Donald Trump");
+
+        assertTrue(tabList.equals(actualTabList));
     }
 }

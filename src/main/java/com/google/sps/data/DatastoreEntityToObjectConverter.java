@@ -33,7 +33,7 @@ public final class DatastoreEntityToObjectConverter {
         String password = (String) entity.getProperty(Constants.REP_PASSWORD);
         List<Post> posts = convertPostsFromRep(entity); 
         String intro = (String) entity.getProperty(Constants.REP_INTRO);
-        List<Tab> tabs = (ArrayList<Tab>) entity.getProperty(Constants.REP_TABS);
+        List<Tab> tabs = convertTabsFromRep(entity);
         long id = entity.getKey().getId();
         return new Representative(name, title, username, password, posts, intro, tabs, id);   
     }
@@ -70,6 +70,12 @@ public final class DatastoreEntityToObjectConverter {
         return new Tab(tabName, platform, id); 
     }
 
+    /**
+     * Converts a list of tab entities into tab objects pulled from a rep 
+     * @param repEntity entity of the rep
+     * @throws EntityNotFoundException
+     * @return List of tab objects
+     */ 
     protected static List<Tab> convertTabsFromRep(Entity repEntity) 
     throws EntityNotFoundException{
         List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 

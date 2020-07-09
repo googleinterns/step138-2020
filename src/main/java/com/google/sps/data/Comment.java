@@ -2,7 +2,7 @@ package com.google.sps.data;
 
 import java.util.Objects;
 
-public final class Comment{
+public final class Comment {
     private final String name;
     private final String comment;
     private final long id;

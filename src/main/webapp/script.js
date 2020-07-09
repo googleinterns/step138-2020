@@ -44,12 +44,10 @@ async function displayTab(){
     if (rep.trim() != "true"){
         createQuestionForm(repName, [{"name" : tabName}], false);
     }
-    else{
-        if (posts.length == 0){
-            var emptyTab = document.createElement("p");
-            emptyTab.innerText = "There are currently no questions associated with this tab."
-            feed.appendChild(emptyTab);
-        }
+    else if(posts.length == 0){
+        var emptyTab = document.createElement("p");
+        emptyTab.innerText = "There are currently no questions associated with this tab."
+        feed.appendChild(emptyTab);
     }
     returnHomeAnchor(feed);
     returnToFeed(repName, feed);

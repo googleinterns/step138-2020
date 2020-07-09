@@ -59,7 +59,7 @@ public class NewPostServlet extends HttpServlet{
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = (feed == true) ? "feed.html?name=" + repName : "tab.html?name=" + repName + "&tab=" + tab;
+        String redirect = (feed) ? "feed.html?name=" + repName : "tab.html?name=" + repName + "&tab=" + tab;
         response.sendRedirect(redirect);
     }
 }

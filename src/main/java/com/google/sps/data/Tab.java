@@ -2,7 +2,7 @@ package com.google.sps.data;
 
 import java.util.Objects;
 
-public final class Tab{
+public final class Tab {
     private final String name;
     private final String platform;
     private final long id;
@@ -32,7 +32,8 @@ public final class Tab{
         } 
         Tab that = (Tab) o;
         return that.getPlatform().equals(this.platform)
-            && that.getTabName().equals(this.name);
+            && that.getTabName().equals(this.name)
+            && that.getID() == this.id;
     } 
 
     @Override 

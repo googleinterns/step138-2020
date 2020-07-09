@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public final class Representative{
+public final class Representative {
     private final String name;
     private final String title;
     private final String username;
@@ -84,13 +84,16 @@ public final class Representative{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("Representative: ").append(System.getProperty("line.separator")); 
-        sb.append("Representative name: ").append(name).append(System.getProperty("line.separator")); 
-        sb.append("Representative title: ").append(title).append(System.getProperty("line.separator")); 
+        sb.append("Representative name: ").append(name).append(
+            System.getProperty("line.separator")); 
+        sb.append("Representative title: ").append(title).append(
+            System.getProperty("line.separator")); 
         for (Post post : posts) {
             sb.append(post.toString()); 
         } 
         if (intro != null){
-            sb.append("Representative intro: ").append(intro).append(System.getProperty("line.separator"));
+            sb.append("Representative intro: ").append(intro).append(
+                System.getProperty("line.separator"));
         } 
         if (tabs != null){
             for (Tab tab : tabs) {

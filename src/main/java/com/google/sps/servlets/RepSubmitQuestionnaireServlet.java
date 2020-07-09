@@ -65,6 +65,5 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-
     }
 }
