@@ -341,14 +341,21 @@ public class DatastoreManager {
 
     /**
      * Searches datastore for a particular tab entity
-     * @param tabId ID of the tab to search datastore for 
+     * @param tabName name of the tab to search datastore for 
      * @return the tab entity found in datastore 
      */ 
-    public static Entity queryForTabEntityWithId(long tabId) 
-    throws EntityNotFoundException {
+    public static Entity queryForTabEntityWithName(String tabName) 
+    throws EntityNotFoundException{
+        Query query = new Query(Constants.TAB_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
-        Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+        PreparedQuery results = datastore.prepare(query);
+        Entity tabEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String name = (String) entity.getProperty(Constants.TAB_NAME);
+            if (name.equals(tabName)) {
+                tabEntity = entity; 
+            }
+        }
         return tabEntity; 
     }
 }

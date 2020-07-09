@@ -16,80 +16,57 @@
 async function displayTab(){
     var rep = localStorage.getItem("rep");
     var urlParams = new URLSearchParams(window.location.search);
-    var tab = decodeURI(urlParams.get('tab'));
-    var repName = decodeURI(urlParams.get('name')); 
-    var tabId = urlParams.get("tabId");
-    var tabName = tab.replace(repName.replace(/\s/g, ''), "");
-    document.getElementById("tabName").innerText = tabName;
 
-    var tabResponse = await fetch(`tab_entity?tabId=${tabId}`);
+    //Pull values from the url
+    var repName = decodeURI(urlParams.get('name')); 
+    var tabName = decodeURI(urlParams.get('tab'));
+    document.getElementById("tabName").innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+
+    //fetch the tabEntity corresponding to tabName
+    var tabResponse = await fetch(`tab_entity?tabName=${tabName}`);
     var tabEntity = await tabResponse.json();
     document.getElementById("platform").innerText = tabEntity.propertyMap.Platform;
 
     if (rep.trim() == "true"){
         localStorage.setItem("nickname", repName);
     }
-    var response = await fetch(`rep_tabs?repName=${repName}`);
-    var tabList = await response.json();
 
-    var response = await fetch(`/tab?repName=${repName}&tab=${tab}`);
-    var posts = await response.json();
+    //Pull the posts under a particular tag
+    var tabPostsResponse = await fetch(`/tab_posts?repName=${repName}&tab=${tabName}`);
+    var posts = await tabPostsResponse.json();
     var feed = document.getElementById("mid_col");
 
     //display rep name 
     var displayRepName = document.createElement("div");
     displayRepName.innerText = repName;
     feed.appendChild(displayRepName);
+
     if (rep.trim() != "true"){
-        createQuestionForm(repName, tabList);
+        createQuestionForm(repName, [{"name" : tabName}], false);
     }
     else{
         if (posts.length == 0){
-            var emptyFeed = document.createElement("p");
-            emptyFeed.innerText = "There are currently no questions on your feed."
-            feed.appendChild(emptyFeed);
+            var emptyTab = document.createElement("p");
+            emptyTab.innerText = "There are currently no questions associated with this tab."
+            feed.appendChild(emptyTab);
         }
     }
+    returnHomeAnchor(feed);
+    returnToFeed(repName, feed);
     posts.forEach((post) => {
-        //new questions div
-        var newQuestion = document.createElement("div");
-        newQuestion.setAttribute("class", "newComment");
-        newQuestion.setAttribute("id", post.id);
-
-        //question text added to div
-        var qText = document.createElement("p");
-        qText.innerText = post.question.name + ": " + post.question.comment;
-        newQuestion.appendChild(qText);
-        feed.appendChild(newQuestion);
+        displayPost(post, feed);
         var question = document.getElementById(post.id);
 
         //reply button
-        var replyBtn = document.createElement("button");
-        replyBtn.addEventListener("click", createReplyForm(post.id, repName));
-        replyBtn.setAttribute("class", "btn");
-        var replyIcon = document.createElement("i");
-        replyIcon.setAttribute("class", "fa fa-comments");
-        replyBtn.appendChild(replyIcon);
-        question.appendChild(replyBtn);
+        createReplyButton(post.id, repName, question);
 
         //answer button
         if (rep.trim() == "true"){
-            var repAnswer = document.createElement("button");
-            repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
-            repAnswer.setAttribute("class", "btn");
-            var repAnswerIcon = document.createElement("i");
-            repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
-            repAnswer.appendChild(repAnswerIcon);
-            question.appendChild(repAnswer);
+            createAnswerButton(post.id, repName, question);
         }
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
-
-        var returnHome = document.createElement("a");
-        returnHome.href = "index.html";
-        returnHome.innerText = "Return to Login";
-        feed.appendChild(returnHome);
     })
 }
 
@@ -102,26 +79,31 @@ async function displayFeed(){
         localStorage.setItem("nickname", repName);
     }
 
+    //Fetches the list of tabs for a particular rep
     var response = await fetch(`rep_tabs?repName=${repName}`);
     var tabList = await response.json();
 
+    //Displays button on side bar for each tab linking to tab feed
     var leftCol = document.getElementById("left_col");
     tabList.forEach((tab) => {
-        addTabButton(tab.name, tab.id, leftCol, repName);
+        addTabButton(tab.name, leftCol, repName);
     });
 
+    //Fetches the representative entity associated with name
     var response = await fetch(`/feed?repName=${repName}`);
     var representative = await response.json();
     postList = representative.posts;
     repName = representative.name;
+
     var feed = document.getElementById("mid_col");
 
     //display rep name 
     var displayRepName = document.createElement("div");
     displayRepName.innerText = repName;
     feed.appendChild(displayRepName);
+
     if (rep.trim() != "true"){
-        createQuestionForm(repName, tabList);
+        createQuestionForm(repName, tabList, true);
     }
     else{
         if (postList.length == 0){
@@ -130,63 +112,89 @@ async function displayFeed(){
             feed.appendChild(emptyFeed);
         }
     }
+    returnHomeAnchor(feed);
     postList.forEach((post) => {
-        //new questions div
-        var newQuestion = document.createElement("div");
-        newQuestion.setAttribute("class", "newComment");
-        newQuestion.setAttribute("id", post.id);
-
-        //question text added to div
-        var qText = document.createElement("p");
-        qText.innerText = post.question.name + ": " + post.question.comment;
-        newQuestion.appendChild(qText);
-        feed.appendChild(newQuestion);
+        displayPost(post, feed);
         var question = document.getElementById(post.id);
 
         //reply button
-        var replyBtn = document.createElement("button");
-        replyBtn.addEventListener("click", createReplyForm(post.id, repName));
-        replyBtn.setAttribute("class", "btn");
-        var replyIcon = document.createElement("i");
-        replyIcon.setAttribute("class", "fa fa-comments");
-        replyBtn.appendChild(replyIcon);
-        question.appendChild(replyBtn);
+        createReplyButton(post.id, repName, question);
 
         //answer button
         if (rep.trim() == "true"){
-            var repAnswer = document.createElement("button");
-            repAnswer.addEventListener("click", createAnswerForm(post.id, repName));
-            repAnswer.setAttribute("class", "btn");
-            var repAnswerIcon = document.createElement("i");
-            repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
-            repAnswer.appendChild(repAnswerIcon);
-            question.appendChild(repAnswer);
+            createAnswerButton(post.id, repName, question);
         }
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
-
-        var returnHome = document.createElement("a");
-        returnHome.href = "index.html";
-        returnHome.innerText = "Return to Login";
-        feed.appendChild(returnHome);
     })
 };
 
+//Displays the question for a post
+function displayPost(post, feed){
+    var newQuestion = document.createElement("div");
+    newQuestion.setAttribute("class", "newComment");
+    newQuestion.setAttribute("id", post.id);
+    var qText = document.createElement("p");
+    qText.innerText = post.question.name + ": " + post.question.comment;
+    newQuestion.appendChild(qText);
+    feed.appendChild(newQuestion);
+}
+
+//Creates an anchor tag for returning home
+function returnHomeAnchor(feed){
+    var returnHome = document.createElement("a");
+    returnHome.href = "index.html";
+    returnHome.innerText = "Return to Login";
+    linebreak = document.createElement("br");
+    returnHome.appendChild(linebreak);
+    feed.appendChild(returnHome);
+}
+
+//Creates anchor tag that links back to representative's feed
+function returnToFeed(repName, feed){
+    var returnToFeed = document.createElement("a");
+    returnToFeed.href = "feed.html?name=" + repName;
+    returnToFeed.innerText = "Return to Feed";
+    feed.appendChild(returnToFeed);
+}
+
+//Creates an button for representative answer
+function createAnswerButton(postId, repName, question){
+    var repAnswer = document.createElement("button");
+    repAnswer.addEventListener("click", createAnswerForm(postId, repName));
+    repAnswer.setAttribute("class", "btn");
+    var repAnswerIcon = document.createElement("i");
+    repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
+    repAnswer.appendChild(repAnswerIcon);
+    question.appendChild(repAnswer);
+}
+
+//Creates a button for users or the representative to add a reply
+function createReplyButton(postId, repName, question){
+    var replyBtn = document.createElement("button");
+    replyBtn.addEventListener("click", createReplyForm(postId, repName));
+    replyBtn.setAttribute("class", "btn");
+    var replyIcon = document.createElement("i");
+    replyIcon.setAttribute("class", "fa fa-comments");
+    replyBtn.appendChild(replyIcon);
+    question.appendChild(replyBtn);
+}
+
 //Adds a tab button
-function addTabButton(tabName, tabId, leftCol, repName){
+function addTabButton(tabName, leftCol, repName){
     var inputElement = document.createElement("input");
     inputElement.type = "button";
     inputElement.value = tabName.replace(repName.replace(/\s/g, ''), "");
-    inputElement.onclick = function() {return getTab(tabName, tabId);} 
+    inputElement.onclick = function() {return getTab(tabName);} 
     leftCol.appendChild(inputElement);
 }
 
 //Navigate to a particular tab
-function getTab(tab, tabId){
+function getTab(tab){
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
-    window.location.href = `tab.html?name=${repName}&tab=${tab}&tabId=${tabId}`;
+    window.location.href = `tab.html?name=${repName}&tab=${tab}`;
 }
 
 //Creates a reply form
@@ -253,12 +261,12 @@ function displayRepAnswer(post, repName){
 }
 
 //Creates form for user to ask a new question on rep's feed
-function createQuestionForm(repName, tabList){
+function createQuestionForm(repName, tabList, feed){
     var feed = document.getElementsByClassName("newComment")[0];
     var nickname = localStorage.getItem("nickname");
     
     var newQuestionForm = document.createElement("form");
-    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}`);
+    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}&feed=${feed}`);
     newQuestionForm.setAttribute("method", "post");
 
     var inputForm = document.createElement("input");
@@ -288,6 +296,7 @@ function createQuestionForm(repName, tabList){
     feed.appendChild(newQuestionForm);
 };
 
+//Add an option in the tab dropdown menu
 function addTabDropdown(tabDropdown, tabName, repName){
     var stripTabName = tabName.replace(repName.replace(/\s/g, ''), "");
     var tabElement = document.createElement("option");
@@ -295,6 +304,7 @@ function addTabDropdown(tabDropdown, tabName, repName){
     tabElement.innerText = stripTabName;
     tabDropdown.appendChild(tabElement);
 }
+
 //When user logins in, stores their zipcode and name in local storage and redirects to repList.html
 function storeZipCodeAndNickname(){
     event.preventDefault();
@@ -449,5 +459,6 @@ function submitRepQuestionnaire(){
         listOfTopics.push(topics[i].value);
         listOfPlatforms.push(platforms[i].value + "*");
     }
-    fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=${listOfPlatforms}&intro=${intro}&repName=${repName}`).then(window.location.href="loginRep.html");
+    fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=${listOfPlatforms}&intro=${intro}&repName=${repName}`)
+    .then(window.location.href="loginRep.html");
 }

@@ -27,9 +27,9 @@ import org.apache.logging.log4j.Logger;
 /**
  * Servlet for fetching a list of posts corresponding with a particular tab
  */ 
-@WebServlet ("/tab")
-public class TabServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger("TabServlet");
+@WebServlet ("/tab_posts")
+public class TabPostsServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger("TabPostsServlet");
     private static final String REP_NAME = "repName";
     private static final String TAB = "tab";
     

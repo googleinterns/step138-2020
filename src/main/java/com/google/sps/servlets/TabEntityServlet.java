@@ -31,15 +31,15 @@ representative has made an account by querying for their name in datastore
 @WebServlet ("/tab_entity")
 public class TabEntityServlet extends HttpServlet{
     private static final Logger logger = LogManager.getLogger("TabEntityServlet");
-    private static final String TAB_ID = "tabId";
+    private static final String TAB_NAME = "tabName";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException{
-        long tabId = Long.parseLong(request.getParameter(TAB_ID));
+        String tabName = request.getParameter(TAB_NAME);
         Entity tab;
         try {
-            tab = DatastoreManager.queryForTabEntityWithId(tabId);        
+            tab = DatastoreManager.queryForTabEntityWithName(tabName);        
         } catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
