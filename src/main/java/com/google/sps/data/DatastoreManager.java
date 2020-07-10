@@ -4,6 +4,7 @@ import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
+import com.google.sps.data.Reaction;
 import com.google.sps.data.Representative;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -67,6 +68,10 @@ public class DatastoreManager {
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
         postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>()); 
+        List<String> reactions = Reaction.getReactionsAsStrings();
+        for (String reaction : reactions) {
+            postEntity.setProperty(reaction, (long) 0); 
+        }
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 

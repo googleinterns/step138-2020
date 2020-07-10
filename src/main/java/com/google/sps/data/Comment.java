@@ -4,7 +4,7 @@ import java.util.Objects;
 import com.google.sps.data.Constants;
 
 public final class Comment{
-    private static final long COMMENT_TOXICITY_THRESHOLD = 0.8;  
+    private static final double COMMENT_TOXICITY_THRESHOLD = 0.8;  
     private final String name;
     private final String comment;
     private final long id;
@@ -15,8 +15,9 @@ public final class Comment{
         this.id = id; 
     }
 
-    public static long toxicityDetector(String msg) {
+    public static double toxicityDetector(String msg) {
         //TODO 
+        return 1.0; 
     }
 
     public String getDisplayName(){

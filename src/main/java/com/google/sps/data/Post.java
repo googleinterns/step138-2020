@@ -13,9 +13,9 @@ public final class Post{
     private final Comment answer;
     private final List<Comment> replies;
     private final long id; 
-    private final Map<Reaction, Integer> reactions; 
+    private final Map<Reaction, Long> reactions; 
 
-    public Post(Comment question, Comment answer, List<Comment> replies, long id, Map<Reaction, Integer> reactions){
+    public Post(Comment question, Comment answer, List<Comment> replies, long id, Map<Reaction, Long> reactions){
         this.question = question;
         this.answer = answer;
         this.replies = replies;
@@ -23,9 +23,9 @@ public final class Post{
         this.reactions = reactions; 
     }
 
-    public Map<Reaction, Integer> getReactions() {
-        Map<Reaction, Integer> copy = new HashMap<Reaction, Integer>();
-        for (Map.Entry<Reaction, Integer> entry : reactions.entrySet())
+    public Map<Reaction, Long> getReactions() {
+        Map<Reaction, Long> copy = new HashMap<Reaction, Long>();
+        for (Map.Entry<Reaction, Long> entry : reactions.entrySet())
         {
             copy.put(entry.getKey(), entry.getValue()); 
         }
@@ -90,10 +90,10 @@ public final class Post{
             sb.append(reply.toString()); 
         } 
         sb.append("Reactions: ").append(System.getProperty("line.separator")); 
-        for (Map.Entry<Reaction, Integer> entry : reactions.entrySet())
+        for (Map.Entry<Reaction, Long> entry : reactions.entrySet())
         {
             sb.append(entry.getKey().toString() + ": "); 
-            sb.append(entry.getValue().toString()).append(System.getProperty("line.separator")); 
+            sb.append(String.valueOf(entry.getValue())).append(System.getProperty("line.separator")); 
         }
         return sb.toString();
     }

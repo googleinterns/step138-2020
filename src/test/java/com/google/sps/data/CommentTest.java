@@ -13,8 +13,8 @@ import org.junit.runners.JUnit4;
 public final class CommentTest {
     @Test
     public void testToxicityDetector() {
-        long toxicity = Comment.toxicityDetector("I dislike you"); 
+        double toxicity = Comment.toxicityDetector("I like you"); 
 
-        assertTrue(toxicity != -1); 
+        assertTrue(toxicity != -1.0); 
     }
 }

@@ -19,6 +19,8 @@ import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,7 +73,9 @@ public final class DatastoreEntityToObjectConverterTest {
             commentIdQuestion); 
         Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", 
             commentIdAnswer); 
-        this.post = new Post(commentQuestion, commentAnswer, replies, postId); 
+        Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
+        reactions.put(Reaction.THUMBS_UP, (long) 0);
+        this.post = new Post(commentQuestion, commentAnswer, replies, postId, reactions); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", 
@@ -86,14 +90,12 @@ public final class DatastoreEntityToObjectConverterTest {
     @Test
     public void testConvertRepresentative() throws EntityNotFoundException{
         Representative actual = DatastoreEntityToObjectConverter.convertRepresentative(repEntity); 
-        
         assertTrue(actual.equals(donaldTrump));
     }
 
     @Test 
     public void testConvertPost() throws EntityNotFoundException {
         Post actual = DatastoreEntityToObjectConverter.convertPost(postEntity); 
-
         assertTrue(actual.equals(post)); 
     }
 }
