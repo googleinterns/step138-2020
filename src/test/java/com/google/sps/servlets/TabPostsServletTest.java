@@ -59,8 +59,6 @@ public class TabPostsServletTest{
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Comment");
         long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
         DatastoreManager.updateRepresentativePostList(repId, postId);
-
-
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);
         when(response.getWriter()).thenReturn(writer);

@@ -62,7 +62,7 @@ public final class DatastoreEntityToObjectConverter {
      * @throws EntityNotFoundException
      * @return the Tab object 
      */ 
-    protected static Tab convertTab(Entity tabEntity) 
+    static Tab convertTab(Entity tabEntity) 
     throws EntityNotFoundException{
         String tabName = (String) (tabEntity.getProperty(Constants.TAB_NAME));
         String platform = (String) (tabEntity.getProperty(Constants.TAB_PLATFORM));
