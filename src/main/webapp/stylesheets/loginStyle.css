@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i,900,900i');
+
+body{
+    background-color: black;
+    font-family: 'Merriweather', serif;
+    font-size: 55px;
+    margin: 0px;
+    padding: 0px;
+    color: white;
+    
+    
+}
+
+.inpt{
+    padding: 15px;
+    padding-left: -15px;
+    border: 2px;
+    border-color: black;
+    outline: black;
+    font-size: 75px;
+}
+
+.form{
+    align:center;
+    padding-top: 100px
+
+    
+}
+
+.submit-btn {
+    font-size: 1.2em;
+    color: black;
+    text-align: center;
+    padding: 0px;
+}

@@ -3,16 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>User Login Page</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="stylesheets/loginStyle.css">
     <script src="script.js"></script>
   </head>
   <body>
-    <form onsubmit="storeZipCodeAndNickname();" method="POST">
+    <center>
+    <h4> Welcome to Votify, please insert a nickname and your local zipcode below!</h4>
+    <form class ="form" onsubmit="storeZipCodeAndNickname();" method="POST">
         <label for="nickname">Nickname: </label>
-        <input type="text" id="nickname" name="nickname" value="Bob"><br><br>
+        <input type="text" id="nickname" name="nickname" class = "inpt" placeholder="ex: Bob"><br><br>
         <label for="zipcode">Zipcode: </label>
-        <input type="text" id="zipcode" name="zipcode" value="80124"><br><br>
-        <input type="submit">
+        <input type="text" id="zipcode" name="zipcode" class = "inpt" placeholder="ex: 80124"><br><br>
+        <input type="submit" class= "submit-btn">
     <form>
+    </center>
   </body>
 </html>
