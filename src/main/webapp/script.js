@@ -410,4 +410,28 @@ function grabTags(){
     for (var i = 0; i < topics.length; i++) {
         listOfTopics.push(topics[i].value);
     }
+
+    for(var j = 0; j<topics.length; j++){
+        newTab(listOfTopics[j].value);
+    }
+}
+
+//appends a new tab with each new topic found in the questionnaire.
+function newTab(tabTopic){
+    var tab = document.createElement("a");
+    tab.setAttribute("value", tabTopic);
+    tab.setAttribute("href", "#");
+    tab.setAttribute("onclick", getTab(this.value));
+    
+    var tabSpan = document.createElement("span");
+    tab.appendChild(tabSpan);
+    
+    var tabIcon = doucment.createElemet("i");
+    tabIcon.setAttribute("class", "material-icons");
+    tabIcon.innerText("folder_open");
+    tab.appendChild(tabIcon)
+
+    var tabText = document.createElement("span");
+    tabText.innerText(tabTopic);
+    tab.appendChild(tabText);
 }
