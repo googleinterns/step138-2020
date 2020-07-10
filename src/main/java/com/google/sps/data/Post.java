@@ -1,21 +1,35 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import com.google.sps.data.Comment;
+import com.google.sps.data.Reaction;
 
 public final class Post{
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
     private final long id; 
+    private final Map<Reaction, Integer> reactions; 
 
-    public Post(Comment question, Comment answer, List<Comment> replies, long id){
+    public Post(Comment question, Comment answer, List<Comment> replies, long id, Map<Reaction, Integer> reactions){
         this.question = question;
         this.answer = answer;
         this.replies = replies;
         this.id = id;
+        this.reactions = reactions; 
+    }
+
+    public Map<Reaction, Integer> getReactions() {
+        Map<Reaction, Integer> copy = new HashMap<Reaction, Integer>();
+        for (Map.Entry<Reaction, Integer> entry : reactions.entrySet())
+        {
+            copy.put(entry.getKey(), entry.getValue()); 
+        }
+        return copy;
     }
 
     public Comment getQuestion(){
@@ -54,12 +68,13 @@ public final class Post{
         
         return that.getQuestion().equals(this.question) && 
                answerEquality && 
-               that.getReplies().equals(this.replies); 
+               that.getReplies().equals(this.replies) && 
+               that.getReactions().equals(this.reactions); 
     } 
 
     @Override
     public int hashCode() {
-        return Objects.hash(question, answer, replies);
+        return Objects.hash(question, answer, replies, reactions);
     }
 
     @Override 
@@ -74,6 +89,12 @@ public final class Post{
         for (Comment reply : replies) {
             sb.append(reply.toString()); 
         } 
+        sb.append("Reactions: ").append(System.getProperty("line.separator")); 
+        for (Map.Entry<Reaction, Integer> entry : reactions.entrySet())
+        {
+            sb.append(entry.getKey().toString() + ": "); 
+            sb.append(entry.getValue().toString()).append(System.getProperty("line.separator")); 
+        }
         return sb.toString();
     }
 }

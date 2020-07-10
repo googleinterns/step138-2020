@@ -1,8 +1,10 @@
 package com.google.sps.data;
 
 import java.util.Objects;
+import com.google.sps.data.Constants;
 
 public final class Comment{
+    private static final long COMMENT_TOXICITY_THRESHOLD = 0.8;  
     private final String name;
     private final String comment;
     private final long id;
@@ -11,6 +13,10 @@ public final class Comment{
         this.name = name;
         this.comment = comment;
         this.id = id; 
+    }
+
+    public static long toxicityDetector(String msg) {
+        //TODO 
     }
 
     public String getDisplayName(){
