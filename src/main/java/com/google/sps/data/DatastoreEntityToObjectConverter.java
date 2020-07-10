@@ -32,8 +32,10 @@ public final class DatastoreEntityToObjectConverter {
         String username = (String) entity.getProperty(Constants.REP_USERNAME);
         String password = (String) entity.getProperty(Constants.REP_PASSWORD);
         List<Post> posts = convertPostsFromRep(entity); 
+        String intro = (String) entity.getProperty(Constants.REP_INTRO);
+        List<Tab> tabs = convertTabsFromRep(entity);
         long id = entity.getKey().getId();
-        return new Representative(name, title, username, password, posts, id);   
+        return new Representative(name, title, username, password, posts, intro, tabs, id);   
     }
     
     /**
@@ -49,8 +51,46 @@ public final class DatastoreEntityToObjectConverter {
         long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
+        String tab = (String) postEntity.getProperty(Constants.POST_TAB);
         long id = postEntity.getKey().getId();
-        return new Post(question, answer, comments, id); 
+        return new Post(question, answer, comments, tab, id); 
+    }
+
+    /**
+     * Converts a tab entity into a Tab object 
+     * @param tabEntity entity of the tab 
+     * @throws EntityNotFoundException
+     * @return the Tab object 
+     */ 
+    static Tab convertTab(Entity tabEntity) 
+    throws EntityNotFoundException{
+        String tabName = (String) (tabEntity.getProperty(Constants.TAB_NAME));
+        String platform = (String) (tabEntity.getProperty(Constants.TAB_PLATFORM));
+        long id = tabEntity.getKey().getId();
+        return new Tab(tabName, platform, id); 
+    }
+
+    /**
+     * Converts a list of tab entities into tab objects pulled from a rep 
+     * @param repEntity entity of the rep
+     * @throws EntityNotFoundException
+     * @return List of tab objects
+     */ 
+    protected static List<Tab> convertTabsFromRep(Entity repEntity) 
+    throws EntityNotFoundException{
+        List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
+        List<Tab> tabs = new ArrayList<>(); 
+        if (tabIds == null) {
+            return tabs; 
+        }
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        for (long tabId : tabIds) {
+            Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+            Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+            Tab tab = convertTab(tabEntity); 
+            tabs.add(tab); 
+        }
+        return new ArrayList<Tab>(tabs); 
     }
 
     private static List<Post> convertPostsFromRep(Entity repEntity) 

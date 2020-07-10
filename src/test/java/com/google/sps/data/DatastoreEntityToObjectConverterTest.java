@@ -17,6 +17,7 @@ import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -31,8 +32,10 @@ public final class DatastoreEntityToObjectConverterTest {
     private DatastoreService ds; 
     private Representative donaldTrump; 
     private Post post; 
+    private Tab tab;
     private Entity repEntity; 
-    private Entity postEntity; 
+    private Entity postEntity;
+    private Entity tabEntity; 
 
     @Before
     public void setUp() {
@@ -47,11 +50,20 @@ public final class DatastoreEntityToObjectConverterTest {
             ("Anonymous", "Why are you in office?");
         long commentIdAnswer = DatastoreManager.insertCommentInDatastore
             ("Donald Trump", "Because I want to be.");
+            
+        this.tabEntity = new Entity(Constants.TAB_ENTITY_TYPE);
+        tabEntity.setProperty(Constants.TAB_NAME, "Education");
+        tabEntity.setProperty(Constants.TAB_PLATFORM, "Platform");
+        ds.put(tabEntity);
+        long tabId = tabEntity.getKey().getId();
+
+        this.tab = new Tab("Education", "Platform", tabId);
 
         this.postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
         postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
+        postEntity.setProperty(Constants.POST_TAB, "Education");
         ds.put(postEntity); 
         long postId = postEntity.getKey().getId(); 
         List<Long> postIds = new ArrayList<>(); 
@@ -62,7 +74,9 @@ public final class DatastoreEntityToObjectConverterTest {
         repEntity.setProperty(Constants.REP_TITLE, "President of the US");
         repEntity.setProperty(Constants.REP_USERNAME, "username");
         repEntity.setProperty(Constants.REP_PASSWORD, "password"); 
-        repEntity.setProperty(Constants.REP_POSTS, postIds); 
+        repEntity.setProperty(Constants.REP_POSTS, postIds);
+        repEntity.setProperty(Constants.REP_INTRO, "This is my Intro");
+        repEntity.setProperty(Constants.REP_TABS, new ArrayList<Long>(Arrays.asList(tabId))); 
         ds.put(repEntity);
         long repId = repEntity.getKey().getId(); 
 
@@ -73,11 +87,11 @@ public final class DatastoreEntityToObjectConverterTest {
             commentIdQuestion); 
         Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", 
             commentIdAnswer); 
-        this.post = new Post(commentQuestion, commentAnswer, replies, postId); 
+        this.post = new Post(commentQuestion, commentAnswer, replies, tab.getTabName(), postId); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", "username", 
-        "password", posts, repId); 
+        "password", posts, "This is my Intro", new ArrayList<Tab>(Arrays.asList(tab)), repId); 
     }
 
     @After
@@ -97,5 +111,19 @@ public final class DatastoreEntityToObjectConverterTest {
         Post actual = DatastoreEntityToObjectConverter.convertPost(postEntity); 
 
         assertTrue(actual.equals(post)); 
+    }
+
+    @Test
+    public void testConvertTab() throws EntityNotFoundException {
+        Tab actual = DatastoreEntityToObjectConverter.convertTab(tabEntity);
+
+        assertTrue(actual.equals(tab));
+    }
+
+    @Test
+    public void testconvertTabsFromRep() throws EntityNotFoundException {
+        List<Tab> actual = DatastoreEntityToObjectConverter.convertTabsFromRep(repEntity);
+
+        assertTrue(actual.equals(new ArrayList<Tab> (Arrays.asList(tab))));
     }
 }

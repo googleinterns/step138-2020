@@ -30,6 +30,8 @@ public class NewPostServlet extends HttpServlet{
     private static final String REP_NAME = "repName";
     private static final String NAME = "name";
     private static final String COMMENT = "comment";
+    private static final String TAB = "tab";
+    private static final String FEED_BOOLEAN = "feed";
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -37,6 +39,8 @@ public class NewPostServlet extends HttpServlet{
         String repName = request.getParameter(REP_NAME);
         String name = request.getParameter(NAME);
         String comment = request.getParameter(COMMENT);
+        Boolean feed = Boolean.parseBoolean(request.getParameter(FEED_BOOLEAN));
+        String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
         try {
@@ -47,7 +51,7 @@ public class NewPostServlet extends HttpServlet{
         }
         long repId = repEntity.getKey().getId();
         long commentId = DatastoreManager.insertCommentInDatastore(name, comment);
-        long postId = DatastoreManager.insertPostInDatastore(commentId);
+        long postId = DatastoreManager.insertPostInDatastore(commentId, tab);
         try {
             DatastoreManager.updateRepresentativePostList(repId, postId);
         } 
@@ -55,7 +59,7 @@ public class NewPostServlet extends HttpServlet{
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = "feed.html?name=" + repName;
+        String redirect = (feed) ? "feed.html?name=" + repName : "tab.html?name=" + repName + "&tab=" + tab;
         response.sendRedirect(redirect);
     }
 }

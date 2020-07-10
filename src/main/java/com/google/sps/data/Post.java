@@ -5,16 +5,18 @@ import java.util.List;
 import java.util.Objects;
 import com.google.sps.data.Comment;
 
-public final class Post{
+public final class Post {
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
+    private final String tab;
     private final long id; 
 
-    public Post(Comment question, Comment answer, List<Comment> replies, long id){
+    public Post(Comment question, Comment answer, List<Comment> replies, String tab, long id){
         this.question = question;
         this.answer = answer;
         this.replies = replies;
+        this.tab = tab;
         this.id = id;
     }
 
@@ -28,6 +30,10 @@ public final class Post{
 
     public List<Comment> getReplies(){
         return new ArrayList<Comment>(replies);
+    }
+
+    public String getTab(){
+        return tab;
     }
 
     public long getID() {
@@ -54,12 +60,13 @@ public final class Post{
         
         return that.getQuestion().equals(this.question) && 
                answerEquality && 
-               that.getReplies().equals(this.replies); 
+               that.getReplies().equals(this.replies) &&
+               that.getTab().equals(this.tab);
     } 
 
     @Override
     public int hashCode() {
-        return Objects.hash(question, answer, replies);
+        return Objects.hash(question, answer, replies, tab);
     }
 
     @Override 
@@ -74,6 +81,8 @@ public final class Post{
         for (Comment reply : replies) {
             sb.append(reply.toString()); 
         } 
+        sb.append("Tab: ").append(System.getProperty("line.separator")); 
+        sb.append(tab.toString());         
         return sb.toString();
     }
 }

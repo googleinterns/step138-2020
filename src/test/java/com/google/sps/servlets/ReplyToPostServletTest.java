@@ -52,7 +52,7 @@ public class ReplyToPostServletTest{
     public void testDoPost() throws Exception {
         // add Representative entity to Datastore 
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
-        Long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        Long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("name")).thenReturn("Alice");
         when(request.getParameter("reply")).thenReturn("Yeah bro, why are you?");
@@ -67,14 +67,17 @@ public class ReplyToPostServletTest{
         List<Comment> replies = new ArrayList<>(); 
         replies.add(reply); 
         List<Post> posts = new ArrayList<>(); 
-        Post post = new Post(question, null, replies, postId); 
+        String tab = "Education";
+        Post post = new Post(question, null, replies, tab, postId); 
         posts.add(post); 
-        Representative expectedRep = new Representative("Donald Trump", 
-        "President", "username", "password", posts, repId);
 
         servlet.doPost(request, response);
     
         Representative actualRep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        assertTrue(actualRep.equals(expectedRep)); 
+        assertTrue(actualRep.getName().equals("Donald Trump"));
+        assertTrue(actualRep.getTitle().equals("President"));
+        assertTrue(actualRep.getUsername().equals("username"));
+        assertTrue(actualRep.getPassword().equals("password"));
+        assertTrue(actualRep.getPosts().equals(posts));   
     }
 }
