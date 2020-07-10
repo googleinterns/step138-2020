@@ -3,17 +3,21 @@
   <head>
     <meta charset="UTF-8">
     <title>Representative Login Page</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="stylesheets/loginStyle.css">
     <script src="script.js"></script>
   </head>
   <body>
-    <form id="loginRep" action="/validate_rep" method='POST'>
+    <center>
+    <h5> Weclome to Votify. If you are are representative you are in the right place! Login to your current account
+        to veiw your personal feed of questions from your constituents, or if you are new sign up!</h4>
+    <form class="form" id="loginRep" action="/validate_rep" method='POST'>
         <label for="username">Username: </label>
-        <input type="text" id="username" name="username"><br><br>
+        <input type="text" id="username" name="username" class="inpt" placeholder="ex:George Washington"><br><br>
         <label for="password">Password: </label>
-        <input type="text" id="password" name="password"><br><br>
-        <input onclick="storeRepBooleanAndSubmit();" type="submit">
+        <input type="passwrod" id="password" name="password" class="inpt" placeholder="password"><br><br>
+        <input onclick="storeRepBooleanAndSubmit();" type="submit" class="submit-btn">
     <form>
     <a href='repZipcode.html'> Don't have an account? Sign up here </a>
+    </center>
   </body>
 </html>
