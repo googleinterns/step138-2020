@@ -39,7 +39,8 @@ public class NewPostServlet extends HttpServlet{
         String repName = request.getParameter(REP_NAME);
         String name = request.getParameter(NAME);
         String comment = request.getParameter(COMMENT);
-        Boolean feed = Boolean.parseBoolean(request.getParameter(FEED_BOOLEAN));
+        String feed1 = request.getParameter(FEED_BOOLEAN);
+        Boolean feed = Boolean.parseBoolean(feed1);
         String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
@@ -59,7 +60,7 @@ public class NewPostServlet extends HttpServlet{
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = (feed) ? "feed.html?name=" + repName : "tab.html?name=" + repName + "&tab=" + tab;
+        String redirect = (feed == true) ? "feed.html?name=" + repName : "tab.html?name=" + repName + "&tab=" + tab;
         response.sendRedirect(redirect);
     }
 }

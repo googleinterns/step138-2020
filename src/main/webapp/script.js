@@ -51,6 +51,7 @@ async function displayTab(){
     }
     returnHomeAnchor(feed);
     returnToFeed(repName, feed);
+    returnPoliticianPageAnchor(feed, repName);
     posts.forEach((post) => {
         displayPost(post, feed);
         var question = document.getElementById(post.id);
@@ -111,6 +112,7 @@ async function displayFeed(){
         }
     }
     returnHomeAnchor(feed);
+    returnPoliticianPageAnchor(feed, repName);
     postList.forEach((post) => {
         displayPost(post, feed);
         var question = document.getElementById(post.id);
@@ -154,7 +156,19 @@ function returnToFeed(repName, feed){
     var returnToFeed = document.createElement("a");
     returnToFeed.href = "feed.html?name=" + repName;
     returnToFeed.innerText = "Return to Feed";
+    linebreak = document.createElement("br");
+    returnToFeed.appendChild(linebreak);
     feed.appendChild(returnToFeed);
+}
+
+//Creates an anchor tag for going to politician's page
+function returnPoliticianPageAnchor(feed, repName){
+    var politicianPage = document.createElement("a");
+    politicianPage.href = `politicianPage.html?name=${repName}`;
+    politicianPage.innerText = "Beyond the Politician";
+    linebreak = document.createElement("br");
+    politicianPage.appendChild(linebreak);
+    feed.appendChild(politicianPage);
 }
 
 //Creates an button for representative answer
@@ -259,12 +273,11 @@ function displayRepAnswer(post, repName){
 }
 
 //Creates form for user to ask a new question on rep's feed
-function createQuestionForm(repName, tabList, feed){
+function createQuestionForm(repName, tabList, feedBool){
     var feed = document.getElementsByClassName("newComment")[0];
     var nickname = localStorage.getItem("nickname");
-    
     var newQuestionForm = document.createElement("form");
-    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}&feed=${feed}`);
+    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}&feed=${feedBool}`);
     newQuestionForm.setAttribute("method", "post");
 
     var inputForm = document.createElement("input");
@@ -399,18 +412,16 @@ async function checkIfRepInDatastore(repName){
 
 //Sends rep info as query parameters to the insertRepDatastoreServlet and 
 //redirects depending on if rep's username was already taken 
-function insertRepDatastore(){
+async function insertRepDatastore(){
     event.preventDefault();
     var username = document.getElementById("username").value;
     var password = document.getElementById("password").value;
     var repName = document.getElementById("repName").value;
     var title = document.getElementById("title").value;
-    fetch(`/insert_rep_datastore?username=${username}&password=
-    ${password}&repName=${repName}&title=${title}`).then(response => response.text())
-    .then((usernameTaken) => {
-        window.location.href = (usernameTaken.trim() == "true") ?  
-        "usernameTaken.html" : `repQuestionnaire.html?name=${repName}`;
-    });
+    var usernameTaken = await fetch(`/insert_rep_datastore?username=${username}&password=
+    ${password}&repName=${repName}&title=${title}`).then(response => response.text());
+    window.location.href = (usernameTaken.trim() == "true") ?  
+    "usernameTaken.html" : `repQuestionnaire.html?name=${repName}`;
 }
 
 //Go to previous page
@@ -427,7 +438,7 @@ function addTopic(){
 
     var input = document.createElement("input");
     input.type = "text";
-    input.class = "topic";
+    input.className = "topic";
     input.value = "Additional Topic";
 
     var paragraphPlatform = document.createElement("p");
@@ -435,7 +446,7 @@ function addTopic(){
 
     var inputPlatform = document.createElement("input");
     inputPlatform.type = "text";
-    inputPlatform.class = "platform";
+    inputPlatform.className = "platform";
 
     additionalTopics.appendChild(paragraphTopic);
     additionalTopics.appendChild(input);
@@ -444,8 +455,7 @@ function addTopic(){
 }
 
 //Grab tabs from questionnaire
-function submitRepQuestionnaire(){
-    event.preventDefault();
+async function submitRepQuestionnaire(){
     var urlParams = new URLSearchParams(window.location.search);
     var repName = urlParams.get('name');
     var topics = document.getElementsByClassName("topic");
@@ -457,6 +467,51 @@ function submitRepQuestionnaire(){
         listOfTopics.push(topics[i].value);
         listOfPlatforms.push(platforms[i].value + "*");
     }
-    fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=${listOfPlatforms}&intro=${intro}&repName=${repName}`)
-    .then(window.location.href="loginRep.html");
+    var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
+    ${listOfPlatforms}&intro=${intro}&repName=${repName}`);
+    if (document.getElementById("imageUpload") != null){
+        return true;
+    }
+    else{
+        event.preventDefault();
+        window.href.location = "loginRep.html";
+        return false;
+    }
+}
+
+//Set action of repQuestionnaire to make request to blobstore
+function fetchBlobstoreUrlAndShowForm() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = urlParams.get('name'); 
+    fetch(`/blobstore-upload-url?repName=${repName}`)
+        .then((response) => {
+            return response.text();
+        })
+        .then((imageUploadUrl) => {
+            const questionnaire = document.getElementById("repQuestionnaire");
+            questionnaire.action = imageUploadUrl;
+        });
+}
+
+//Populated beyond the politician page
+async function displayPoliticianPage(imgUrl){
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = urlParams.get('name'); 
+    var representativeResponse = await fetch(`feed?repName=${repName}`)
+    var repJson = await representativeResponse.json();
+    var bodyElement = document.getElementById('body_main');
+    const nameElement = document.createElement("p");
+    nameElement.innerText = repName;
+    const imgElement = document.createElement("img");
+    imgElement.setAttribute("src", repJson.imageUrl);
+    imgElement.setAttribute("class", "floated");
+    const introElement = document.createElement("p");
+    introElement.innerText = repJson.intro;
+    bodyElement.appendChild(nameElement);
+    bodyElement.appendChild(imgElement);
+    bodyElement.appendChild(introElement);
+    repJson.tabs.forEach((tab) => {
+        addTabButton(tab.name, bodyElement, repName);
+    });
+    returnToFeed(repName, bodyElement);
 }

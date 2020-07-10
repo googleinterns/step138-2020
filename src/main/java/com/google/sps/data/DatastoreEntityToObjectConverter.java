@@ -33,9 +33,10 @@ public final class DatastoreEntityToObjectConverter {
         String password = (String) entity.getProperty(Constants.REP_PASSWORD);
         List<Post> posts = convertPostsFromRep(entity); 
         String intro = (String) entity.getProperty(Constants.REP_INTRO);
+        String imageUrl = (String) entity.getProperty(Constants.REP_IMAGE_URL);
         List<Tab> tabs = convertTabsFromRep(entity);
         long id = entity.getKey().getId();
-        return new Representative(name, title, username, password, posts, intro, tabs, id);   
+        return new Representative(name, title, username, password, posts, intro, imageUrl, tabs, id);   
     }
     
     /**
@@ -68,6 +69,24 @@ public final class DatastoreEntityToObjectConverter {
         String platform = (String) (tabEntity.getProperty(Constants.TAB_PLATFORM));
         long id = tabEntity.getKey().getId();
         return new Tab(tabName, platform, id); 
+    }
+
+    /**
+     * Converts a tab entity into a Tab object 
+     * @param tabIds list of tab ids 
+     * @return list of tab names corresponding to ids
+     */ 
+    static List<String> convertNamesFromTabs(List<Long> tabIds) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<String> tabNames = new ArrayList<String> ();
+        for (long tabId : tabIds) {
+            Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+            Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+            String tabName = (String) tabEntity.getProperty(Constants.TAB_NAME);
+            tabNames.add(tabName);
+        }
+        return tabNames;
     }
 
     /**

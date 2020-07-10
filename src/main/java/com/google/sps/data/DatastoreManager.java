@@ -55,6 +55,7 @@ public class DatastoreManager {
         repEntity.setProperty(Constants.REP_PASSWORD, password);
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
         repEntity.setProperty(Constants.REP_INTRO, "");
+        repEntity.setProperty(Constants.REP_IMAGE_URL, "");
         repEntity.setProperty(Constants.REP_TABS, new ArrayList<>());
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -77,6 +78,7 @@ public class DatastoreManager {
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
     }
+
     /**
      * Inserts a tab entity into datastore 
      * @param name name of the tab being inserted
@@ -128,8 +130,22 @@ public class DatastoreManager {
         List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
         if (tabIds == null) {
             tabIds = new ArrayList<>(); 
+            tabIds.addAll(tabIdList);
         }
-        tabIds.addAll(tabIdList);
+        else{
+            List<String> tabNames = DatastoreEntityToObjectConverter.convertNamesFromTabs(tabIds);
+            for (Long tabId : tabIdList) {
+                Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+                Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+                String name = (String) tabEntity.getProperty(Constants.TAB_NAME);
+                if (tabNames.contains(name)){
+                    tabIds.set(tabNames.indexOf(name), tabId);
+                }
+                else{
+                    tabIds.add(tabId);
+                }
+            }
+        }
         repEntity.setProperty(Constants.REP_TABS, tabIds); 
         datastore.put(repEntity);
     }
@@ -145,6 +161,20 @@ public class DatastoreManager {
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) datastore.get(repEntityKey); 
         repEntity.setProperty(Constants.REP_INTRO, intro); 
+        datastore.put(repEntity);
+    }
+
+    /**
+     * Updates a representative entity with a new image
+     * @param repId ID of the representative entity 
+     * @param imageUrl a link to the representative's profile image
+     */ 
+    public static void updateRepresentativeImage(long repId, String imageUrl) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        repEntity.setProperty(Constants.REP_IMAGE_URL, imageUrl); 
         datastore.put(repEntity);
     }
 

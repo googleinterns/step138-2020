@@ -8,6 +8,7 @@ public final class Constants {
     public static final String REP_PASSWORD = "Password";
     public static final String REP_POSTS = "Posts";
     public static final String REP_INTRO = "Intro";
+    public static final String REP_IMAGE_URL = "ImageUrl";
     public static final String REP_TABS = "Tabs";
 
     public static final String POST_ENTITY_TYPE = "Post";
