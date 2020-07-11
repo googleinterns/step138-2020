@@ -216,13 +216,11 @@ public class DatastoreManager {
         long reactionCount; 
         if (postEntity.getProperty(reaction) != null) {
             reactionCount = (long) postEntity.getProperty(reaction); 
-            System.out.println(" reaction count before : " + reactionCount); 
         }
         else {
             reactionCount = 0; 
         }
         postEntity.setProperty(reaction, reactionCount + 1); 
-        System.out.println(" reaction count after : " + (long) postEntity.getProperty(reaction)); 
         datastore.put(postEntity);
     }
 
