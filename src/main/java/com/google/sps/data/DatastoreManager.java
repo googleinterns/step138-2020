@@ -203,4 +203,49 @@ public class DatastoreManager {
         Entity postEntity = (Entity) datastore.get(postEntityKey); 
         return postEntity; 
     }
+
+    /**
+     * Updates a post entity with a reaction
+     * @param postId ID of the post entity 
+     * @param reaction String of the reaction enum 
+     */ 
+    public static void addReactionToPost(long postId, String reaction) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        long reactionCount; 
+        if (postEntity.getProperty(reaction) != null) {
+            reactionCount = (long) postEntity.getProperty(reaction); 
+            System.out.println(" reaction count before : " + reactionCount); 
+        }
+        else {
+            reactionCount = 0; 
+        }
+        postEntity.setProperty(reaction, reactionCount + 1); 
+        System.out.println(" reaction count after : " + (long) postEntity.getProperty(reaction)); 
+        datastore.put(postEntity);
+    }
+
+    /**
+     * Removes a reaction from a post entity 
+     * @param postId ID of the post entity 
+     * @param reaction String of the reaction enum 
+     */ 
+    public static void removeReactionFromPost(long postId, String reaction) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        long reactionCount; 
+        if (postEntity.getProperty(reaction) != null) {
+            reactionCount = (long) postEntity.getProperty(reaction); 
+        }
+        else {
+            reactionCount = 0; 
+        }
+        if (reactionCount != 0) {
+            reactionCount -= 1; 
+        }
+        postEntity.setProperty(reaction, reactionCount); 
+        datastore.put(postEntity);
+    }
 }

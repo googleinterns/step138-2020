@@ -233,4 +233,63 @@ public final class DatastoreManagerTest {
         assertTrue(questionIdActual == commentIdQuestion);
         assertTrue(answerIdActual == commentIdAnswer);
     }
+
+    @Test
+    public void testAddReactionToPost() 
+    throws EntityNotFoundException{
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString()); 
+        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
+        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
+
+        assertTrue(reactionCount == 1);
+    }
+
+    @Test
+    public void testRemoveReactionFromPostWithZeroReactions() 
+    throws EntityNotFoundException{
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+
+        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
+        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
+        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
+
+        assertTrue(reactionCount == 0);
+    }
+
+    @Test
+    public void testRemoveReactionFromPostWithOneReaction() 
+    throws EntityNotFoundException{
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString()); 
+
+        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
+        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
+        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
+
+        assertTrue(reactionCount == 0);
+    }
+
+    @Test
+    public void testRemoveReactionFromPostWithTwoReactions() 
+    throws EntityNotFoundException{
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString()); 
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString());
+
+        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
+        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
+        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
+
+        assertTrue(reactionCount == 1);
+    }
 }

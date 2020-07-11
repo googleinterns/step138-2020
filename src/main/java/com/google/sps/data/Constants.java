@@ -6,9 +6,6 @@ public final class Constants {
     public static final String REP_TITLE = "Official Title";
     public static final String REP_POSTS = "Posts";
 
-    public static final String PERSPECTIVE_API_KEY = "PERSPECTIVE_API_KEY";
-    public static final String PERSPECTIVE_API_ENDPOINT = 
-        "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze"; 
     public static final String POST_ENTITY_TYPE = "Post";
     public static final String POST_QUESTION = "Question";
     public static final String POST_ANSWER = "Answer";
