@@ -43,6 +43,8 @@ async function displayTab(){
                 emptyFeed.innerText = "There are currently no questions on your feed."
                 feed.appendChild(emptyFeed);
             }
+        }
+    });
           
     //Pull the posts under a particular tag
     var tabPostsResponse = await fetch(`/tab_posts?repName=${repName}&tab=${tabName}`);
@@ -101,6 +103,8 @@ async function displayFeed(){
         displayRepName.innerText = repName;
         if (rep.trim() != "true"){
             createQuestionForm(repName);
+        }
+    });
 
     //Fetches the list of tabs for a particular rep
     var response = await fetch(`rep_tabs?repName=${repName}`);
@@ -151,7 +155,8 @@ async function displayFeed(){
         displayRepAnswer(post, repName);
         displayReplyList(post);
     })
-};
+}
+
 
 //Displays the question for a post
 function displayPost(post, feed){
