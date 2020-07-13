@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i,900,900i');
-
 body{
     background-color: black;
     font-family: 'Merriweather', serif;
@@ -23,8 +22,6 @@ body{
 .form{
     align:center;
     padding-top: 100px
-
-    
 }
 
 .submit-btn {
