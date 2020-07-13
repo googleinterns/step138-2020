@@ -1,5 +1,6 @@
 package com.google.sps.data;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -17,6 +18,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import java.lang.UnsupportedOperationException; 
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -250,16 +252,14 @@ public final class DatastoreManagerTest {
 
     @Test
     public void testRemoveReactionFromPostWithZeroReactions() 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
         long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
 
-        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
-        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
-        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
-
-        assertTrue(reactionCount == 0);
+        assertThrows(UnsupportedOperationException.class, () -> {
+            DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
+        });
     }
 
     @Test
@@ -275,21 +275,5 @@ public final class DatastoreManagerTest {
         long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
 
         assertTrue(reactionCount == 0);
-    }
-
-    @Test
-    public void testRemoveReactionFromPostWithTwoReactions() 
-    throws EntityNotFoundException{
-        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
-            ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
-        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString()); 
-        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString());
-
-        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
-        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
-        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
-
-        assertTrue(reactionCount == 1);
     }
 }

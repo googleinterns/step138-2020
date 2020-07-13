@@ -12,6 +12,7 @@ import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import java.lang.UnsupportedOperationException; 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,10 @@ public class UnreactToPostServlet extends HttpServlet {
             DatastoreManager.removeReactionFromPost(postId, reaction); 
         } 
         catch(EntityNotFoundException e) {
+            logger.error(e);
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
+        catch(UnsupportedOperationException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }

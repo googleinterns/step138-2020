@@ -51,7 +51,7 @@ public final class DatastoreEntityToObjectConverter {
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
         long id = postEntity.getKey().getId();
-        List<String> reactionStrings = Reaction.getReactionsAsStrings(); 
+        List<String> reactionStrings = Reaction.allValues(); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
         for (String reactionString : reactionStrings) {
             long reactionCount; 
@@ -61,7 +61,7 @@ public final class DatastoreEntityToObjectConverter {
             else {
                 reactionCount = (long) 0; 
             }
-            reactions.put(Reaction.stringToEnumReaction(reactionString), reactionCount); 
+            reactions.put(Reaction.fromString(reactionString), reactionCount); 
         }
         return new Post(question, answer, comments, id, reactions); 
     }

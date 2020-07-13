@@ -3,6 +3,7 @@ package com.google.sps.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /** 
  * Reactions a user can add to a post 
@@ -10,11 +11,11 @@ import java.util.List;
 public enum Reaction {
     THUMBS_UP; 
 
-    public static Reaction stringToEnumReaction(String reactionStr) {
+    public static Reaction fromString(String reactionStr) {
         return Reaction.valueOf(reactionStr); 
     }
 
-    public static List<String> getReactionsAsStrings() {
+    public static List<String> allValues() {
         List<Reaction> reactionEnums = Arrays.asList(Reaction.values());
         List<String> reactionStrings = new ArrayList<String>(); 
         for (Reaction reaction : reactionEnums) {
@@ -22,4 +23,14 @@ public enum Reaction {
         }
         return reactionStrings; 
     }
+
+    // @Override 
+    // public String toString() {
+    //     return this.reaction; 
+    // }
+
+    // @Override
+    // public int hashCode() {
+    //     return Objects.hash(reaction);
+    // }
 }

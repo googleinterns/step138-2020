@@ -52,28 +52,16 @@ public class ReactToPostServletTest{
 
     @Test
     public void testDoPost() throws Exception {
-        // add Representative entity to Datastore 
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
         Long postId = DatastoreManager.insertPostInDatastore(questionId); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("reaction")).thenReturn(Reaction.THUMBS_UP.toString());
         when(request.getParameter("repName")).thenReturn("Donald Trump");
-        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President");
-        DatastoreManager.updateRepresentativePostList(repId, postId); 
-        
-        // make Representative object for comparison purposes 
-        Comment question = new Comment("Bob", "Why are you president?", questionId); 
-        List<Comment> replies = new ArrayList<>(); 
-        List<Post> posts = new ArrayList<>(); 
-        Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
-        reactions.put(Reaction.THUMBS_UP, (long) 1);
-        Post post = new Post(question, null, replies, postId, reactions); 
-        posts.add(post); 
-        Representative expectedRep = new Representative("Donald Trump", "President", posts, repId);
 
         servlet.doGet(request, response);
     
-        Representative actualRep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        assertTrue(actualRep.equals(expectedRep)); 
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        long reactionCount = (long) postEntity.getProperty(Reaction.THUMBS_UP.toString()); 
+        assertTrue(reactionCount == 1); 
     }
 }

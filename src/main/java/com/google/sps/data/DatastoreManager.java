@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
@@ -68,9 +69,9 @@ public class DatastoreManager {
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
         postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>()); 
-        List<String> reactions = Reaction.getReactionsAsStrings();
+        List<String> reactions = Reaction.allValues();
         for (String reaction : reactions) {
-            postEntity.setProperty(reaction, (long) 0); 
+            postEntity.setProperty(reaction, (long) 0);
         }
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
@@ -230,20 +231,17 @@ public class DatastoreManager {
      * @param reaction String of the reaction enum 
      */ 
     public static void removeReactionFromPost(long postId, String reaction) 
-    throws EntityNotFoundException {
+    throws EntityNotFoundException, UnsupportedOperationException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
-        long reactionCount; 
-        if (postEntity.getProperty(reaction) != null) {
-            reactionCount = (long) postEntity.getProperty(reaction); 
+        if (postEntity.getProperty(reaction) == null || (long) postEntity.getProperty(reaction) == 0) {
+            throw new UnsupportedOperationException("No such reactions in post entity"); 
         }
         else {
-            reactionCount = 0; 
-        }
-        if (reactionCount != 0) {
+            long reactionCount = (long) postEntity.getProperty(reaction); 
             reactionCount -= 1; 
+            postEntity.setProperty(reaction, reactionCount); 
+            datastore.put(postEntity);
         }
-        postEntity.setProperty(reaction, reactionCount); 
-        datastore.put(postEntity);
     }
 }

@@ -24,12 +24,7 @@ public final class Post{
     }
 
     public Map<Reaction, Long> getReactions() {
-        Map<Reaction, Long> copy = new HashMap<Reaction, Long>();
-        for (Map.Entry<Reaction, Long> entry : reactions.entrySet())
-        {
-            copy.put(entry.getKey(), entry.getValue()); 
-        }
-        return copy;
+        return new HashMap<Reaction, Long>(reactions);
     }
 
     public Comment getQuestion(){

@@ -3,7 +3,7 @@ package com.google.sps.data;
 import java.util.Objects;
 import com.google.sps.data.Constants;
 
-public final class Comment{ 
+public final class Comment {
     private final String name;
     private final String comment;
     private final long id;
@@ -13,7 +13,7 @@ public final class Comment{
         this.comment = comment;
         this.id = id; 
     }
-    
+
     public String getDisplayName(){
         return name; 
     }
