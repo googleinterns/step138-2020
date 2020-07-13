@@ -11,6 +11,7 @@ import com.google.sps.data.Comment;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Representative;
 import java.io.IOException;
+import java.net.URLEncoder; 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +61,8 @@ public class NewPostServlet extends HttpServlet{
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = (feed == true) ? "feed.html?name=" + repName : "tab.html?name=" + repName + "&tab=" + tab;
+        String redirect = (feed == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
+            "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tab);
         response.sendRedirect(redirect);
     }
 }

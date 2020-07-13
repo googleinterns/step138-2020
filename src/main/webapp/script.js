@@ -154,7 +154,7 @@ function returnHomeAnchor(feed){
 //Creates anchor tag that links back to representative's feed
 function returnToFeed(repName, feed){
     var returnToFeed = document.createElement("a");
-    returnToFeed.href = "feed.html?name=" + repName;
+    returnToFeed.href = "feed.html?name=" + encodeURI(repName);    
     returnToFeed.innerText = "Return to Feed";
     linebreak = document.createElement("br");
     returnToFeed.appendChild(linebreak);
@@ -348,7 +348,6 @@ async function getRepList(){
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
     var zipcode = localStorage.getItem("zipcode");
-    console.log(zipcode);
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
@@ -395,13 +394,13 @@ function displayRepListLogin(text, title, name, inDatastore) {
 //Displays the rep name and title from Civic Info API while the rep enters username/password for new account 
 function createRepAccount(){
     var urlParams = new URLSearchParams(window.location.search);
-    var repName = urlParams.get('name'); 
+    var repName = decodeURI(urlParams.get('name')); 
 
     var repNameElement = document.getElementById("repName");
     repNameElement.value = repName;
     repNameElement.innerText = repName;
 
-    var title = urlParams.get('title');
+    var title = decodeURI(urlParams.get('title'));
     var titleElement = document.getElementById("title");
     titleElement.value = title;
 }
@@ -460,7 +459,7 @@ function addTopic(){
 //Grab tabs from questionnaire
 async function submitRepQuestionnaire(){
     var urlParams = new URLSearchParams(window.location.search);
-    var repName = urlParams.get('name');
+    var repName = decodeURI(urlParams.get('name'));
     var topics = document.getElementsByClassName("topic");
     var platforms = document.getElementsByClassName("platform");
     var intro = document.getElementById("intro").value;
@@ -485,7 +484,7 @@ async function submitRepQuestionnaire(){
 //Set action of repQuestionnaire to make request to blobstore
 function fetchBlobstoreUrlAndShowForm() {
     var urlParams = new URLSearchParams(window.location.search);
-    var repName = urlParams.get('name'); 
+    var repName = decodeURI(urlParams.get('name')); 
     fetch(`/blobstore-upload-url?repName=${repName}`)
         .then((response) => {
             return response.text();
@@ -499,14 +498,14 @@ function fetchBlobstoreUrlAndShowForm() {
 //Populated beyond the politician page
 async function displayPoliticianPage(imgUrl){
     var urlParams = new URLSearchParams(window.location.search);
-    var repName = urlParams.get('name'); 
+    var repName = decodeURI(urlParams.get('name')); 
     var representativeResponse = await fetch(`feed?repName=${repName}`)
     var repJson = await representativeResponse.json();
     var bodyElement = document.getElementById('body_main');
     const nameElement = document.createElement("p");
     nameElement.innerText = repName;
     const imgElement = document.createElement("img");
-    imgElement.setAttribute("src", repJson.imageUrl);
+    imgElement.setAttribute("src", repJson.blobKeyUrl);
     imgElement.setAttribute("class", "floated");
     const introElement = document.createElement("p");
     introElement.innerText = repJson.intro;

@@ -76,7 +76,7 @@ public final class DatastoreEntityToObjectConverterTest {
         repEntity.setProperty(Constants.REP_PASSWORD, "password"); 
         repEntity.setProperty(Constants.REP_POSTS, postIds);
         repEntity.setProperty(Constants.REP_INTRO, "This is my Intro");
-        repEntity.setProperty(Constants.REP_IMAGE_URL, "imageUrl");
+        repEntity.setProperty(Constants.REP_BLOB_KEY_URL, "blobKeyUrl");
         repEntity.setProperty(Constants.REP_TABS, new ArrayList<Long>(Arrays.asList(tabId))); 
         ds.put(repEntity);
         long repId = repEntity.getKey().getId(); 
@@ -92,7 +92,7 @@ public final class DatastoreEntityToObjectConverterTest {
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", "username", 
-        "password", posts, "This is my Intro", "imageUrl", new ArrayList<Tab>(Arrays.asList(tab)), repId); 
+        "password", posts, "This is my Intro", "blobKeyUrl", new ArrayList<Tab>(Arrays.asList(tab)), repId); 
     }
 
     @After

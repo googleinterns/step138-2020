@@ -55,7 +55,7 @@ public class DatastoreManager {
         repEntity.setProperty(Constants.REP_PASSWORD, password);
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
         repEntity.setProperty(Constants.REP_INTRO, "");
-        repEntity.setProperty(Constants.REP_IMAGE_URL, "");
+        repEntity.setProperty(Constants.REP_BLOB_KEY_URL, "");
         repEntity.setProperty(Constants.REP_TABS, new ArrayList<>());
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -167,14 +167,14 @@ public class DatastoreManager {
     /**
      * Updates a representative entity with a new image
      * @param repId ID of the representative entity 
-     * @param imageUrl a link to the representative's profile image
+     * @param blobKeyUrl a link to the representative's profile image
      */ 
-    public static void updateRepresentativeImage(long repId, String imageUrl) 
+    public static void updateRepresentativeImage(long repId, String blobKeyUrl) 
     throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) datastore.get(repEntityKey); 
-        repEntity.setProperty(Constants.REP_IMAGE_URL, imageUrl); 
+        repEntity.setProperty(Constants.REP_BLOB_KEY_URL, blobKeyUrl); 
         datastore.put(repEntity);
     }
 

@@ -12,19 +12,19 @@ public final class Representative {
     private final String password;
     private final List<Post> posts;
     private final String intro;
-    private final String imageUrl;
+    private final String blobKeyUrl;
     private final List<Tab> tabs;
     private final long id; 
 
     public Representative(String name, String title, String username, 
-    String password, List<Post> posts, String intro, String imageUrl, List<Tab> tabs, long id){
+    String password, List<Post> posts, String intro, String blobKeyUrl, List<Tab> tabs, long id){
         this.name = name;
         this.title = title;
         this.username = username;
         this.password = password;
         this.posts = posts;
         this.intro = intro;
-        this.imageUrl = imageUrl;
+        this.blobKeyUrl = blobKeyUrl;
         this.tabs = tabs;
         this.id = id; 
     }
@@ -53,8 +53,8 @@ public final class Representative {
         return intro;
     }
 
-    public String getImageUrl(){
-        return imageUrl;
+    public String getBlobKeyUrl(){
+        return blobKeyUrl;
     }
 
     public List<Tab> getTabs(){
@@ -78,13 +78,13 @@ public final class Representative {
                that.getPassword().equals(this.password) &&
                that.getPosts().equals(this.posts) &&
                that.getIntro().equals(this.intro) &&
-               that.getImageUrl().equals(this.imageUrl) &&
+               that.getBlobKeyUrl().equals(this.blobKeyUrl) &&
                that.getTabs().equals(this.tabs);
     } 
 
     @Override 
     public int hashCode() {
-        return Objects.hash(name, title, username, password, posts, intro, imageUrl, tabs);
+        return Objects.hash(name, title, username, password, posts, intro, blobKeyUrl, tabs);
     }
 
     @Override 
@@ -102,7 +102,7 @@ public final class Representative {
             sb.append("Representative intro: ").append(intro).append(
                 System.getProperty("line.separator"));
         } 
-        sb.append("Representative imageUrl: ").append(imageUrl).append(
+        sb.append("Representative blobKeyUrl: ").append(blobKeyUrl).append(
             System.getProperty("line.separator")); 
         if (tabs != null){
             for (Tab tab : tabs) {

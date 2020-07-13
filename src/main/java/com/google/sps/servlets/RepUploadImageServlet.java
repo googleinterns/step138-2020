@@ -43,56 +43,34 @@ public class RepUploadImageServlet extends HttpServlet{
     private static final Logger logger = LogManager.getLogger("RepUploadImageServlet");
     private static final String IMAGE_UPLOAD = "imageUpload";
     private static final String REP_NAME = "repName";
+    private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException{
-        String imageUrl = getUploadedFileUrl(request, IMAGE_UPLOAD);
+        String blobKeyUrl = getBlobKeyUrl(request, IMAGE_UPLOAD);
         String repName = request.getParameter(REP_NAME);
         Entity rep;
         long repId;
         try {
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
             repId = rep.getKey().getId(); 
-            DatastoreManager.updateRepresentativeImage(repId, imageUrl);
-        } 
-        catch(EntityNotFoundException e) {
+            DatastoreManager.updateRepresentativeImage(repId, blobKeyUrl);
+        } catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         response.sendRedirect("/loginRep.html");
     }
 
-    private String getUploadedFileUrl(HttpServletRequest request, String formInputElementName) {
-        BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
+    private String getBlobKeyUrl(HttpServletRequest request, String formInputElementName) {
         Map<String, List<BlobKey>> blobs = blobstoreService.getUploads(request);
         List<BlobKey> blobKeys = blobs.get(formInputElementName);
 
-        // User submitted form without selecting a file, so we can't get a URL. (dev server)
         if (blobKeys == null || blobKeys.isEmpty()) {
-            return ("/images/defaultProfilePicture.png");
+            return("/images/defaultProfilePicture.png");
+        } else {
+            return ("/serve_blob?blobKey=" + blobKeys.get(0).getKeyString());
         }
-
-        BlobKey blobKey = blobKeys.get(0);
-
-        // User submitted form without selecting a file, so we can't get a URL. (live server)
-        BlobInfo blobInfo = new BlobInfoFactory().loadBlobInfo(blobKey);
-        if (blobInfo.getSize() == 0) {
-            blobstoreService.delete(blobKey);
-            return ("/images/defaultProfilePicture.png");
-        }
-
-        // Use ImagesService to get a URL that points to the uploaded file.
-        ImagesService imagesService = ImagesServiceFactory.getImagesService();
-        ServingUrlOptions options = ServingUrlOptions.Builder.withBlobKey(blobKey);
-        String servingUrl = imagesService.getServingUrl(options);
-
-        //Return relative path to image
-        try {
-            URL url = new URL(servingUrl);
-            return url.getPath();
-        } catch (MalformedURLException e) {
-            return servingUrl;
-        }    
     }
 }

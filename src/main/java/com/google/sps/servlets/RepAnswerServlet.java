@@ -11,6 +11,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import java.io.IOException;
+import java.net.URLEncoder; 
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +49,7 @@ public class RepAnswerServlet extends HttpServlet{
         }
         post.setProperty(Constants.POST_ANSWER, commentId);
         datastore.put(post);
-        String redirect = "feed.html?name=" + repName;
+        String redirect = "feed.html?name=" + URLEncoder.encode(repName);
         response.sendRedirect(redirect);
     }
 }

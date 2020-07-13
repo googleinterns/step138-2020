@@ -15,6 +15,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.io.IOException;
+import java.net.URLEncoder; 
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -51,7 +52,7 @@ public class ReplyToPostServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = "feed.html?name=" + repName;
+        String redirect = "feed.html?name=" + URLEncoder.encode(repName);
         response.sendRedirect(redirect);
     }
 }
