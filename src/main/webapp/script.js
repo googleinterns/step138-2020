@@ -335,8 +335,10 @@ function storeRepBooleanAndSubmit(){
 }
 
 //Stores boolean property "rep" in localStorage when rep enters zipcode and redirects to create account html 
-function storeRepBooleanAndRedirect(){ 
+function storeRepBooleanAndZipcodeAndRedirect(){ 
     event.preventDefault(); 
+    var zipcode = document.getElementById("zipcode").value;
+    localStorage.setItem("zipcode", zipcode);
     localStorage.setItem("rep", true);
     window.location.href = "/repList.html";
 }
@@ -346,6 +348,7 @@ async function getRepList(){
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
     var zipcode = localStorage.getItem("zipcode");
+    console.log(zipcode);
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
