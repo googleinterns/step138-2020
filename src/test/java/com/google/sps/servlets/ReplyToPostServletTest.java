@@ -70,12 +70,14 @@ public class ReplyToPostServletTest{
         String tab = "Education";
         Post post = new Post(question, null, replies, tab, postId); 
         posts.add(post); 
-        Representative expectedRep = new Representative("Donald Trump", 
-        "President", "username", "password", posts, repId);
 
         servlet.doPost(request, response);
     
         Representative actualRep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        assertTrue(actualRep.equals(expectedRep)); 
+        assertTrue(actualRep.getName().equals("Donald Trump"));
+        assertTrue(actualRep.getTitle().equals("President"));
+        assertTrue(actualRep.getUsername().equals("username"));
+        assertTrue(actualRep.getPassword().equals("password"));
+        assertTrue(actualRep.getPosts().equals(posts));   
     }
 }

@@ -24,22 +24,27 @@ import javax.servlet.ServletException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/**
- * Servlet for fetching a list of posts corresponding with a particular tab
- */ 
-@WebServlet ("/tab")
-public class TabServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger("TabServlet");
-    private static final String REP_NAME = "repName";
-    private static final String TAB = "tab";
-    
+/** 
+The RepInDatastore Servlet class checks to see whether or not a particular
+representative has made an account by querying for their name in datastore
+*/
+@WebServlet ("/tab_entity")
+public class TabEntityServlet extends HttpServlet{
+    private static final Logger logger = LogManager.getLogger("TabEntityServlet");
+    private static final String TAB_NAME = "tabName";
+
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException {
-        String repName = request.getParameter(REP_NAME);
-        String tab = request.getParameter(TAB);
-        List<Post> postList = DatastoreManager.queryForPostListWithTab(repName, tab);
+    throws IOException, ServletException{
+        String tabName = request.getParameter(TAB_NAME);
+        Entity tab;
+        try {
+            tab = DatastoreManager.queryForTabEntityWithName(tabName);        
+        } catch(EntityNotFoundException e) {
+            logger.error(e);
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
         response.setContentType("application/json;");
-        response.getWriter().println(new Gson().toJson(postList));
+        response.getWriter().println(new Gson().toJson(tab));
     }
 }

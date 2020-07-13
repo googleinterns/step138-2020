@@ -7,12 +7,18 @@ public final class Constants {
     public static final String REP_USERNAME = "Username";
     public static final String REP_PASSWORD = "Password";
     public static final String REP_POSTS = "Posts";
+    public static final String REP_INTRO = "Intro";
+    public static final String REP_TABS = "Tabs";
 
     public static final String POST_ENTITY_TYPE = "Post";
     public static final String POST_QUESTION = "Question";
     public static final String POST_ANSWER = "Answer";
     public static final String POST_REPLIES = "Replies";
     public static final String POST_TAB = "Tab";
+
+    public static final String TAB_ENTITY_TYPE = "Tab";
+    public static final String TAB_NAME = "Name";
+    public static final String TAB_PLATFORM = "Platform";
 
     public static final String COMMENT_ENTITY_TYPE = "Comment";
     public static final String COMMENT_NAME = "Nick Name";
