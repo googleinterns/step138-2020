@@ -511,8 +511,10 @@ async function submitRepQuestionnaire() {
     var listOfTopics = [];
     var listOfPlatforms = [];
     for (var i = 0; i < topics.length; i++) {
-        listOfTopics.push(topics[i].value);
-        listOfPlatforms.push(platforms[i].value + "*");
+        if (topics[i].value != "") {
+            listOfTopics.push(topics[i].value);
+            listOfPlatforms.push(platforms[i].value + "*");
+        }
     }
     var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
         ${listOfPlatforms}&intro=${intro}&repName=${repName}`);
