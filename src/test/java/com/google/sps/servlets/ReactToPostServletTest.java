@@ -55,13 +55,13 @@ public class ReactToPostServletTest{
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
         Long postId = DatastoreManager.insertPostInDatastore(questionId); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
-        when(request.getParameter("reaction")).thenReturn(Reaction.THUMBS_UP.toString());
+        when(request.getParameter("reaction")).thenReturn(Reaction.THUMBS_UP.getValue());
         when(request.getParameter("repName")).thenReturn("Donald Trump");
 
         servlet.doGet(request, response);
     
         Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
-        long reactionCount = (long) postEntity.getProperty(Reaction.THUMBS_UP.toString()); 
+        long reactionCount = (long) postEntity.getProperty(Reaction.THUMBS_UP.getValue()); 
         assertTrue(reactionCount == 1); 
     }
 }

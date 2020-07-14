@@ -54,12 +54,9 @@ public final class DatastoreEntityToObjectConverter {
         List<String> reactionStrings = Reaction.allValues(); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
         for (String reactionString : reactionStrings) {
-            long reactionCount; 
+            long reactionCount = 0; 
             if (postEntity.getProperty(reactionString) != null) {
                 reactionCount = (long) (postEntity.getProperty(reactionString));
-            }
-            else {
-                reactionCount = (long) 0; 
             }
             reactions.put(Reaction.fromString(reactionString), reactionCount); 
         }

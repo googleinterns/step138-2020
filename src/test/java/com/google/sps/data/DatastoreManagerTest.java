@@ -243,7 +243,7 @@ public final class DatastoreManagerTest {
             ("Anonymous", "Why are you in office?");
         long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
 
-        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString()); 
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
         Post post = DatastoreManager.queryForPostObjectWithId(postId); 
         long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
 
@@ -258,7 +258,7 @@ public final class DatastoreManagerTest {
         long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
 
         assertThrows(UnsupportedOperationException.class, () -> {
-            DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
+            DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
         });
     }
 
@@ -268,9 +268,9 @@ public final class DatastoreManagerTest {
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
         long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
-        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.toString()); 
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
 
-        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.toString()); 
+        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
         Post post = DatastoreManager.queryForPostObjectWithId(postId); 
         long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
 

@@ -87,7 +87,7 @@ public final class Post{
         sb.append("Reactions: ").append(System.getProperty("line.separator")); 
         for (Map.Entry<Reaction, Long> entry : reactions.entrySet())
         {
-            sb.append(entry.getKey().toString() + ": "); 
+            sb.append(entry.getKey().getValue() + ": "); 
             sb.append(String.valueOf(entry.getValue())).append(System.getProperty("line.separator")); 
         }
         return sb.toString();

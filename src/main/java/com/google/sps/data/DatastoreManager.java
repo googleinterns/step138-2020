@@ -214,12 +214,9 @@ public class DatastoreManager {
     throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
-        long reactionCount; 
+        long reactionCount = 0; 
         if (postEntity.getProperty(reaction) != null) {
             reactionCount = (long) postEntity.getProperty(reaction); 
-        }
-        else {
-            reactionCount = 0; 
         }
         postEntity.setProperty(reaction, reactionCount + 1); 
         datastore.put(postEntity);
@@ -234,14 +231,12 @@ public class DatastoreManager {
     throws EntityNotFoundException, UnsupportedOperationException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
-        if (postEntity.getProperty(reaction) == null || (long) postEntity.getProperty(reaction) == 0) {
+        Long reactionCount = (long) postEntity.getProperty(reaction); 
+        if (reactionCount == null || reactionCount == 0) {
             throw new UnsupportedOperationException("No such reactions in post entity"); 
         }
-        else {
-            long reactionCount = (long) postEntity.getProperty(reaction); 
-            reactionCount -= 1; 
-            postEntity.setProperty(reaction, reactionCount); 
-            datastore.put(postEntity);
-        }
+        reactionCount -= 1;
+        postEntity.setProperty(reaction, reactionCount); 
+        datastore.put(postEntity);
     }
 }
