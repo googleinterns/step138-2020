@@ -15,7 +15,9 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.After;
@@ -67,8 +69,15 @@ public class ReplyToPostServletTest{
         List<Comment> replies = new ArrayList<>(); 
         replies.add(reply); 
         List<Post> posts = new ArrayList<>(); 
+        Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
+        reactions.put(Reaction.THUMBS_UP, (long) 0);
+        reactions.put(Reaction.THUMBS_DOWN, (long) 0);
+        reactions.put(Reaction.ANGRY, (long) 0);
+        reactions.put(Reaction.CRYING, (long) 0);
+        reactions.put(Reaction.HEART, (long) 0);
+        reactions.put(Reaction.LAUGHING, (long) 0);
         String tab = "Education";
-        Post post = new Post(question, null, replies, tab, postId); 
+        Post post = new Post(question, null, replies, tab, postId, reactions); 
         posts.add(post); 
 
         servlet.doPost(request, response);
