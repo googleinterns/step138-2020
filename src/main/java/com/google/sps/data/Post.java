@@ -12,7 +12,7 @@ public final class Post {
     private final String tab;
     private final long id; 
 
-    public Post(Comment question, Comment answer, List<Comment> replies, String tab, long id){
+    public Post(Comment question, Comment answer, List<Comment> replies, String tab, long id) {
         this.question = question;
         this.answer = answer;
         this.replies = replies;
@@ -20,19 +20,19 @@ public final class Post {
         this.id = id;
     }
 
-    public Comment getQuestion(){
+    public Comment getQuestion() {
         return question; 
     }
 
-    public Comment getAnswer(){
+    public Comment getAnswer() {
         return answer; 
     }
 
-    public List<Comment> getReplies(){
+    public List<Comment> getReplies() {
         return new ArrayList<Comment>(replies);
     }
 
-    public String getTab(){
+    public String getTab() {
         return tab;
     }
 

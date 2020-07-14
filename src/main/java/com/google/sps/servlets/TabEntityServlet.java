@@ -29,13 +29,13 @@ The RepInDatastore Servlet class checks to see whether or not a particular
 representative has made an account by querying for their name in datastore
 */
 @WebServlet ("/tab_entity")
-public class TabEntityServlet extends HttpServlet{
+public class TabEntityServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("TabEntityServlet");
     private static final String TAB_NAME = "tabName";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         String tabName = request.getParameter(TAB_NAME);
         Entity tab;
         try {

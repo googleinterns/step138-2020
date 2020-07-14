@@ -28,7 +28,7 @@ Info API to pull the list of representatives relevant for that zipcode and retur
 a json formatted objects which contains corresponding offices and officials
 */
 @WebServlet ("/rep_list")
-public class RepresentativeListServlet extends HttpServlet{
+public class RepresentativeListServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");
     private static final String ZIPCODE = "zipcode";
     private final String apiKey;
@@ -39,7 +39,7 @@ public class RepresentativeListServlet extends HttpServlet{
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         String zipcode = request.getParameter(ZIPCODE);
         HttpClient httpclient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder();
@@ -48,16 +48,16 @@ public class RepresentativeListServlet extends HttpServlet{
         builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
         .setParameter("key", apiKey)
         .setParameter("address", zipcode);
-        try{
+        try {
             uri = builder.build();
-        } catch(URISyntaxException e){
+        } catch(URISyntaxException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         HttpGet httpGet = new HttpGet(uri);
         String responseString = null;
         HttpResponse httpResponse = null;
-        try{
+        try {
             httpResponse = httpclient.execute(httpGet);
         } catch (IOException e) {
             logger.error(e);
@@ -71,7 +71,7 @@ public class RepresentativeListServlet extends HttpServlet{
         if(responseEntity != null) {
             responseString = EntityUtils.toString(responseEntity);
         }
-        else{
+        else {
             throw new ServletException("Could not get response from Civic Info API");
         }
         String json = new Gson().toJson(responseString);

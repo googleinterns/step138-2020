@@ -7,21 +7,21 @@ public final class Comment {
     private final String comment;
     private final long id;
 
-    public Comment(String name, String comment, long id){
+    public Comment(String name, String comment, long id) {
         this.name = name;
         this.comment = comment;
         this.id = id; 
     }
 
-    public String getDisplayName(){
+    public String getDisplayName() {
         return name; 
     }
 
-    public String getComment(){
+    public String getComment() {
         return comment; 
     }
 
-    public long getID(){
+    public long getID() {
         return id; 
     }
 

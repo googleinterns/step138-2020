@@ -37,7 +37,7 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepSubmitQuestionnaireServlet");
     private static final String TOPIC_LIST = "topicList";
     private static final String PLATFORM_LIST = "platformList";
-    private static final String INTRO = "Intro";
+    private static final String INTRO = "intro";
     private static final String REP_NAME = "repName";
 
     @Override
@@ -45,11 +45,14 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
     throws IOException, ServletException {
         String repName = request.getParameter(REP_NAME);
         String topics = request.getParameter(TOPIC_LIST);
+        String intro = request.getParameter(INTRO);
+
         List<String> topicList = new ArrayList<String>(Arrays.asList(topics.split(",")));
         topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
         String platforms = request.getParameter(PLATFORM_LIST);
         List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("\\*,")));
-        String intro = request.getParameter(INTRO);
+        //Remove the * from the string of the last platform
+        platformList.get(platformList.size() - 1).replace("\\*", "");
        
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
 

@@ -6,11 +6,14 @@
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
   </head>
-  <body>
-     <form onsubmit="submitRepQuestionnaire();">
+  <body id="body" onload="fetchBlobstoreUrlAndShowForm()">
+     <form id="repQuestionnaire" onsubmit="submitRepQuestionnaire();" enctype="multipart/form-data" method="POST">
         <p> Please provide a brief description of yourself for your portfolio page: </p>
         <label for="intro">Introduction:</label><br>
         <input type="text" id="intro" name="intro"><br>
+        <p> Please upload a picture of yourself for your portfolio page </p>
+        <label for="imageUpload">Upload Image: </label><br>
+        <input type="file" id="imageUpload" name="imageUpload"><br/>
         <p> Name at least three issues and provide a description of your platform with on each </p>
         <p> Topic: </p>
         <input class="topic" type="text" value="Education"><br>

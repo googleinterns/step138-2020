@@ -12,46 +12,52 @@ public final class Representative {
     private final String password;
     private final List<Post> posts;
     private final String intro;
+    private final String blobKeyUrl;
     private final List<Tab> tabs;
     private final long id; 
 
     public Representative(String name, String title, String username, 
-    String password, List<Post> posts, String intro, List<Tab> tabs, long id){
+    String password, List<Post> posts, String intro, String blobKeyUrl, List<Tab> tabs, long id) {
         this.name = name;
         this.title = title;
         this.username = username;
         this.password = password;
         this.posts = posts;
         this.intro = intro;
+        this.blobKeyUrl = blobKeyUrl;
         this.tabs = tabs;
         this.id = id; 
     }
 
-    public String getName(){
+    public String getName() {
         return name; 
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title; 
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username; 
     }
 
-    public String getPassword(){
+    public String getPassword()  {
         return password; 
     }
 
-    public List<Post> getPosts(){
+    public List<Post> getPosts() {
         return new ArrayList<Post>(posts);
     }
 
-    public String getIntro(){
+    public String getIntro() {
         return intro;
     }
 
-    public List<Tab> getTabs(){
+    public String getBlobKeyUrl() {
+        return blobKeyUrl;
+    }
+
+    public List<Tab> getTabs() {
         return new ArrayList<Tab>(tabs);
     }
 
@@ -72,12 +78,13 @@ public final class Representative {
                that.getPassword().equals(this.password) &&
                that.getPosts().equals(this.posts) &&
                that.getIntro().equals(this.intro) &&
+               that.getBlobKeyUrl().equals(this.blobKeyUrl) &&
                that.getTabs().equals(this.tabs);
     } 
 
     @Override 
     public int hashCode() {
-        return Objects.hash(name, title, username, password, posts, intro, tabs);
+        return Objects.hash(name, title, username, password, posts, intro, blobKeyUrl, tabs);
     }
 
     @Override 
@@ -91,11 +98,13 @@ public final class Representative {
         for (Post post : posts) {
             sb.append(post.toString()); 
         } 
-        if (intro != null){
+        if (intro != null) {
             sb.append("Representative intro: ").append(intro).append(
                 System.getProperty("line.separator"));
         } 
-        if (tabs != null){
+        sb.append("Representative blobKeyUrl: ").append(blobKeyUrl).append(
+            System.getProperty("line.separator")); 
+        if (tabs != null) {
             for (Tab tab : tabs) {
                 sb.append(tab.getTabName() + ": " + tab.getPlatform()); 
             } 

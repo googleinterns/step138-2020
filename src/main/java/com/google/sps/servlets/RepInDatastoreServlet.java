@@ -17,13 +17,13 @@ The RepInDatastore Servlet class checks to see whether or not a particular
 representative has made an account by querying for their name in datastore
 */
 @WebServlet ("/rep_in_datastore")
-public class RepInDatastoreServlet extends HttpServlet{
+public class RepInDatastoreServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepInDatastoreServlet");
     private static final String REP_NAME = "repName";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         String repName = request.getParameter(REP_NAME);
         Entity representative;
         try {

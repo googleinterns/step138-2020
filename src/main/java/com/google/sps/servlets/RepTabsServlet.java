@@ -32,16 +32,16 @@ The RepInDatastore Servlet class checks to see whether or not a particular
 representative has made an account by querying for their name in datastore
 */
 @WebServlet ("/rep_tabs")
-public class RepTabsServlet extends HttpServlet{
+public class RepTabsServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepTabsServlet");
     private static final String REP_NAME = "repName";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         String repName = request.getParameter(REP_NAME);
         List<Tab> tabList;
-        try{
+        try {
             tabList = DatastoreManager.queryForTabListWithRepName(repName);
         } catch (Exception e) {
             logger.error(e);
