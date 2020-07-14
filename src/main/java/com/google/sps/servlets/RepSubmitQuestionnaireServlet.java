@@ -18,6 +18,7 @@ import com.google.sps.data.DatastoreManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -27,37 +28,45 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** 
-InsertRepDatastoreServlet currently inserts the representative Donald
-Trump into the datastore as a hard code for the MVP.
+RepSubmitQuestionnaireServlet updates the intro and tabs of the 
+representative when they submit the questionnaire
 */
 
-@WebServlet ("/insert_rep_datastore")
-public class InsertRepDatastoreServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger("InsertRepDatastoreServlet");
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
+@WebServlet ("/rep_submit_questionnaire")
+public class RepSubmitQuestionnaireServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger("RepSubmitQuestionnaireServlet");
+    private static final String TOPIC_LIST = "topicList";
+    private static final String PLATFORM_LIST = "platformList";
+    private static final String INTRO = "intro";
     private static final String REP_NAME = "repName";
-    private static final String TITLE = "title";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException {
-        String username = request.getParameter(USERNAME);
-        String password = request.getParameter(PASSWORD);
         String repName = request.getParameter(REP_NAME);
-        String title = request.getParameter(TITLE);
+        String topics = request.getParameter(TOPIC_LIST);
+        String intro = request.getParameter(INTRO);
+
+        List<String> topicList = new ArrayList<String>(Arrays.asList(topics.split(",")));
+        topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
+        String platforms = request.getParameter(PLATFORM_LIST);
+        List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("\\*,")));
+        //Remove the * from the string of the last platform
+        platformList.get(platformList.size() - 1).replace("\\*", "");
+       
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
+
         Entity rep;
+        long repId;
         try {
-            rep = DatastoreManager.queryForRepresentativeUsername(username.trim()); 
+            rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
+            repId = rep.getKey().getId(); 
+            DatastoreManager.updateRepresentativeTabList(repId, tabIds);
+            DatastoreManager.updateRepresentativeIntro(repId, intro);
         } 
         catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        if (rep == null) {
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);   
-        }
-        response.setContentType("text/html");
-        response.getWriter().println(Boolean.toString(rep != null));
     }
 }

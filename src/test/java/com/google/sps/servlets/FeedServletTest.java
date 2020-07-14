@@ -54,7 +54,8 @@ public class FeedServletTest{
         PrintWriter writer = new PrintWriter(stringWriter);
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(response.getWriter()).thenReturn(writer);
-        DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President");
+        DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password");
 
         servlet.doGet(request, response);
     

@@ -54,12 +54,13 @@ public class ReplyToPostServletTest{
     public void testDoPost() throws Exception {
         // add Representative entity to Datastore 
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
-        Long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        Long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("name")).thenReturn("Alice");
         when(request.getParameter("reply")).thenReturn("Yeah bro, why are you?");
         when(request.getParameter("repName")).thenReturn("Donald Trump");
-        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President");
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password");
         DatastoreManager.updateRepresentativePostList(repId, postId); 
         
         // make Representative object for comparison purposes 
@@ -75,13 +76,17 @@ public class ReplyToPostServletTest{
         reactions.put(Reaction.CRYING, (long) 0);
         reactions.put(Reaction.HEART, (long) 0);
         reactions.put(Reaction.LAUGHING, (long) 0);
-        Post post = new Post(question, null, replies, postId, reactions); 
+        String tab = "Education";
+        Post post = new Post(question, null, replies, tab, postId, reactions); 
         posts.add(post); 
-        Representative expectedRep = new Representative("Donald Trump", "President", posts, repId);
 
         servlet.doPost(request, response);
     
         Representative actualRep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        assertTrue(actualRep.equals(expectedRep)); 
+        assertTrue(actualRep.getName().equals("Donald Trump"));
+        assertTrue(actualRep.getTitle().equals("President"));
+        assertTrue(actualRep.getUsername().equals("username"));
+        assertTrue(actualRep.getPassword().equals("password"));
+        assertTrue(actualRep.getPosts().equals(posts));   
     }
 }

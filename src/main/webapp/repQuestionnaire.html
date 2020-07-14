@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Representative Questionnaire</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+  <body id="body" onload="fetchBlobstoreUrlAndShowForm()">
+     <form id="repQuestionnaire" onsubmit="submitRepQuestionnaire();" enctype="multipart/form-data" method="POST">
+        <p> Please provide a brief description of yourself for your portfolio page: </p>
+        <label for="intro">Introduction:</label><br>
+        <input type="text" id="intro" name="intro"><br>
+        <p> Please upload a picture of yourself for your portfolio page </p>
+        <label for="imageUpload">Upload Image: </label><br>
+        <input type="file" id="imageUpload" name="imageUpload"><br/>
+        <p> Name at least three issues and provide a description of your platform with on each </p>
+        <p> Topic: </p>
+        <input class="topic" type="text" value="Education"><br>
+        <p> Platform: </p>
+        <input class="platform" type="text"><br>
+        <p> Topic: </p>
+        <input class="topic" type="text" value="Police"><br>
+        <p> Platform: </p>        
+        <input class="platform" type="text"><br>
+        <p> Topic: </p>
+        <input class="topic" type="text" value="Taxes"><br><br>
+        <p> Platform: </p>        
+        <input class="platform" type="text"><br>
+        <div id="additionalTopics"></div>
+        <button type="button" onclick="addTopic();"> Add another topic </button>
+        <input type="submit">
+     </form>
+  </body>
+</html>

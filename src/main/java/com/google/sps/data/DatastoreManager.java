@@ -48,11 +48,17 @@ public class DatastoreManager {
      * @param title of representative  
      * @return ID of entity inserted into datastore
      */ 
-    public static long insertRepresentativeInDatastore(String name, String title) {
+    public static long insertRepresentativeInDatastore(
+        String name, String title, String username, String password) {
         Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, name); 
         repEntity.setProperty(Constants.REP_TITLE, title); 
+        repEntity.setProperty(Constants.REP_USERNAME, username);
+        repEntity.setProperty(Constants.REP_PASSWORD, password);
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
+        repEntity.setProperty(Constants.REP_INTRO, "");
+        repEntity.setProperty(Constants.REP_BLOB_KEY_URL, "");
+        repEntity.setProperty(Constants.REP_TABS, new ArrayList<>());
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(repEntity); 
@@ -64,18 +70,38 @@ public class DatastoreManager {
      * @param question ID of comment entity representing question made by the user 
      * @return ID of entity inserted into datastore
      */ 
-    public static long insertPostInDatastore(long question) {
+    public static long insertPostInDatastore(long question, String tab) {
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
-        postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>()); 
+        postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>());
         List<String> reactions = Reaction.allValues();
         for (String reaction : reactions) {
             postEntity.setProperty(reaction, (long) 0);
         }
+        postEntity.setProperty(Constants.POST_TAB, tab);
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
+    }
+
+    /**
+     * Inserts a tab entity into datastore 
+     * @param name name of the tab being inserted
+     * @param platform description of representative's platform for particular tab
+     * @return ID of entity inserted into datastore
+     */ 
+    public static List<Long> insertTabsInDatastore(List<String> names, List<String> platforms) {
+        List<Long> tabIds = new ArrayList<>();
+        for (int i = 0 ; i < names.size() ; i++) {
+            Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
+            tabEntity.setProperty(Constants.TAB_NAME, names.get(i)); 
+            tabEntity.setProperty(Constants.TAB_PLATFORM, platforms.get(i)); 
+            DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+            ds.put(tabEntity); 
+            tabIds.add(tabEntity.getKey().getId());
+        }
+        return tabIds;
     }
 
     /**
@@ -94,6 +120,67 @@ public class DatastoreManager {
         }
         postIds.add(postId);
         repEntity.setProperty(Constants.REP_POSTS, postIds); 
+        datastore.put(repEntity);
+    }
+
+    /**
+     * Updates a representative entity with a new tab entity 
+     * @param repId ID of the representative entity 
+     * @param tabId ID of the tab entity 
+     */ 
+    public static void updateRepresentativeTabList(long repId, List<Long> tabIdList) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
+        if (tabIds == null) {
+            tabIds = new ArrayList<>(); 
+            tabIds.addAll(tabIdList);
+        }
+        else {
+            List<String> tabNames = DatastoreEntityToObjectConverter.convertNamesFromTabs(tabIds);
+            for (Long tabId : tabIdList) {
+                Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+                Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+                String name = (String) tabEntity.getProperty(Constants.TAB_NAME);
+                if (tabNames.contains(name)) {
+                    tabIds.set(tabNames.indexOf(name), tabId);
+                }
+                else {
+                    tabIds.add(tabId);
+                }
+            }
+        }
+        repEntity.setProperty(Constants.REP_TABS, tabIds); 
+        datastore.put(repEntity);
+    }
+
+    /**
+     * Updates a representative entity with a new intro
+     * @param repId ID of the representative entity 
+     * @param intro a brief description of representative
+     */ 
+    public static void updateRepresentativeIntro(long repId, String intro) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        repEntity.setProperty(Constants.REP_INTRO, intro); 
+        datastore.put(repEntity);
+    }
+
+    /**
+     * Updates a representative entity with a new image
+     * @param repId ID of the representative entity 
+     * @param blobKeyUrl a link to the representative's profile image
+     */ 
+    public static void updateRepresentativeImage(long repId, String blobKeyUrl) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        repEntity.setProperty(Constants.REP_BLOB_KEY_URL, blobKeyUrl); 
         datastore.put(repEntity);
     }
 
@@ -162,12 +249,55 @@ public class DatastoreManager {
     }
 
     /**
+     * Searches datastore for a particular representative with username 
+     * and password and returns the representative's name
+     * @param repUsername username of the representative to search datastore for 
+     * @param repPassword password of the representative to search datastore for
+     * @return the representative's name as string, or null if it was not found in datastore 
+     */ 
+    public static String queryForRepresentativeNameWithLogin(
+    String repUsername, String repPassword) throws EntityNotFoundException {
+        Query query = new Query(Constants.REP_ENTITY_TYPE); 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+        Entity repEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String username = ((String) entity.getProperty(Constants.REP_USERNAME)).trim();
+            String password = ((String) entity.getProperty(Constants.REP_PASSWORD)).trim();
+            if (username.equals(repUsername) && password.equals(repPassword)) {
+                repEntity = entity; 
+            }
+        }
+        return (repEntity != null) ? (String) repEntity.getProperty(Constants.REP_NAME) : null;
+    }
+
+    /**
+     * Searches datastore to check if username already taken
+     * @param repUsername username of the representative to search datastore for 
+     * @return the rep entity with a particular username
+     */ 
+    public static Entity queryForRepresentativeUsername(String repUsername) 
+    throws EntityNotFoundException {
+        Query query = new Query(Constants.REP_ENTITY_TYPE); 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+        Entity repEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String username = ((String) entity.getProperty(Constants.REP_USERNAME)).trim();
+            if (username.equals(repUsername)) {
+                repEntity = entity; 
+            }
+        }
+        return repEntity;
+    }
+
+    /**
      * Searches datastore for a particular representative and returns entity
      * @param repName name of the representative to search datastore for 
      * @return the representative entity, or null if it was not found in datastore 
      */ 
     public static Entity queryForRepresentativeEntityWithName(String repName) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -179,6 +309,46 @@ public class DatastoreManager {
             }
         }
         return repEntity; 
+    }
+
+    /**
+     * Searches datastore for a particular representative and returns entity
+     * @param repName name of the representative to search datastore for
+     * @param tab name of the tab that we want to categorize by 
+     * @return the list of posts under a representative that are associated with particular tab 
+     */ 
+    public static List<Post> queryForPostListWithTab(String repName, String tab) {
+        List<Post> postListForTab = new ArrayList<>();
+        Representative rep = null;
+        rep = queryForRepresentativeObjectWithName(repName);
+        if (rep != null) {
+            List<Post> postList= rep.getPosts();
+            for (Post post : postList) {
+                if (post.getTab().equals(tab)) {
+                    postListForTab.add(post);
+                }
+            }
+        }
+        return postListForTab; 
+    }
+
+    /**
+     * Searches datastore for list of tabs corresponding to a particular representative
+     * @param repName name of the representative to search datastore for
+     * @return the list of tabs under a representative
+     */ 
+    public static List<Tab> queryForTabListWithRepName(String repName)
+    throws EntityNotFoundException {
+        List<Tab> tabListForRep = new ArrayList<>();
+        Entity repEntity;
+        try {
+            repEntity = queryForRepresentativeEntityWithName(repName);
+        }
+        catch(EntityNotFoundException e) {
+            logger.error(e);
+            return null; 
+        }
+        return DatastoreEntityToObjectConverter.convertTabsFromRep(repEntity);
     }
 
     /**
@@ -238,5 +408,24 @@ public class DatastoreManager {
         reactionCount -= 1;
         postEntity.setProperty(reaction, reactionCount); 
         datastore.put(postEntity);
+    }
+
+     * Searches datastore for a particular tab entity
+     * @param tabName name of the tab to search datastore for 
+     * @return the tab entity found in datastore 
+     */ 
+    public static Entity queryForTabEntityWithName(String tabName) 
+    throws EntityNotFoundException {
+        Query query = new Query(Constants.TAB_ENTITY_TYPE); 
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        PreparedQuery results = datastore.prepare(query);
+        Entity tabEntity = null; 
+        for (Entity entity : results.asIterable()) {
+            String name = (String) entity.getProperty(Constants.TAB_NAME);
+            if (name.equals(tabName)) {
+                tabEntity = entity; 
+            }
+        }
+        return tabEntity; 
     }
 }

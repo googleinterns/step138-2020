@@ -19,6 +19,7 @@ import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import java.lang.UnsupportedOperationException; 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
@@ -62,15 +63,19 @@ public final class DatastoreManagerTest {
     public void testInsertRepresentativeInDatastore() 
     throws EntityNotFoundException{
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US"); 
+            "President of the US", "username", "password"); 
         Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repId);
         Entity repEntity = (Entity) ds.get(repEntityKey);
 
         String name = (String) (repEntity.getProperty(Constants.REP_NAME));
         String title = (String) (repEntity.getProperty(Constants.REP_TITLE));
+        String username = (String) (repEntity.getProperty(Constants.REP_USERNAME));
+        String password = (String) (repEntity.getProperty(Constants.REP_PASSWORD));
 
         assertTrue(name.equals("Donald Trump")); 
         assertTrue(title.equals("President of the US")); 
+        assertTrue(username.equals("username"));
+        assertTrue(password.equals("password"));
     }
 
     @Test 
@@ -78,7 +83,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         Key postEntityKey = KeyFactory.createKey(Constants.POST_ENTITY_TYPE, postId); 
         Entity postEntity = (Entity) ds.get(postEntityKey); 
 
@@ -99,10 +104,10 @@ public final class DatastoreManagerTest {
     public void testUpdateRepresentativePostList() 
     throws EntityNotFoundException{
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US");
+            "President of the US", "username", "password");
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         
         DatastoreManager.updateRepresentativePostList(repId, postId); 
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump"); 
@@ -119,7 +124,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude."); 
 
         DatastoreManager.updatePostWithComment(postId, commentId);
@@ -136,7 +141,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         long answerId = DatastoreManager.insertCommentInDatastore("Donald Trump", 
             "Because I want to."); 
 
@@ -151,21 +156,22 @@ public final class DatastoreManagerTest {
     @Test
     public void testQueryForRepresentativeObjectWithName() {
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US");
+            "President of the US", "username", "password");
 
         Representative actualRep = DatastoreManager.
             queryForRepresentativeObjectWithName("Donald Trump");
-        Representative expectedRep = new Representative("Donald Trump", 
-            "President of the US", new ArrayList<>(), repId);
 
-        assertTrue(actualRep.equals(expectedRep));
+        assertTrue(actualRep.getName().equals("Donald Trump"));
+        assertTrue(actualRep.getTitle().equals("President of the US"));
+        assertTrue(actualRep.getUsername().equals("username"));
+        assertTrue(actualRep.getPassword().equals("password"));
     }
 
     @Test
     public void testQueryForRepresentativeEntityWithName() 
     throws EntityNotFoundException{
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-            "President of the US");
+            "President of the US", "username", "password");
 
         Entity repEntity = DatastoreManager.queryForRepresentativeEntityWithName("Donald Trump");
         String name = (String) repEntity.getProperty(Constants.REP_NAME); 
@@ -275,5 +281,72 @@ public final class DatastoreManagerTest {
         long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
 
         assertTrue(reactionCount == 0);
+    }
+
+    @Test
+    public void testqueryForTabListWithRepName() 
+    throws EntityNotFoundException {
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police")));
+        Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
+        Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));
+        List<Tab> tabList = new ArrayList<Tab> (Arrays.asList(tab1, tab2));
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password");
+        DatastoreManager.updateRepresentativeTabList(repId, tabIds);
+
+        List<Tab> tabListActual = DatastoreManager.queryForTabListWithRepName("Donald Trump");
+
+        assertTrue(tabListActual.equals(tabList));
+    }
+
+    @Test
+    public void testqueryForTabEntityWithName() throws EntityNotFoundException {
+        Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
+        tabEntity.setProperty(Constants.TAB_NAME, "Education");
+        tabEntity.setProperty(Constants.TAB_PLATFORM, "Platform");
+        ds.put(tabEntity);
+
+        Entity actualEntity = DatastoreManager.queryForTabEntityWithName("Education");
+
+        assertTrue(tabEntity.equals(actualEntity));
+    }
+
+    @Test
+    public void testInsertTabsInDatastore() 
+    throws EntityNotFoundException{
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
+        Key tabEntityKey1 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(0));
+        Entity tabEntity1 = (Entity) ds.get(tabEntityKey1);
+        Key tabEntityKey2 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(1));
+        Entity tabEntity2 = (Entity) ds.get(tabEntityKey2);
+        
+        String name1 = (String) (tabEntity1.getProperty(Constants.TAB_NAME));
+        String platform1 = (String) (tabEntity1.getProperty(Constants.TAB_PLATFORM));
+        String name2 = (String) (tabEntity2.getProperty(Constants.TAB_NAME));
+        String platform2 = (String) (tabEntity2.getProperty(Constants.TAB_PLATFORM));
+
+        assertTrue(name1.equals("Education")); 
+        assertTrue(name2.equals("Police"));         
+        assertTrue(platform1.equals("Platform on education")); 
+        assertTrue(platform2.equals("Platform on police"));
+    }
+
+    @Test
+    public void testUpdateRepresentativeTabList() 
+    throws EntityNotFoundException{
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
+        Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
+        Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));
+        List<Tab> tabList = new ArrayList<Tab> (Arrays.asList(tab1, tab2));
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+            "President of the US", "username", "password");
+
+        DatastoreManager.updateRepresentativeTabList(repId, tabIds);
+        List<Tab> actualTabList = DatastoreManager.queryForTabListWithRepName("Donald Trump");
+
+        assertTrue(tabList.equals(actualTabList));
     }
 }

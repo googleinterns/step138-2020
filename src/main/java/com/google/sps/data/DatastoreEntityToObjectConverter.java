@@ -21,7 +21,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 /**
  * Converts entities from datastore into objects 
  */  
-public final class DatastoreEntityToObjectConverter {
+public final class DatastoreEntityToObjectConverter {  
     /**
      * Converts a representative entity into a Representative object 
      * @param entity of the representative 
@@ -29,12 +29,18 @@ public final class DatastoreEntityToObjectConverter {
      * @return the Representative object 
      */  
     protected static Representative convertRepresentative(Entity entity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         String name = (String) entity.getProperty(Constants.REP_NAME);
         String title = (String) entity.getProperty(Constants.REP_TITLE);
+        String username = (String) entity.getProperty(Constants.REP_USERNAME);
+        String password = (String) entity.getProperty(Constants.REP_PASSWORD);
         List<Post> posts = convertPostsFromRep(entity); 
+        String intro = (String) entity.getProperty(Constants.REP_INTRO);
+        String blobKeyUrl = (String) entity.getProperty(Constants.REP_BLOB_KEY_URL);
+        List<Tab> tabs = convertTabsFromRep(entity);
         long id = entity.getKey().getId();
-        return new Representative(name, title, posts, id);   
+        return new Representative(
+            name, title, username, password, posts, intro, blobKeyUrl, tabs, id);   
     }
     
     /**
@@ -44,12 +50,13 @@ public final class DatastoreEntityToObjectConverter {
      * @return the Post object 
      */ 
     protected static Post convertPost(Entity postEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         long questionId = (long) (postEntity.getProperty(Constants.POST_QUESTION));
         Comment question = convertComment(questionId);
         long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
+        String tab = (String) postEntity.getProperty(Constants.POST_TAB);
         long id = postEntity.getKey().getId();
         List<String> reactionStrings = Reaction.allValues(); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
@@ -60,11 +67,66 @@ public final class DatastoreEntityToObjectConverter {
             }
             reactions.put(Reaction.fromString(reactionString), reactionCount); 
         }
-        return new Post(question, answer, comments, id, reactions); 
+        return new Post(question, answer, comments, tab, id, reactions); 
+    }
+
+    /**
+     * Converts a tab entity into a Tab object 
+     * @param tabEntity entity of the tab 
+     * @throws EntityNotFoundException
+     * @return the Tab object 
+     */ 
+    static Tab convertTab(Entity tabEntity) 
+    throws EntityNotFoundException {
+        String tabName = (String) (tabEntity.getProperty(Constants.TAB_NAME));
+        String platform = (String) (tabEntity.getProperty(Constants.TAB_PLATFORM));
+        long id = tabEntity.getKey().getId();
+        return new Tab(tabName, platform, id); 
+    }
+
+    /**
+     * Converts a tab entity into a Tab object 
+     * @param tabIds list of tab ids 
+     * @return list of tab names corresponding to ids
+     */ 
+    static List<String> convertNamesFromTabs(List<Long> tabIds) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        List<String> tabNames = new ArrayList<String>();
+        for (long tabId : tabIds) {
+            Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+            Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+            String tabName = (String) tabEntity.getProperty(Constants.TAB_NAME);
+            tabNames.add(tabName);
+        }
+        return tabNames;
+    }
+
+    /**
+     * Converts a list of tab entities into tab objects pulled from a rep 
+     * @param repEntity entity of the rep
+     * @throws EntityNotFoundException
+     * @return List of tab objects
+     */ 
+    protected static List<Tab> convertTabsFromRep(Entity repEntity) 
+    throws EntityNotFoundException {
+        List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
+        List<Tab> tabs = new ArrayList<>(); 
+        if (tabIds == null) {
+            return tabs; 
+        }
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        for (long tabId : tabIds) {
+            Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+            Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+            Tab tab = convertTab(tabEntity); 
+            tabs.add(tab); 
+        }
+        return new ArrayList<Tab>(tabs); 
     }
 
     private static List<Post> convertPostsFromRep(Entity repEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         List<Post> posts = new ArrayList<>(); 
         if (postIds == null) {
@@ -77,11 +139,11 @@ public final class DatastoreEntityToObjectConverter {
             Post post = convertPost(postEntity); 
             posts.add(post); 
         }
-        return posts; 
+        return new ArrayList<Post>(posts); 
     }
 
     private static List<Comment> convertCommentsFromPost(Entity postEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Long> commentIds = (ArrayList<Long>) postEntity.getProperty(Constants.POST_REPLIES); 
         List<Comment> comments = new ArrayList<>(); 
         if (commentIds == null) {
@@ -97,7 +159,7 @@ public final class DatastoreEntityToObjectConverter {
 
     private static Comment convertComment(long commentId) 
     throws EntityNotFoundException {
-        if (commentId == -1){
+        if (commentId == -1) {
             return null;
         }
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();

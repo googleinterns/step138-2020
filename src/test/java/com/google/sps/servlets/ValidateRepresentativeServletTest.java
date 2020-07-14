@@ -1,33 +1,34 @@
 package com.google.sps.data;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
-import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.DatastoreManager;
-import com.google.sps.servlets.NewPostServlet;
+import com.google.sps.servlets.ValidateRepresentativeServlet;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.ArgumentCaptor;  
 import org.mockito.junit.MockitoJUnitRunner;
 
+
 @RunWith(JUnit4.class)
-public class NewPostServletTest{
-    private NewPostServlet servlet;
+public class ValidateRepresentativeServletTest{
+    private ValidateRepresentativeServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private LocalServiceTestHelper helper;
@@ -35,7 +36,7 @@ public class NewPostServletTest{
 
     @Before
     public void setUp() {
-        servlet = new NewPostServlet();
+        servlet = new ValidateRepresentativeServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -49,18 +50,30 @@ public class NewPostServletTest{
     }
 
     @Test
-    public void newPost() throws Exception {
-        when(request.getParameter("repName")).thenReturn("Donald Trump");
-        when(request.getParameter("name")).thenReturn("Bob");
-        when(request.getParameter("comment")).thenReturn("Why are you president?");
+    public void testLoginInformationCorrect() throws Exception {
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President", "username", "password");
+        "President of the U.S.", "username", "password");
+        when(request.getParameter("username")).thenReturn("username");
+        when(request.getParameter("password")).thenReturn("password");
 
         servlet.doPost(request, response);
-    
-        Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
-        List<Post> posts = rep.getPosts();
-        assertTrue(posts.get(0).getQuestion().getDisplayName().equals("Bob"));
-        assertTrue(posts.get(0).getQuestion().getComment().equals("Why are you president?"));
+
+        verify(response).sendRedirect(captor.capture());
+        assertTrue(("feed.html?name=Donald+Trump").equals(captor.getValue()));    
+    }
+
+    @Test
+    public void testLoginInformationIncorrect() throws Exception {
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President of the U.S.", "username", "password");
+        when(request.getParameter("username")).thenReturn("user");
+        when(request.getParameter("password")).thenReturn("password");
+
+        servlet.doPost(request, response);
+
+        verify(response).sendRedirect(captor.capture());
+        assertTrue(("invalidAuthRep.html").equals(captor.getValue()));
     }
 }

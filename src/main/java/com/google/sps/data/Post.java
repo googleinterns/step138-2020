@@ -8,17 +8,21 @@ import java.util.Objects;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Reaction;
 
-public final class Post{
+public final class Post {
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
+    private final String tab;
     private final long id; 
     private final Map<Reaction, Long> reactions; 
 
-    public Post(Comment question, Comment answer, List<Comment> replies, long id, Map<Reaction, Long> reactions){
+
+    public Post(Comment question, Comment answer, List<Comment> replies, String tab, 
+                long id, Map<Reaction, Long> reactions) {
         this.question = question;
         this.answer = answer;
         this.replies = replies;
+        this.tab = tab;
         this.id = id;
         this.reactions = reactions; 
     }
@@ -27,16 +31,20 @@ public final class Post{
         return new HashMap<Reaction, Long>(reactions);
     }
 
-    public Comment getQuestion(){
+    public Comment getQuestion() {
         return question; 
     }
 
-    public Comment getAnswer(){
+    public Comment getAnswer() {
         return answer; 
     }
 
-    public List<Comment> getReplies(){
+    public List<Comment> getReplies() {
         return new ArrayList<Comment>(replies);
+    }
+
+    public String getTab() {
+        return tab;
     }
 
     public long getID() {
@@ -64,12 +72,13 @@ public final class Post{
         return that.getQuestion().equals(this.question) && 
                answerEquality && 
                that.getReplies().equals(this.replies) && 
-               that.getReactions().equals(this.reactions); 
+               that.getReactions().equals(this.reactions) && 
+               that.getTab().equals(this.tab); 
     } 
 
     @Override
     public int hashCode() {
-        return Objects.hash(question, answer, replies, reactions);
+        return Objects.hash(question, answer, replies, tab, reactions);
     }
 
     @Override 
@@ -84,12 +93,14 @@ public final class Post{
         for (Comment reply : replies) {
             sb.append(reply.toString()); 
         } 
+
         sb.append("Reactions: ").append(System.getProperty("line.separator")); 
-        for (Map.Entry<Reaction, Long> entry : reactions.entrySet())
-        {
+        for (Map.Entry<Reaction, Long> entry : reactions.entrySet()) {
             sb.append(entry.getKey().getValue() + ": "); 
             sb.append(String.valueOf(entry.getValue())).append(System.getProperty("line.separator")); 
         }
+        sb.append("Tab: ").append(System.getProperty("line.separator")); 
+        sb.append(tab.toString());         
         return sb.toString();
     }
 }

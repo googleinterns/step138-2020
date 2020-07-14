@@ -14,6 +14,7 @@ import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import com.google.sps.data.Tab;
 import com.google.sps.data.DatastoreManager;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,37 +28,26 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** 
-InsertRepDatastoreServlet currently inserts the representative Donald
-Trump into the datastore as a hard code for the MVP.
+The RepInDatastore Servlet class checks to see whether or not a particular
+representative has made an account by querying for their name in datastore
 */
-
-@WebServlet ("/insert_rep_datastore")
-public class InsertRepDatastoreServlet extends HttpServlet {
-    private static final Logger logger = LogManager.getLogger("InsertRepDatastoreServlet");
-    private static final String USERNAME = "username";
-    private static final String PASSWORD = "password";
+@WebServlet ("/rep_tabs")
+public class RepTabsServlet extends HttpServlet {
+    private static final Logger logger = LogManager.getLogger("RepTabsServlet");
     private static final String REP_NAME = "repName";
-    private static final String TITLE = "title";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException {
-        String username = request.getParameter(USERNAME);
-        String password = request.getParameter(PASSWORD);
         String repName = request.getParameter(REP_NAME);
-        String title = request.getParameter(TITLE);
-        Entity rep;
+        List<Tab> tabList;
         try {
-            rep = DatastoreManager.queryForRepresentativeUsername(username.trim()); 
-        } 
-        catch(EntityNotFoundException e) {
+            tabList = DatastoreManager.queryForTabListWithRepName(repName);
+        } catch (Exception e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        if (rep == null) {
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);   
-        }
-        response.setContentType("text/html");
-        response.getWriter().println(Boolean.toString(rep != null));
+        response.setContentType("application/json;");
+        response.getWriter().println(new Gson().toJson(tabList));
     }
 }
