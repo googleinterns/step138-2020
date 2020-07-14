@@ -354,8 +354,6 @@ async function getRepList() {
         return;
     }
     var representativeList = document.getElementById("repList");
-    console.log(representativeList);
-    console.log(typeof representativeList)
     var offices = representatives.offices;
     var officials = representatives.officials;
     for (var i = 0; i < offices.length; i++) {
@@ -542,20 +540,16 @@ function questionnaireInnerDiv(){
     return innerDiv;
 }
 
-
 //Grab tabs from questionnaire
 async function submitRepQuestionnaire() {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name'));
     var topics = document.getElementsByClassName("topic");
-    console.log("These are the topics: " + topics);
     var platforms = document.getElementsByClassName("platform");
-    console.log("These are the platforms: " + platforms);
     var intro = document.getElementById("intro").value;
     var listOfTopics = [];
     var listOfPlatforms = [];
     for (var i = 0; i < topics.length; i++) {
-        console.log(topics[i].value);
         if (topics[i].value != "") {
             listOfTopics.push(topics[i].value);
             listOfPlatforms.push(platforms[i].value + "*");
