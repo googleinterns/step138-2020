@@ -45,12 +45,14 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
     throws IOException, ServletException {
         String repName = request.getParameter(REP_NAME);
         String topics = request.getParameter(TOPIC_LIST);
+        String intro = request.getParameter(INTRO);
+
         List<String> topicList = new ArrayList<String>(Arrays.asList(topics.split(",")));
         topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
         String platforms = request.getParameter(PLATFORM_LIST);
         List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("\\*,")));
+        //Remove the * from the string of the last platform
         platformList.get(platformList.size() - 1).replace("\\*", "");
-        String intro = request.getParameter(INTRO);
        
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
 

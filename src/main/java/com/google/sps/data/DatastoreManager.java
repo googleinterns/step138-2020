@@ -4,6 +4,7 @@ import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
+import com.google.sps.data.Reaction;
 import com.google.sps.data.Representative;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -13,6 +14,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
@@ -47,7 +49,7 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertRepresentativeInDatastore(
-    String name, String title, String username, String password) {
+        String name, String title, String username, String password) {
         Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, name); 
         repEntity.setProperty(Constants.REP_TITLE, title); 
@@ -72,7 +74,11 @@ public class DatastoreManager {
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
-        postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>()); 
+        postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>());
+        List<String> reactions = Reaction.allValues();
+        for (String reaction : reactions) {
+            postEntity.setProperty(reaction, (long) 0);
+        }
         postEntity.setProperty(Constants.POST_TAB, tab);
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
@@ -132,16 +138,16 @@ public class DatastoreManager {
             tabIds = new ArrayList<>(); 
             tabIds.addAll(tabIdList);
         }
-        else{
+        else {
             List<String> tabNames = DatastoreEntityToObjectConverter.convertNamesFromTabs(tabIds);
             for (Long tabId : tabIdList) {
                 Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
                 Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
                 String name = (String) tabEntity.getProperty(Constants.TAB_NAME);
-                if (tabNames.contains(name)){
+                if (tabNames.contains(name)) {
                     tabIds.set(tabNames.indexOf(name), tabId);
                 }
-                else{
+                else {
                     tabIds.add(tabId);
                 }
             }
@@ -250,7 +256,7 @@ public class DatastoreManager {
      * @return the representative's name as string, or null if it was not found in datastore 
      */ 
     public static String queryForRepresentativeNameWithLogin(
-    String repUsername, String repPassword) throws EntityNotFoundException{
+    String repUsername, String repPassword) throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -271,7 +277,7 @@ public class DatastoreManager {
      * @return the rep entity with a particular username
      */ 
     public static Entity queryForRepresentativeUsername(String repUsername) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -291,7 +297,7 @@ public class DatastoreManager {
      * @return the representative entity, or null if it was not found in datastore 
      */ 
     public static Entity queryForRepresentativeEntityWithName(String repName) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -311,14 +317,14 @@ public class DatastoreManager {
      * @param tab name of the tab that we want to categorize by 
      * @return the list of posts under a representative that are associated with particular tab 
      */ 
-    public static List<Post> queryForPostListWithTab(String repName, String tab){
+    public static List<Post> queryForPostListWithTab(String repName, String tab) {
         List<Post> postListForTab = new ArrayList<>();
         Representative rep = null;
         rep = queryForRepresentativeObjectWithName(repName);
-        if (rep != null){
+        if (rep != null) {
             List<Post> postList= rep.getPosts();
-            for (Post post : postList){
-                if (post.getTab().equals(tab)){
+            for (Post post : postList) {
+                if (post.getTab().equals(tab)) {
                     postListForTab.add(post);
                 }
             }
@@ -332,10 +338,10 @@ public class DatastoreManager {
      * @return the list of tabs under a representative
      */ 
     public static List<Tab> queryForTabListWithRepName(String repName)
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Tab> tabListForRep = new ArrayList<>();
         Entity repEntity;
-        try{
+        try {
             repEntity = queryForRepresentativeEntityWithName(repName);
         }
         catch(EntityNotFoundException e) {
@@ -370,12 +376,47 @@ public class DatastoreManager {
     }
 
     /**
+     * Updates a post entity with a reaction
+     * @param postId ID of the post entity 
+     * @param reaction String of the reaction enum 
+     */ 
+    public static void addReactionToPost(long postId, String reaction) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        long reactionCount = 0; 
+        if (postEntity.getProperty(reaction) != null) {
+            reactionCount = (long) postEntity.getProperty(reaction); 
+        }
+        postEntity.setProperty(reaction, reactionCount + 1); 
+        datastore.put(postEntity);
+    }
+
+    /**
+     * Removes a reaction from a post entity 
+     * @param postId ID of the post entity 
+     * @param reaction String of the reaction enum 
+     */ 
+    public static void removeReactionFromPost(long postId, String reaction) 
+    throws EntityNotFoundException, UnsupportedOperationException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        Long reactionCount = (long) postEntity.getProperty(reaction); 
+        if (reactionCount == null || reactionCount == 0) {
+            throw new UnsupportedOperationException("No such reactions in post entity"); 
+        }
+        reactionCount -= 1;
+        postEntity.setProperty(reaction, reactionCount); 
+        datastore.put(postEntity);
+    }
+
+    /*
      * Searches datastore for a particular tab entity
      * @param tabName name of the tab to search datastore for 
      * @return the tab entity found in datastore 
      */ 
     public static Entity queryForTabEntityWithName(String tabName) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.TAB_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);

@@ -39,7 +39,7 @@ public class ReplyToPostServlet extends HttpServlet {
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         long postId = Long.parseLong(request.getParameter(POST_ID));
         String nickName = request.getParameter(NICKNAME);
         String comment = request.getParameter(REPLY);

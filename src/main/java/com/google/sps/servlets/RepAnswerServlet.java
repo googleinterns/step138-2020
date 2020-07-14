@@ -25,7 +25,7 @@ The RepAnswerServlet class inserts a comment entity into datastore and updates
 the answer property of the post that the representative is responding to
 */
 @WebServlet ("/rep_answer")
-public class RepAnswerServlet extends HttpServlet{
+public class RepAnswerServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepAnswerServlet");
     private static final String POST_ID = "postId";
     private static final String REP_NAME = "repName";
@@ -33,7 +33,7 @@ public class RepAnswerServlet extends HttpServlet{
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         long postId = Long.parseLong(request.getParameter(POST_ID));
         String repName = request.getParameter(REP_NAME);
         String answer = request.getParameter(ANSWER);

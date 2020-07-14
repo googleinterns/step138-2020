@@ -2,10 +2,13 @@ package com.google.sps.data;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
 import com.google.sps.data.Post;
+import com.google.sps.data.Reaction;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -18,7 +21,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 /**
  * Converts entities from datastore into objects 
  */  
-public final class DatastoreEntityToObjectConverter {
+public final class DatastoreEntityToObjectConverter {  
     /**
      * Converts a representative entity into a Representative object 
      * @param entity of the representative 
@@ -26,7 +29,7 @@ public final class DatastoreEntityToObjectConverter {
      * @return the Representative object 
      */  
     protected static Representative convertRepresentative(Entity entity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         String name = (String) entity.getProperty(Constants.REP_NAME);
         String title = (String) entity.getProperty(Constants.REP_TITLE);
         String username = (String) entity.getProperty(Constants.REP_USERNAME);
@@ -36,7 +39,8 @@ public final class DatastoreEntityToObjectConverter {
         String blobKeyUrl = (String) entity.getProperty(Constants.REP_BLOB_KEY_URL);
         List<Tab> tabs = convertTabsFromRep(entity);
         long id = entity.getKey().getId();
-        return new Representative(name, title, username, password, posts, intro, blobKeyUrl, tabs, id);   
+        return new Representative(
+            name, title, username, password, posts, intro, blobKeyUrl, tabs, id);   
     }
     
     /**
@@ -46,7 +50,7 @@ public final class DatastoreEntityToObjectConverter {
      * @return the Post object 
      */ 
     protected static Post convertPost(Entity postEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         long questionId = (long) (postEntity.getProperty(Constants.POST_QUESTION));
         Comment question = convertComment(questionId);
         long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
@@ -54,7 +58,16 @@ public final class DatastoreEntityToObjectConverter {
         List<Comment> comments = convertCommentsFromPost(postEntity); 
         String tab = (String) postEntity.getProperty(Constants.POST_TAB);
         long id = postEntity.getKey().getId();
-        return new Post(question, answer, comments, tab, id); 
+        List<String> reactionStrings = Reaction.allValues(); 
+        Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
+        for (String reactionString : reactionStrings) {
+            long reactionCount = 0; 
+            if (postEntity.getProperty(reactionString) != null) {
+                reactionCount = (long) (postEntity.getProperty(reactionString));
+            }
+            reactions.put(Reaction.fromString(reactionString), reactionCount); 
+        }
+        return new Post(question, answer, comments, tab, id, reactions); 
     }
 
     /**
@@ -64,7 +77,7 @@ public final class DatastoreEntityToObjectConverter {
      * @return the Tab object 
      */ 
     static Tab convertTab(Entity tabEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         String tabName = (String) (tabEntity.getProperty(Constants.TAB_NAME));
         String platform = (String) (tabEntity.getProperty(Constants.TAB_PLATFORM));
         long id = tabEntity.getKey().getId();
@@ -79,7 +92,7 @@ public final class DatastoreEntityToObjectConverter {
     static List<String> convertNamesFromTabs(List<Long> tabIds) 
     throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        List<String> tabNames = new ArrayList<String> ();
+        List<String> tabNames = new ArrayList<String>();
         for (long tabId : tabIds) {
             Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
             Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
@@ -96,7 +109,7 @@ public final class DatastoreEntityToObjectConverter {
      * @return List of tab objects
      */ 
     protected static List<Tab> convertTabsFromRep(Entity repEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Long> tabIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_TABS); 
         List<Tab> tabs = new ArrayList<>(); 
         if (tabIds == null) {
@@ -113,7 +126,7 @@ public final class DatastoreEntityToObjectConverter {
     }
 
     private static List<Post> convertPostsFromRep(Entity repEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         List<Post> posts = new ArrayList<>(); 
         if (postIds == null) {
@@ -130,7 +143,7 @@ public final class DatastoreEntityToObjectConverter {
     }
 
     private static List<Comment> convertCommentsFromPost(Entity postEntity) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Long> commentIds = (ArrayList<Long>) postEntity.getProperty(Constants.POST_REPLIES); 
         List<Comment> comments = new ArrayList<>(); 
         if (commentIds == null) {
@@ -146,7 +159,7 @@ public final class DatastoreEntityToObjectConverter {
 
     private static Comment convertComment(long commentId) 
     throws EntityNotFoundException {
-        if (commentId == -1){
+        if (commentId == -1) {
             return null;
         }
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
