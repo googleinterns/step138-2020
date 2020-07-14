@@ -217,7 +217,6 @@ function addPoliticianTab(tabName, repName){
     tabsElement.appendChild(div);
 }
 
-
 //Navigate to a particular tab
 function getTab(tab) {
     var urlParams = new URLSearchParams(window.location.search);
