@@ -15,7 +15,9 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -49,8 +51,11 @@ public class RepInDatastoreServletTest{
 
     @Test
     public void testRepInDatastore() throws Exception {
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                new ArrayList<String> (Arrays.asList("Other")), 
+                new ArrayList<String> (Arrays.asList("")));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President of the U.S.", "username", "password");
+        "President of the U.S.", "username", "password", tabIds);
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);

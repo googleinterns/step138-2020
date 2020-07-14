@@ -14,6 +14,9 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.servlets.FeedServlet;
 import java.io.StringWriter;
 import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FileUtils;
@@ -54,8 +57,11 @@ public class FeedServletTest{
         PrintWriter writer = new PrintWriter(stringWriter);
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(response.getWriter()).thenReturn(writer);
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                new ArrayList<String> (Arrays.asList("Other")), 
+                new ArrayList<String> (Arrays.asList("")));
         DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President", "username", "password");
+        "President", "username", "password", tabIds);
 
         servlet.doGet(request, response);
     

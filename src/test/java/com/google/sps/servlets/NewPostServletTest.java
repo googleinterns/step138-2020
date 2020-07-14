@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
@@ -53,8 +54,11 @@ public class NewPostServletTest{
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(request.getParameter("name")).thenReturn("Bob");
         when(request.getParameter("comment")).thenReturn("Why are you president?");
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                new ArrayList<String> (Arrays.asList("Other")), 
+                new ArrayList<String> (Arrays.asList("")));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President", "username", "password");
+        "President", "username", "password", tabIds);
 
         servlet.doPost(request, response);
     
