@@ -39,15 +39,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @WebServlet("/rep_upload_image")
-public class RepUploadImageServlet extends HttpServlet{
+public class RepUploadImageServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepUploadImageServlet");
     private static final String IMAGE_UPLOAD = "imageUpload";
     private static final String REP_NAME = "repName";
+    private static final String SERVE_URL = "/serve_blob?blobKey=";
+
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException{
+    throws ServletException, IOException {
         String blobKeyUrl = getBlobKeyUrl(request, IMAGE_UPLOAD);
         String repName = request.getParameter(REP_NAME);
         Entity rep;
@@ -68,9 +70,9 @@ public class RepUploadImageServlet extends HttpServlet{
         List<BlobKey> blobKeys = blobs.get(formInputElementName);
 
         if (blobKeys == null || blobKeys.isEmpty()) {
-            return("/images/defaultProfilePicture.png");
+            return(Constants.DEFAULT_POLITICIAN_IMAGE_URL);
         } else {
-            return ("/serve_blob?blobKey=" + blobKeys.get(0).getKeyString());
+            return (SERVE_URL + blobKeys.get(0).getKeyString());
         }
     }
 }

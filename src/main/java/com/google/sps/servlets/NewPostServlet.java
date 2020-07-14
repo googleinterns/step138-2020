@@ -26,7 +26,7 @@ and updates the list of posts associated with a representative when a user enter
 question on a representative's feed
 */
 @WebServlet ("/new_post")
-public class NewPostServlet extends HttpServlet{    
+public class NewPostServlet extends HttpServlet {    
     private static final Logger logger = LogManager.getLogger("NewPostServlet");
     private static final String REP_NAME = "repName";
     private static final String NAME = "name";
@@ -36,12 +36,12 @@ public class NewPostServlet extends HttpServlet{
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
-    throws IOException, ServletException{
+    throws IOException, ServletException {
         String repName = request.getParameter(REP_NAME);
         String name = request.getParameter(NAME);
         String comment = request.getParameter(COMMENT);
-        String feed1 = request.getParameter(FEED_BOOLEAN);
-        Boolean feed = Boolean.parseBoolean(feed1);
+        String feedBooleanAsString = request.getParameter(FEED_BOOLEAN);
+        Boolean feedBool = Boolean.parseBoolean(feedBooleanAsString);
         String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
@@ -61,7 +61,7 @@ public class NewPostServlet extends HttpServlet{
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = (feed == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
+        String redirect = (feedBool == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
             "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tab);
         response.sendRedirect(redirect);
     }

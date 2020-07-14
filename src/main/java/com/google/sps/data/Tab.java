@@ -7,21 +7,21 @@ public final class Tab {
     private final String platform;
     private final long id;
 
-    public Tab(String name, String platform, long id){
+    public Tab(String name, String platform, long id) {
         this.name = name;
         this.platform = platform;
         this.id = id; 
     }
 
-    public String getTabName(){
+    public String getTabName() {
         return name; 
     }
 
-    public String getPlatform(){
+    public String getPlatform() {
         return platform; 
     }
 
-    public long getID(){
+    public long getID() {
         return id; 
     }
 

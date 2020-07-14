@@ -132,16 +132,16 @@ public class DatastoreManager {
             tabIds = new ArrayList<>(); 
             tabIds.addAll(tabIdList);
         }
-        else{
+        else {
             List<String> tabNames = DatastoreEntityToObjectConverter.convertNamesFromTabs(tabIds);
             for (Long tabId : tabIdList) {
                 Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
                 Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
                 String name = (String) tabEntity.getProperty(Constants.TAB_NAME);
-                if (tabNames.contains(name)){
+                if (tabNames.contains(name)) {
                     tabIds.set(tabNames.indexOf(name), tabId);
                 }
-                else{
+                else {
                     tabIds.add(tabId);
                 }
             }
@@ -250,7 +250,7 @@ public class DatastoreManager {
      * @return the representative's name as string, or null if it was not found in datastore 
      */ 
     public static String queryForRepresentativeNameWithLogin(
-    String repUsername, String repPassword) throws EntityNotFoundException{
+    String repUsername, String repPassword) throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -271,7 +271,7 @@ public class DatastoreManager {
      * @return the rep entity with a particular username
      */ 
     public static Entity queryForRepresentativeUsername(String repUsername) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -291,7 +291,7 @@ public class DatastoreManager {
      * @return the representative entity, or null if it was not found in datastore 
      */ 
     public static Entity queryForRepresentativeEntityWithName(String repName) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.REP_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);
@@ -311,14 +311,14 @@ public class DatastoreManager {
      * @param tab name of the tab that we want to categorize by 
      * @return the list of posts under a representative that are associated with particular tab 
      */ 
-    public static List<Post> queryForPostListWithTab(String repName, String tab){
+    public static List<Post> queryForPostListWithTab(String repName, String tab) {
         List<Post> postListForTab = new ArrayList<>();
         Representative rep = null;
         rep = queryForRepresentativeObjectWithName(repName);
-        if (rep != null){
+        if (rep != null) {
             List<Post> postList= rep.getPosts();
-            for (Post post : postList){
-                if (post.getTab().equals(tab)){
+            for (Post post : postList) {
+                if (post.getTab().equals(tab)) {
                     postListForTab.add(post);
                 }
             }
@@ -332,10 +332,10 @@ public class DatastoreManager {
      * @return the list of tabs under a representative
      */ 
     public static List<Tab> queryForTabListWithRepName(String repName)
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Tab> tabListForRep = new ArrayList<>();
         Entity repEntity;
-        try{
+        try {
             repEntity = queryForRepresentativeEntityWithName(repName);
         }
         catch(EntityNotFoundException e) {
@@ -375,7 +375,7 @@ public class DatastoreManager {
      * @return the tab entity found in datastore 
      */ 
     public static Entity queryForTabEntityWithName(String tabName) 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         Query query = new Query(Constants.TAB_ENTITY_TYPE); 
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         PreparedQuery results = datastore.prepare(query);

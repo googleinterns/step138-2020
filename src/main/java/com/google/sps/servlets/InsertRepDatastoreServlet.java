@@ -54,7 +54,7 @@ public class InsertRepDatastoreServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        if (rep == null){
+        if (rep == null) {
             DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);   
         }
         response.setContentType("text/html");

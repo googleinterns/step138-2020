@@ -17,7 +17,7 @@ public final class Representative {
     private final long id; 
 
     public Representative(String name, String title, String username, 
-    String password, List<Post> posts, String intro, String blobKeyUrl, List<Tab> tabs, long id){
+    String password, List<Post> posts, String intro, String blobKeyUrl, List<Tab> tabs, long id) {
         this.name = name;
         this.title = title;
         this.username = username;
@@ -29,35 +29,35 @@ public final class Representative {
         this.id = id; 
     }
 
-    public String getName(){
+    public String getName() {
         return name; 
     }
 
-    public String getTitle(){
+    public String getTitle() {
         return title; 
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username; 
     }
 
-    public String getPassword(){
+    public String getPassword()  {
         return password; 
     }
 
-    public List<Post> getPosts(){
+    public List<Post> getPosts() {
         return new ArrayList<Post>(posts);
     }
 
-    public String getIntro(){
+    public String getIntro() {
         return intro;
     }
 
-    public String getBlobKeyUrl(){
+    public String getBlobKeyUrl() {
         return blobKeyUrl;
     }
 
-    public List<Tab> getTabs(){
+    public List<Tab> getTabs() {
         return new ArrayList<Tab>(tabs);
     }
 
@@ -98,13 +98,13 @@ public final class Representative {
         for (Post post : posts) {
             sb.append(post.toString()); 
         } 
-        if (intro != null){
+        if (intro != null) {
             sb.append("Representative intro: ").append(intro).append(
                 System.getProperty("line.separator"));
         } 
         sb.append("Representative blobKeyUrl: ").append(blobKeyUrl).append(
             System.getProperty("line.separator")); 
-        if (tabs != null){
+        if (tabs != null) {
             for (Tab tab : tabs) {
                 sb.append(tab.getTabName() + ": " + tab.getPlatform()); 
             } 
