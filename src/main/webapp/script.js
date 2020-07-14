@@ -352,8 +352,10 @@ function storeRepBooleanAndSubmit(){
 }
 
 //Stores boolean property "rep" in localStorage when rep enters zipcode and redirects to create account html 
-function storeRepBooleanAndRedirect(){ 
+function storeRepBooleanAndZipcodeAndRedirect() { 
     event.preventDefault(); 
+    var zipcode = document.getElementById("zipcode").value;
+    localStorage.setItem("zipcode", zipcode);
     localStorage.setItem("rep", true);
     window.location.href = "/repList.html";
 }
@@ -367,7 +369,7 @@ async function getRepList(){
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
     if (representatives["error"]){
-        window.location.href = "errors/zipcodeNotFound.html";
+        window.location.href = "/zipcodeNotFound.html";
         return;
     }
     var representativeList = document.getElementById("repList");
