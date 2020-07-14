@@ -13,7 +13,7 @@
 // limitations under the License.
 
 //Displays the feed for a particular rep
-window.onload = function displayFeed(){
+window.onload = function displayFeed() {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = urlParams.get('name'); 
     fetch(`/feed?repName=${repName}`).then(response => response.json())
@@ -62,11 +62,10 @@ window.onload = function displayFeed(){
             displayRepAnswer(post, repName);
             displayReplyList(post);
         })
-
     });
 };
 
-function createReplyForm(questionID, repName){
+function createReplyForm(questionID, repName) {
     var question = document.getElementById(questionID);
     var replyForm = document.createElement("form");
     var nickname = localStorage.getItem("nickname");
@@ -82,7 +81,7 @@ function createReplyForm(questionID, repName){
     question.appendChild(replyForm);       
 }
 
-function createAnswerForm(questionID, repName){
+function createAnswerForm(questionID, repName) {
     var question = document.getElementById(questionID);
     var ansForm = document.createElement("form");
     ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${repName}`);
@@ -97,7 +96,7 @@ function createAnswerForm(questionID, repName){
     question.appendChild(ansForm);
 }
 
-function displayReplyList(post){
+function displayReplyList(post) {
     replyList = post.replies;
     replyList.forEach((reply)=>{
         var postElement = document.getElementById(post.id);
@@ -107,7 +106,7 @@ function displayReplyList(post){
     })
 }
 
-function displayRepAnswer(post, repName){
+function displayRepAnswer(post, repName) {
     var answer = post.answer;
     if (answer != undefined){    
         var postElement = document.getElementById(post.id);
@@ -117,7 +116,7 @@ function displayRepAnswer(post, repName){
     }
 }
 
-function createQuestionForm(repName){
+function createQuestionForm(repName) {
     var feed = document.getElementsByClassName("newComment");
     feed = feed[0];
     var newQuestionForm = document.createElement("form");

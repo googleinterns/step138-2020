@@ -4,13 +4,17 @@ import java.lang.IllegalArgumentException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 /** 
  * Reactions a user can add to a post 
  */
 public enum Reaction {
-    THUMBS_UP("thumbs_up"); 
+    THUMBS_UP("thumbs_up"),
+    THUMBS_DOWN("thumbs_down"),
+    ANGRY("angry"),
+    CRYING("crying"),
+    HEART("heart"),
+    LAUGHING("laughing");
 
     private final String value; 
 
