@@ -367,7 +367,7 @@ async function getRepList(){
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
     if (representatives["error"]){
-        window.location.href = "zipcodeNotFound.html";
+        window.location.href = "errors/zipcodeNotFound.html";
         return;
     }
     var representativeList = document.getElementById("repList");
@@ -495,6 +495,7 @@ function submitRepQuestionnaire(){
 //appends a new tab with each new topic found in the questionnaire.
 function newTab(tabTopic){
     var tab = document.createElement("a");
+    var sideBar = document.getElementById("mySidebar");
     tab.setAttribute("value", tabTopic);
     tab.setAttribute("href", "#");
     tab.setAttribute("onclick", getTab(this.value));
@@ -510,6 +511,8 @@ function newTab(tabTopic){
     var tabText = document.createElement("span");
     tabText.innerText(tabTopic);
     tab.appendChild(tabText);
+
+    sideBar.appendChild(tap);
 
     fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=${listOfPlatforms}&intro=${intro}&repName=${repName}`)
     .then(window.location.href="loginRep.html");
