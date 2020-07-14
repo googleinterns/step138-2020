@@ -70,6 +70,11 @@ public class ReplyToPostServletTest{
         List<Post> posts = new ArrayList<>(); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
         reactions.put(Reaction.THUMBS_UP, (long) 0);
+        reactions.put(Reaction.THUMBS_DOWN, (long) 0);
+        reactions.put(Reaction.ANGRY, (long) 0);
+        reactions.put(Reaction.CRYING, (long) 0);
+        reactions.put(Reaction.HEART, (long) 0);
+        reactions.put(Reaction.LAUGHING, (long) 0);
         Post post = new Post(question, null, replies, postId, reactions); 
         posts.add(post); 
         Representative expectedRep = new Representative("Donald Trump", "President", posts, repId);
