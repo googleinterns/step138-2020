@@ -53,7 +53,7 @@ public class UnreactToPostServletTest{
     @Test
     public void testDoPost() throws Exception {
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
-        Long postId = DatastoreManager.insertPostInDatastore(questionId); 
+        Long postId = DatastoreManager.insertPostInDatastore(questionId, "education"); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("reaction")).thenReturn(Reaction.THUMBS_UP.getValue());
         when(request.getParameter("repName")).thenReturn("Donald Trump");

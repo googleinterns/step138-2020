@@ -410,6 +410,7 @@ public class DatastoreManager {
         datastore.put(postEntity);
     }
 
+    /*
      * Searches datastore for a particular tab entity
      * @param tabName name of the tab to search datastore for 
      * @return the tab entity found in datastore 

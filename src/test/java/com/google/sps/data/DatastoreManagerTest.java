@@ -247,7 +247,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
 
         DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
         Post post = DatastoreManager.queryForPostObjectWithId(postId); 
@@ -261,7 +261,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
 
         assertThrows(UnsupportedOperationException.class, () -> {
             DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
@@ -273,7 +273,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion); 
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
         DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
 
         DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
