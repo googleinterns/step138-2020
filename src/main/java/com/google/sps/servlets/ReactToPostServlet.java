@@ -40,7 +40,7 @@ public class ReactToPostServlet extends HttpServlet {
     throws IOException, ServletException{
         long postId = Long.parseLong(request.getParameter(POST_ID).trim());
         String repName = request.getParameter(REP_NAME);
-        String reaction = Reaction.valueOf(request.getParameter(REACTION).getValue();
+        String reaction = Reaction.valueOf(request.getParameter(REACTION)).getValue();
 
         try {
             DatastoreManager.addReactionToPost(postId, reaction); 
