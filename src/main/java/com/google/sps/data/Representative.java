@@ -5,7 +5,6 @@ import java.lang.Double;
 import java.lang.System; 
 import java.util.ArrayList;
 import java.util.Collections; 
-import java.util.Comparator; 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,7 +32,7 @@ public final class Representative {
         this.tabs = tabs;
         this.id = id; 
 
-        Collections.sort(this.posts, new PostComparator());
+        Collections.sort(this.posts, new Post.PostComparator());
     }
 
     public String getName() {
@@ -117,15 +116,5 @@ public final class Representative {
             } 
         }
         return sb.toString();
-    }
-
-    class PostComparator implements Comparator<Post> {
-        @Override
-        public int compare(Post a, Post b) {
-            long currTime = System.currentTimeMillis(); 
-            double aRecency = a.getTimestamp()/currTime; 
-            double bRecency = b.getTimestamp()/currTime; 
-            return Double.compare(aRecency, bRecency); 
-        }
     }
 }

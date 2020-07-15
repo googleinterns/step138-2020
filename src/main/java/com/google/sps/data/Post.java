@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import java.util.Comparator; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,5 +108,15 @@ public final class Post {
         sb.append("Tab: ").append(System.getProperty("line.separator")); 
         sb.append(tab.toString());         
         return sb.toString();
+    }
+
+    static class PostComparator implements Comparator<Post> {
+        @Override
+        public int compare(Post a, Post b) {
+            long currTime = System.currentTimeMillis(); 
+            double aRecency = a.getTimestamp()/currTime; 
+            double bRecency = b.getTimestamp()/currTime; 
+            return Double.compare(aRecency, bRecency); 
+        }
     }
 }
