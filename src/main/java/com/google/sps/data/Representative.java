@@ -1,7 +1,10 @@
 package com.google.sps.data;
 
 import com.google.sps.data.Post;
+import java.lang.Double; 
+import java.lang.System; 
 import java.util.ArrayList;
+import java.util.Collections; 
 import java.util.Comparator; 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +32,8 @@ public final class Representative {
         this.blobKeyUrl = blobKeyUrl;
         this.tabs = tabs;
         this.id = id; 
+
+        Collections.sort(this.posts, new PostComparator());
     }
 
     public String getName() {
@@ -117,16 +122,10 @@ public final class Representative {
     class PostComparator implements Comparator<Post> {
         @Override
         public int compare(Post a, Post b) {
-            if (a.getAnswer() == null )
-        }
-
-        private long countReactions(Post post) {
-            Map<Reaction, Long> reactions = post.getReactions(); 
-            long count = 0; 
-            for (Map.Entry<Reaction, Long> entry : reactions.entrySet()) {
-                count += entry.getValue(); 
-            }
-            return count; 
+            long currTime = System.currentTimeMillis(); 
+            double aRecency = a.getTimestamp()/currTime; 
+            double bRecency = b.getTimestamp()/currTime; 
+            return Double.compare(aRecency, bRecency); 
         }
     }
 }
