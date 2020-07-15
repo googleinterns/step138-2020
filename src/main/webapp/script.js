@@ -111,9 +111,47 @@ async function displayFeed() {
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
-        displayReactions(post, repName);
+
+        //show reaction buttons 
+        var reactionDiv = document.createElement("div");
+        displayReaction(post, repName, reactionDiv, "ANGRY"); 
+        displayReaction(post, repName, reactionDiv, "CRYING"); 
+        displayReaction(post, repName, reactionDiv, "LAUGHING"); 
+        displayReaction(post, repName, reactionDiv, "HEART"); 
+        displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
+        displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
+        document.getElementById(post.id).appendChild(reactionDiv);
     })
 };
+
+function displayReaction(post, repName, reactionDiv, reaction) {
+    var btn = document.createElement("button");
+    btn.setAttribute("class", "btn"); 
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
+    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    //btn.innerHTML = '<img src="reaction_icons/thumbs_down.jpg" width="20px" height="20px">';
+    btn.innerHTML += post.reactions[reaction]; 
+    btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
+    reactionDiv.appendChild(btn); 
+}
+
+async function reactToPost(reaction, postId, repName) {
+    if (localStorage.getItem(postId + reaction) === null) {
+        localStorage.setItem(postId + reaction, "unreacted");
+    }
+    var reactionState = localStorage.getItem(postId + reaction); 
+    if (reactionState === "unreacted") {
+        await fetch(`/react_to_post?repName=${repName}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, "reacted");
+    }
+    else {
+        await fetch(`/unreact_to_post?repName=${repName}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, "unreacted");
+    }
+    window.location.reload(false); 
+}
 
 //Displays the question for a post
 function displayPost(post, feed) {
@@ -135,32 +173,6 @@ function displayRepAnswer(post, repName) {
         repAnswer.innerText = repName + ": " + answer.comment;
         postElement.appendChild(repAnswer);
     }
-}
-
-//Displays the reactions for every post 
-function displayReactions(post, repName) {
-    var reactionsMap = post.reactions; 
-    var postElement = document.getElementById(post.id);
-    var reactionDiv = document.createElement("div");
-    for (var reaction in reactionsMap) {
-        var btn = document.createElement("button");
-        btn.setAttribute("class", "btn"); 
-        var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
-        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
-        btn.innerHTML += reactionsMap[reaction]; 
-        reactionDiv.appendChild(btn); 
-    }
-    postElement.appendChild(reactionDiv);
-}
-
-async function reactToPost(reaction, postId, repName) {
-    await fetch(`/react_to_post?repName=${repName}&postId=
-    ${postId}&reaction=${reaction}`);
-}
-
-async function unreactToPost(reaction, postId, repName) {
-    await fetch(`/unreact_to_post?repName=${repName}&postId=
-    ${postId}&reaction=${reaction}`);
 }
 
 //Creates an anchor tag for returning home
