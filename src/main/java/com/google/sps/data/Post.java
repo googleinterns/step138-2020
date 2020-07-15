@@ -14,17 +14,18 @@ public final class Post {
     private final List<Comment> replies;
     private final String tab;
     private final long id; 
-    private final Map<Reaction, Long> reactions; 
-
+    private final Map<Reaction, Long> reactions;
+    private final long timestamp;  
 
     public Post(Comment question, Comment answer, List<Comment> replies, String tab, 
-                long id, Map<Reaction, Long> reactions) {
+                long id, Map<Reaction, Long> reactions, long timestamp) {
         this.question = question;
         this.answer = answer;
         this.replies = replies;
         this.tab = tab;
         this.id = id;
         this.reactions = reactions; 
+        this.timestamp = timestamp; 
     }
 
     public Map<Reaction, Long> getReactions() {
@@ -49,6 +50,10 @@ public final class Post {
 
     public long getID() {
         return id; 
+    }
+
+    public long getTimestamp() {
+        return timestamp; 
     }
 
     @Override

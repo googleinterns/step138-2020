@@ -97,7 +97,7 @@ public final class DatastoreEntityToObjectConverterTest {
         reactions.put(Reaction.CRYING, (long) 0);
         reactions.put(Reaction.HEART, (long) 0);
         reactions.put(Reaction.LAUGHING, (long) 0);
-        this.post = new Post(commentQuestion, commentAnswer, replies, tab.getTabName(), postId, reactions); 
+        this.post = new Post(commentQuestion, commentAnswer, replies, tab.getTabName(), postId, reactions, 0); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", "username", 
