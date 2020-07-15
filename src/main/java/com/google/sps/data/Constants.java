@@ -31,5 +31,7 @@ public final class Constants {
     public static final String DEFAULT_POLITICIAN_IMAGE_URL = 
         "/images/defaultProfilePicture.png";
 
+    public static final double REACTIONS_IMPACT = 0.2;
+
     private Constants() {}
 }

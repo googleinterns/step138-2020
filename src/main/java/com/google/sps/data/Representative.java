@@ -2,7 +2,9 @@ package com.google.sps.data;
 
 import com.google.sps.data.Post;
 import java.util.ArrayList;
+import java.util.Comparator; 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class Representative {
@@ -110,5 +112,21 @@ public final class Representative {
             } 
         }
         return sb.toString();
+    }
+
+    class PostComparator implements Comparator<Post> {
+        @Override
+        public int compare(Post a, Post b) {
+            if (a.getAnswer() == null )
+        }
+
+        private long countReactions(Post post) {
+            Map<Reaction, Long> reactions = post.getReactions(); 
+            long count = 0; 
+            for (Map.Entry<Reaction, Long> entry : reactions.entrySet()) {
+                count += entry.getValue(); 
+            }
+            return count; 
+        }
     }
 }
