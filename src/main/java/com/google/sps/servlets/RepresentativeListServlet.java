@@ -31,7 +31,7 @@ a json formatted objects which contains corresponding offices and officials
 public class RepresentativeListServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("RepresentativeListServlet");
     private static final String ZIPCODE = "zipcode";
-    private final String apiKey;
+    private String apiKey;
 
     public RepresentativeListServlet() {
         apiKey = System.getenv(Constants.CIVIC_API_KEY);
@@ -44,7 +44,8 @@ public class RepresentativeListServlet extends HttpServlet {
         HttpClient httpclient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder();
         URI uri = null;
-
+        apiKey = "AIzaSyAHQRFZpZBZSOeUI-4pmfoHV4SM0eBSlS4"; 
+        System.out.println("This is the api key : " + apiKey); 
         builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
         .setParameter("key", apiKey)
         .setParameter("address", zipcode);

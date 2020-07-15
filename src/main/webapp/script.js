@@ -1,17 +1,3 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //Displays the posts from a tab 
 async function displayTab() {
     var rep = localStorage.getItem("rep");
@@ -125,6 +111,7 @@ async function displayFeed() {
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
+        displayReactions(post, repName);
     })
 };
 
@@ -137,6 +124,43 @@ function displayPost(post, feed) {
     qText.innerText = post.question.name + ": " + post.question.comment;
     newQuestion.appendChild(qText);
     feed.appendChild(newQuestion);
+}
+
+//Displays the representative's answer to a particular post
+function displayRepAnswer(post, repName) {
+    var answer = post.answer;
+    if (answer != undefined) {    
+        var postElement = document.getElementById(post.id);
+        var repAnswer = document.createElement("div");
+        repAnswer.innerText = repName + ": " + answer.comment;
+        postElement.appendChild(repAnswer);
+    }
+}
+
+//Displays the reactions for every post 
+function displayReactions(post, repName) {
+    var reactionsMap = post.reactions; 
+    var postElement = document.getElementById(post.id);
+    var reactionDiv = document.createElement("div");
+    for (var reaction in reactionsMap) {
+        var btn = document.createElement("button");
+        btn.setAttribute("class", "btn"); 
+        var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+        btn.innerHTML += reactionsMap[reaction]; 
+        reactionDiv.appendChild(btn); 
+    }
+    postElement.appendChild(reactionDiv);
+}
+
+async function reactToPost(reaction, postId, repName) {
+    await fetch(`/react_to_post?repName=${repName}&postId=
+    ${postId}&reaction=${reaction}`);
+}
+
+async function unreactToPost(reaction, postId, repName) {
+    await fetch(`/unreact_to_post?repName=${repName}&postId=
+    ${postId}&reaction=${reaction}`);
 }
 
 //Creates an anchor tag for returning home
@@ -259,17 +283,6 @@ function displayReplyList(post) {
     })
 }
 
-//Displays the representative's answer to a particular post
-function displayRepAnswer(post, repName) {
-    var answer = post.answer;
-    if (answer != undefined) {    
-        var postElement = document.getElementById(post.id);
-        var repAnswer = document.createElement("div");
-        repAnswer.innerText = repName + ": " + answer.comment;
-        postElement.appendChild(repAnswer);
-    }
-}
-
 //Creates form for user to ask a new question on rep's feed
 function createQuestionForm(repName, tabList, feedBool) {
     var feed = document.getElementsByClassName("newComment")[0];
@@ -341,7 +354,7 @@ function storeRepBooleanAndZipcodeAndRedirect() {
     window.location.href = "/repList.html";
 }
 
-//Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
+//Makes fetch to repListServlet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList() {
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
