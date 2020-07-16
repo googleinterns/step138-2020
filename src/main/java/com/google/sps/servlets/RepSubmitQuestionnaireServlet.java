@@ -51,15 +51,14 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
         String platforms = request.getParameter(PLATFORM_LIST);
         List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("\\*,")));
-        //Remove the * from the string of the last platform
-        platformList.get(platformList.size() - 1).replace("\\*", "");
-       
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
 
         Entity rep;
         long repId;
         try {
+            System.out.println("this is the repname: " + repName);
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
+            System.out.println(rep);
             repId = rep.getKey().getId(); 
             DatastoreManager.updateRepresentativeTabList(repId, tabIds);
             DatastoreManager.updateRepresentativeIntro(repId, intro);

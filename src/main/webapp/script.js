@@ -251,7 +251,7 @@ function displayReplyList(post) {
     replyList = post.replies;
     replyList.forEach((reply)=> {
         var postElement = document.getElementById(post.id);
-        var newReply = document.createElement("div");
+        var newReply = document.createElement("p");
         newReply.innerText = reply.name + ": " + reply.comment;
         postElement.appendChild(newReply);
     })
@@ -262,7 +262,7 @@ function displayRepAnswer(post, repName) {
     var answer = post.answer;
     if (answer != undefined) {    
         var postElement = document.getElementById(post.id);
-        var repAnswer = document.createElement("div");
+        var repAnswer = document.createElement("p");
         repAnswer.innerText = repName + ": " + answer.comment;
         postElement.appendChild(repAnswer);
     }
@@ -531,7 +531,10 @@ async function submitRepQuestionnaire() {
     for (var i = 0; i < topics.length; i++) {
         if (topics[i].value != "") {
             listOfTopics.push(topics[i].value);
-            listOfPlatforms.push(platforms[i].value + "*");
+            var platform = (platforms[i].value != "") ? platforms[i].value : 
+                "This representative has not provided a platform";
+            var platformString = (i == topics.length - 1) ? platform : platform + "*";
+            listOfPlatforms.push(platformString);
         }
     }
     var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
