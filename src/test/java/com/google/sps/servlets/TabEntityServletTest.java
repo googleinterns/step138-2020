@@ -51,8 +51,8 @@ public class TabEntityServletTest{
 
     @Test
     public void testTabInDatastore() throws Exception {
-        List<Long> tabId = DatastoreManager.insertTabsInDatastore(new ArrayList<String> 
-        (Arrays.asList("Education")), new ArrayList<String> (Arrays.asList("Platform")));
+        List<Long> tabId = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Education"), Arrays.asList("Platform"));
         when(request.getParameter("tabName")).thenReturn("Education");
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);

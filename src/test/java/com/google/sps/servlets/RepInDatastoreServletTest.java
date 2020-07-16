@@ -52,8 +52,7 @@ public class RepInDatastoreServletTest{
     @Test
     public void testRepInDatastore() throws Exception {
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList("Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+            Arrays.asList("Other"), Arrays.asList(""));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
         "President of the U.S.", "username", "password", tabIds);
         when(request.getParameter("repName")).thenReturn("Donald Trump");

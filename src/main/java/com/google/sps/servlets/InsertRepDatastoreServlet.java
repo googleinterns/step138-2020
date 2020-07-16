@@ -58,10 +58,11 @@ public class InsertRepDatastoreServlet extends HttpServlet {
         if (rep == null) {
             //Initializes rep's tab list with an Other tab prepended by repName for uniqueness
             List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList(repName.replaceAll("\\s+","") + "Other")), 
-                new ArrayList<String> (Arrays.asList("This is my Other tab for all the 
-                    posts that don't fit into any existing tab")));
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password, tabIds);   
+                Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
+                Arrays.asList("This is my Other tab for all the 
+                    posts that don't fit into any existing tab"));
+            DatastoreManager.insertRepresentativeInDatastore(
+                repName, title, username, password, tabIds);   
         }
         response.setContentType("text/html");
         response.getWriter().println(Boolean.toString(rep != null));
