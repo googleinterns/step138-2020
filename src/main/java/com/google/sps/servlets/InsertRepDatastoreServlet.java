@@ -57,9 +57,12 @@ public class InsertRepDatastoreServlet extends HttpServlet {
         }
         if (rep == null) {
             List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList(repName.replaceAll("\\s+","") + "Other")), 
-                new ArrayList<String> (Arrays.asList("")));
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password, tabIds);   
+                //Prepend the Other tag with repName for uniqueness and 
+                // remove spaces in repName with replaceAll
+                Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
+                Arrays.asList(""));
+            DatastoreManager.insertRepresentativeInDatastore(
+                repName, title, username, password, tabIds);   
         }
         response.setContentType("text/html");
         response.getWriter().println(Boolean.toString(rep != null));

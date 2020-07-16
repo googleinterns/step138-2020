@@ -2,10 +2,13 @@ package com.google.sps.data;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
 import com.google.sps.data.Post;
+import com.google.sps.data.Reaction;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -55,7 +58,16 @@ public final class DatastoreEntityToObjectConverter {
         List<Comment> comments = convertCommentsFromPost(postEntity); 
         String tab = (String) postEntity.getProperty(Constants.POST_TAB);
         long id = postEntity.getKey().getId();
-        return new Post(question, answer, comments, tab, id); 
+        List<String> reactionStrings = Reaction.allValues(); 
+        Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
+        for (String reactionString : reactionStrings) {
+            long reactionCount = 0; 
+            if (postEntity.getProperty(reactionString) != null) {
+                reactionCount = (long) (postEntity.getProperty(reactionString));
+            }
+            reactions.put(Reaction.fromString(reactionString), reactionCount); 
+        }
+        return new Post(question, answer, comments, tab, id, reactions); 
     }
 
     /**

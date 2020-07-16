@@ -4,6 +4,7 @@ import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
+import com.google.sps.data.Reaction;
 import com.google.sps.data.Representative;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -13,6 +14,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
@@ -72,7 +74,11 @@ public class DatastoreManager {
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
-        postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>()); 
+        postEntity.setProperty(Constants.POST_REPLIES, new ArrayList<>());
+        List<String> reactions = Reaction.allValues();
+        for (String reaction : reactions) {
+            postEntity.setProperty(reaction, (long) 0);
+        }
         postEntity.setProperty(Constants.POST_TAB, tab);
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
@@ -370,6 +376,41 @@ public class DatastoreManager {
     }
 
     /**
+     * Updates a post entity with a reaction
+     * @param postId ID of the post entity 
+     * @param reaction String of the reaction enum 
+     */ 
+    public static void addReactionToPost(long postId, String reaction) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        long reactionCount = 0; 
+        if (postEntity.getProperty(reaction) != null) {
+            reactionCount = (long) postEntity.getProperty(reaction); 
+        }
+        postEntity.setProperty(reaction, reactionCount + 1); 
+        datastore.put(postEntity);
+    }
+
+    /**
+     * Removes a reaction from a post entity 
+     * @param postId ID of the post entity 
+     * @param reaction String of the reaction enum 
+     */ 
+    public static void removeReactionFromPost(long postId, String reaction) 
+    throws EntityNotFoundException, UnsupportedOperationException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        Long reactionCount = (long) postEntity.getProperty(reaction); 
+        if (reactionCount == null || reactionCount == 0) {
+            throw new UnsupportedOperationException("No such reactions in post entity"); 
+        }
+        reactionCount -= 1;
+        postEntity.setProperty(reaction, reactionCount); 
+        datastore.put(postEntity);
+    }
+
+    /*
      * Searches datastore for a particular tab entity
      * @param tabName name of the tab to search datastore for 
      * @return the tab entity found in datastore 
