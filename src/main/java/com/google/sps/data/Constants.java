@@ -11,6 +11,7 @@ public final class Constants {
     public static final String REP_BLOB_KEY_URL = "BlobKeyUrl";
     public static final String REP_TABS = "Tabs";
 
+    public static final String PERSPECTIVE_API_KEY = "PERSPECTIVE_API_KEY";
     public static final String POST_ENTITY_TYPE = "Post";
     public static final String POST_QUESTION = "Question";
     public static final String POST_ANSWER = "Answer";
@@ -24,6 +25,7 @@ public final class Constants {
     public static final String COMMENT_ENTITY_TYPE = "Comment";
     public static final String COMMENT_NAME = "Nick Name";
     public static final String COMMENT_MSG = "Message";
+    public static final double COMMENT_TOXICITY_THRESHOLD = 0.7;
     public static final String CIVIC_API_KEY = "CIVIC_API_KEY";
     public static final String CIVIC_API_ENDPOINT = 
         "www.googleapis.com/civicinfo/v2/representatives";

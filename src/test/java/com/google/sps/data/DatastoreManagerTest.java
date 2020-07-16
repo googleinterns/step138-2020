@@ -18,6 +18,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import java.lang.IllegalArgumentException; 
 import java.lang.UnsupportedOperationException; 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -57,6 +58,15 @@ public final class DatastoreManagerTest {
 
         assertTrue(name.equals("Anonymous")); 
         assertTrue(msg.equals("Nice dude")); 
+    }
+
+    @Test
+    public void testInsertToxicCommentInDatastore() 
+    throws EntityNotFoundException{
+        String toxicComment = "I hate you and everything you stand for."; 
+        assertThrows(IllegalArgumentException.class, () -> {
+            DatastoreManager.insertCommentInDatastore("Anonymous", toxicComment); 
+        });
     }
 
     @Test
@@ -301,7 +311,8 @@ public final class DatastoreManagerTest {
     }
 
     @Test
-    public void testqueryForTabEntityWithName() throws EntityNotFoundException {
+    public void testqueryForTabEntityWithName() 
+    throws EntityNotFoundException {
         Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
         tabEntity.setProperty(Constants.TAB_NAME, "Education");
         tabEntity.setProperty(Constants.TAB_PLATFORM, "Platform");
@@ -315,7 +326,8 @@ public final class DatastoreManagerTest {
     @Test
     public void testInsertTabsInDatastore() 
     throws EntityNotFoundException{
-        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> 
+            (Arrays.asList("Education", "Police")), 
         new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
         Key tabEntityKey1 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(0));
         Entity tabEntity1 = (Entity) ds.get(tabEntityKey1);
@@ -336,7 +348,8 @@ public final class DatastoreManagerTest {
     @Test
     public void testUpdateRepresentativeTabList() 
     throws EntityNotFoundException{
-        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> 
+            (Arrays.asList("Education", "Police")), 
         new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
         Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
         Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));

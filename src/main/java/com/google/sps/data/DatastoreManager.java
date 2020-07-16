@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import java.lang.IllegalArgumentException; 
 import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertCommentInDatastore(String name, String message) {
+        if (Comment.isCommentToxic(message)) {
+            throw new IllegalArgumentException("Can't enter toxic comments."); 
+        }
         Entity commentEntity = new Entity(Constants.COMMENT_ENTITY_TYPE); 
         commentEntity.setProperty(Constants.COMMENT_MSG, message); 
         commentEntity.setProperty(Constants.COMMENT_NAME, name); 
