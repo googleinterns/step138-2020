@@ -333,6 +333,7 @@ function addTabDropdown(tabDropdown, tabName, repName) {
 function storeZipCodeAndNickname() {
     event.preventDefault();
     var nickname = document.getElementById("nickname").value;
+    nickname = (nickname == "") ? "Anonymous" : nickname;
     var zipcode = document.getElementById("zipcode").value;
     localStorage.setItem("nickname", nickname);
     localStorage.setItem("zipcode", zipcode);

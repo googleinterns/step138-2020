@@ -50,15 +50,13 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         List<String> topicList = Arrays.asList(topics.split(","));
         topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
         String platforms = request.getParameter(PLATFORM_LIST);
-        List<String> platformList = Arrays.asList(platforms.split("\\*,");
+        List<String> platformList = Arrays.asList(platforms.split("\\*,"));
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
 
         Entity rep;
         long repId;
         try {
-            System.out.println("this is the repname: " + repName);
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
-            System.out.println(rep);
             repId = rep.getKey().getId(); 
             DatastoreManager.updateRepresentativeTabList(repId, tabIds);
             DatastoreManager.updateRepresentativeIntro(repId, intro);
