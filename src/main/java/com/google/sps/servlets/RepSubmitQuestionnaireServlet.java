@@ -56,9 +56,7 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         Entity rep;
         long repId;
         try {
-            System.out.println("this is the repname: " + repName);
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName); 
-            System.out.println(rep);
             repId = rep.getKey().getId(); 
             DatastoreManager.updateRepresentativeTabList(repId, tabIds);
             DatastoreManager.updateRepresentativeIntro(repId, intro);

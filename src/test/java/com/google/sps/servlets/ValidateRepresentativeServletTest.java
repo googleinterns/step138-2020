@@ -79,6 +79,6 @@ public class ValidateRepresentativeServletTest{
         servlet.doPost(request, response);
 
         verify(response).sendRedirect(captor.capture());
-        assertTrue(("invalidAuthRep.html").equals(captor.getValue()));
+        assertTrue(("/errors/invalidAuthRep.html").equals(captor.getValue()));
     }
 }
