@@ -73,12 +73,9 @@ public class ReplyToPostServletTest{
         replies.add(reply); 
         List<Post> posts = new ArrayList<>(); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
-        reactions.put(Reaction.THUMBS_UP, (long) 0);
-        reactions.put(Reaction.THUMBS_DOWN, (long) 0);
-        reactions.put(Reaction.ANGRY, (long) 0);
-        reactions.put(Reaction.CRYING, (long) 0);
-        reactions.put(Reaction.HEART, (long) 0);
-        reactions.put(Reaction.LAUGHING, (long) 0);
+        for (Reaction reaction : Reaction.values()) { 
+            reactions.put(reaction, (long) 0);
+        }
         String tab = "Education";
         Post post = new Post(question, null, replies, tab, postId, reactions); 
         posts.add(post); 

@@ -1,17 +1,3 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //Displays the posts from a tab 
 async function displayTab() {
     
@@ -35,6 +21,7 @@ async function displayTab() {
 
     //Set values for tabname, title, image, and platform
     document.getElementById("tabName").innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+    document.getElementById("tabNameDiv").style.margin = "0px 16px 16px";
     document.getElementById("repTitle").innerText = representative.title;
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
     document.getElementById("platform").innerText = tabEntity.propertyMap.Platform;
@@ -125,6 +112,16 @@ async function displayFeed() {
         }
         displayRepAnswer(post, repName);
         displayReplyList(post);
+
+        //show reaction buttons 
+        var reactionDiv = document.createElement("div");
+        displayReaction(post, repName, reactionDiv, "ANGRY"); 
+        displayReaction(post, repName, reactionDiv, "CRYING"); 
+        displayReaction(post, repName, reactionDiv, "LAUGHING"); 
+        displayReaction(post, repName, reactionDiv, "HEART"); 
+        displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
+        displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
+        document.getElementById(post.id).appendChild(reactionDiv);
     })
 }
 
@@ -135,6 +132,39 @@ function addTabButton(tabName, container, repName) {
     tab.className = "w3-button w3-block w3-theme-l1 w3-left-align";
     tab.innerText = tabName.replace(repName.replace(/\s/g, ''), "");
     container.appendChild(tab);
+}
+
+function displayReaction(post, repName, reactionDiv, reaction) {
+    var btn = document.createElement("button");
+    btn.setAttribute("class", "btn"); 
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
+    if (localStorage.getItem(post.id + reaction) === "reacted") {
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px" border="1">';
+    }
+    else {
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    }
+    btn.innerHTML += post.reactions[reaction]; 
+    btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
+    reactionDiv.appendChild(btn); 
+}
+
+async function reactToPost(reaction, postId, repName) {
+    var reactionState = localStorage.getItem(postId + reaction); 
+    if (reactionState === null) {
+        localStorage.setItem(postId + reaction, "unreacted");
+    }
+    if (reactionState === "unreacted") {
+        await fetch(`/react_to_post?repName=${repName}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, "reacted");
+    }
+    else {
+        await fetch(`/unreact_to_post?repName=${repName}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, "unreacted");
+    }
+    window.location.reload(false); 
 }
 
 //Displays the question for a post
@@ -356,7 +386,7 @@ function storeRepBooleanAndZipcodeAndRedirect() {
     window.location.href = "/repList.html";
 }
 
-//Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
+//Makes fetch to repListServlet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList() {
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
@@ -396,7 +426,6 @@ function displayRepListUser(title, name, inDatastore, image) {
 
         listElement.onclick = function() {window.location.href = `feed.html?name=${name}`};
         imageElement.src = image;
-
         return displayRepList(listElement, imageElement, title, name);
     }
     return document.createElement("emptyNode");
