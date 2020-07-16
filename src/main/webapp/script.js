@@ -394,7 +394,7 @@ function displayRepListUser(title, name, inDatastore, image) {
     var imageElement = document.createElement("img");
     imageElement.className = "w3-bar-item w3-circle w3-hide-small";
     imageElement.style = "width:85px";
-    imageElement.src = (inDatastore) ? image : "/images/defaultProfilePicture.png";
+    imageElement.src = inDatastore ? image : "/images/defaultProfilePicture.png";
 
     if (inDatastore) {
         listElement.onclick = function() {window.location.href = `feed.html?name=${name}`};

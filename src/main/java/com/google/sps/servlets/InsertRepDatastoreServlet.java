@@ -39,6 +39,8 @@ public class InsertRepDatastoreServlet extends HttpServlet {
     private static final String PASSWORD = "password";
     private static final String REP_NAME = "repName";
     private static final String TITLE = "title";
+    private static final String OTHER_TAB_PLATFORM = 
+        "This is my Other tab for all the posts that don't fit into any existing tab";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -61,8 +63,7 @@ public class InsertRepDatastoreServlet extends HttpServlet {
                 //Prepend the Other tag with repName for uniqueness and 
                 // remove spaces in repName with replaceAll
                 Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
-                Arrays.asList("This is my Other tab for all the 
-                    posts that don't fit into any existing tab"));
+                Arrays.asList(OTHER_TAB_PLATFORM));
             DatastoreManager.insertRepresentativeInDatastore(
                 repName, title, username, password, tabIds);   
         }
