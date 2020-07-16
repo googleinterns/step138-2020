@@ -6,6 +6,7 @@ import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Reaction;
 import com.google.sps.data.Representative;
+import com.google.sps.data.ToxicityDetector;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
@@ -35,7 +36,8 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertCommentInDatastore(String name, String message) {
-        if (Comment.isCommentToxic(message)) {
+        ToxicityDetector detector = new ToxicityDetector(); 
+        if (detector.isCommentToxic(message)) {
             throw new IllegalArgumentException("Can't enter toxic comments."); 
         }
         Entity commentEntity = new Entity(Constants.COMMENT_ENTITY_TYPE); 
