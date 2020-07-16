@@ -58,8 +58,7 @@ public class FeedServletTest{
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(response.getWriter()).thenReturn(writer);
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList("Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+            Arrays.asList("Other"), Arrays.asList(""));
         DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
         "President", "username", "password", tabIds);
 

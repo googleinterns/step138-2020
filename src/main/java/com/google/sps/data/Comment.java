@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import java.util.Objects;
+import com.google.sps.data.Constants;
 
 public final class Comment {
     private final String name;
