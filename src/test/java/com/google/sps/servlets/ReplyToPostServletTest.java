@@ -77,7 +77,7 @@ public class ReplyToPostServletTest{
             reactions.put(reaction, (long) 0);
         }
         String tab = "Education";
-        Post post = new Post(question, null, replies, tab, postId, reactions); 
+        Post post = new Post(question, null, replies, tab, postId, reactions, 0); 
         posts.add(post); 
 
         servlet.doPost(request, response);
