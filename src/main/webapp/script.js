@@ -365,7 +365,7 @@ async function getRepList() {
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
     if (representatives["error"]) {
-        window.location.href = "zipcodeNotFound.html";
+        window.location.href = "/errors/zipcodeNotFound.html";
         return;
     }
     var representativeList = document.getElementById("repList");
@@ -473,7 +473,7 @@ async function insertRepDatastore() {
     var usernameTaken = await fetch(`/insert_rep_datastore?username=${username}&password=
     ${password}&repName=${repName}&title=${title}`).then(response => response.text());
     window.location.href = (usernameTaken.trim() == "true") ?  
-    "usernameTaken.html" : `repQuestionnaire.html?name=${repName}`;
+    "/errors/usernameTaken.html" : `repQuestionnaire.html?name=${repName}`;
 }
 
 //Go to previous page
