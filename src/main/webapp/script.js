@@ -62,7 +62,7 @@ async function displayTab() {
     }
     
     posts.forEach((post) => {
-        displayPost(post);
+        displayPost(post, false);
         var question = document.getElementById(post.id);
 
         //answer button
@@ -113,7 +113,8 @@ async function displayFeed() {
         document.getElementById("posts").appendChild(emptyFeed);
     }
     postList.forEach((post) => {
-        displayPost(post);
+        var firstPost = (rep.trim() == "true" && post == postList[0]) ? true : false;
+        displayPost(post, firstPost);
         var question = document.getElementById(post.id);
         //answer button
         if (rep.trim() == "true") {
@@ -137,10 +138,14 @@ function addTabButton(tabName, container, repName) {
 }
 
 //Displays the question for a post
-function displayPost(post) {
+function displayPost(post, firstPost) {
     var posts = document.getElementById("posts");
     var newQuestion = document.createElement("div");
-    newQuestion.className = "w3-container w3-card w3-white w3-round w3-margin";
+    newQuestion.className = "w3-container w3-card w3-white w3-round";
+    newQuestion.style.margin = (firstPost) ? "0px 16px 16px" : "16px";
+    if (firstPost) {
+        newQuestion.style.marginTop = 0;
+    }
     newQuestion.setAttribute("id", post.id);
     var name = document.createElement("h4");
     name.innerText = post.question.name;
@@ -171,7 +176,10 @@ function returnToFeed(repName, feed) {
 //Creates an button for representative answer
 function createAnswerButton(postId, repName, question) {
     var repAnswer = document.createElement("button");
-    repAnswer.onclick = function() {createAnswerForm(postId, repName)};
+    repAnswer.onclick = function() {
+        var answerForm = document.getElementById("answerForm" + postId);
+        answerForm.style.display = (answerForm.style.display == "none") ? "block" : "none";
+    };
     repAnswer.className = "w3-button w3-theme-d2 w3-margin-bottom";
     repAnswer.innerText = "Answer";
     var icon = document.createElement("i");
@@ -181,12 +189,16 @@ function createAnswerButton(postId, repName, question) {
     formDiv.id = "answerForm" + postId;
     question.appendChild(repAnswer);
     question.appendChild(formDiv);
+    createAnswerForm(postId, repName);
 }
 
 //Creates a button for users to respond to a question
 function createReplyButton(postId, repName, question) {
     var replyBtn = document.createElement("button");
-    replyBtn.onclick = function() {createReplyForm(postId, repName)};
+    replyBtn.onclick = function() {
+        var replyForm = document.getElementById("replyForm" + postId);
+        replyForm.style.display = (replyForm.style.display == "none") ? "block" : "none";
+    };
     replyBtn.className = "w3-button w3-theme-d2 w3-margin-bottom";
     var replyIcon = document.createElement("i");
     replyIcon.setAttribute("class", "fa fa-comments");
@@ -195,6 +207,7 @@ function createReplyButton(postId, repName, question) {
     formDiv.id = "replyForm" + postId;
     question.appendChild(replyBtn);
     question.appendChild(formDiv);
+    createReplyForm(postId, repName);
 }
 
 //Navigate to a particular tab
@@ -206,7 +219,7 @@ function getTab(tab) {
 
 //Creates a reply form
 function createReplyForm(questionID, repName) {
-    var question = document.getElementById("replyForm" + questionID);
+    var formDiv = document.getElementById("replyForm" + questionID);
     var nickname = localStorage.getItem("nickname");
 
     var replyForm = document.createElement("form");
@@ -222,12 +235,15 @@ function createReplyForm(questionID, repName) {
     submitBtn.type = "submit";
 
     replyForm.appendChild(submitBtn);
-    question.appendChild(replyForm);       
+    formDiv.appendChild(replyForm);
+    linebreak = document.createElement("br");
+    formDiv.appendChild(linebreak);
+    formDiv.style.display = "none";       
 }
 
 //Creates an answer form 
 function createAnswerForm(questionID, repName) {
-    var question = document.getElementById("answerForm" + questionID);
+    var formDiv = document.getElementById("answerForm" + questionID);
 
     var ansForm = document.createElement("form");
     ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${repName}`);
@@ -243,7 +259,10 @@ function createAnswerForm(questionID, repName) {
     
     ansForm.appendChild(inputElement);
     ansForm.appendChild(submitBtn);
-    question.appendChild(ansForm);
+    formDiv.appendChild(ansForm);
+    linebreak = document.createElement("br");
+    formDiv.appendChild(linebreak);
+    formDiv.style.display = "none";       
 }
 
 //Displays the list of replies for a particular post
@@ -350,42 +369,37 @@ async function getRepList() {
 
 //Adds list element for each rep with link to rep's feed if account created
 function displayRepListUser(title, name, inDatastore, image) {
-    var listElement = document.createElement('li')
-    listElement.className = "w3-bar";
-    
-    var imageElement = document.createElement("img");
-    imageElement.className = "w3-bar-item w3-circle w3-hide-small";
-    imageElement.style = "width:85px";
-
     if (inDatastore) {
+        var listElement = document.createElement('li')
+        listElement.className = "w3-bar";
+        
+        var imageElement = document.createElement("img");
+        imageElement.className = "w3-bar-item w3-circle w3-hide-small ";
+        imageElement.style = "width:85px";
+
         listElement.onclick = function() {window.location.href = `feed.html?name=${name}`};
         imageElement.src = image;
-    }
-    else{
-        imageElement.src = "/images/defaultProfilePicture.png";
-    }
 
-    return displayRepList(listElement, imageElement, title, name);
+        return displayRepList(listElement, imageElement, title, name);
+    }
+    return document.createElement("emptyNode");
 }
 
 //Displays rep list and adds href linking to create account html if rep not already in datastore
 function displayRepListLogin(title, name, inDatastore, image) {
-    const listElement = document.createElement('li')
-    listElement.className = "w3-bar";
-    
-    const imageElement = document.createElement("img");
-    imageElement.className = "w3-bar-item w3-circle w3-hide-small";
-    imageElement.style = "width:85px";
-
     if (inDatastore == false) {
+        const listElement = document.createElement('li')
+        listElement.className = (inDatastore == false) ? "w3-bar w3-hoverable" : "w3-bar";
+        
+        const imageElement = document.createElement("img");
+        imageElement.className = "w3-bar-item w3-circle w3-hide-small";
+        imageElement.style = "width:85px";
         listElement.onclick = function() {window.location.href = `repUsernamePassword.html?name=${name}&title=${title}`};
         imageElement.src = "/images/defaultProfilePicture.png";
-    }
-    else{
-        imageElement.src = image;
-    }
 
-    return displayRepList(listElement, imageElement, title, name);
+        return displayRepList(listElement, imageElement, title, name);
+    }
+    return document.createElement("emptyNode");
 }
 
 //Abstracts out the common aspects of repList regardless of user or rep
