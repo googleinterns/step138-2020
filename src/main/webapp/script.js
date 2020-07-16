@@ -25,6 +25,9 @@ async function displayTab() {
     document.getElementById("repTitle").innerText = representative.title;
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
     document.getElementById("platform").innerText = tabEntity.propertyMap.Platform;
+    document.getElementById("repName").innerText = repName;
+    document.getElementById("repContainer").onclick = function() {
+        window.location.href = `/politicianPage.html?name=${repName}`};
 
     //Add a button to return to feed
     var feedElement = document.getElementById("feed");
@@ -80,6 +83,8 @@ async function displayFeed() {
     var representative = await response.json();
     document.getElementById("repTitle").innerText = representative.title;
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
+    document.getElementById("repContainer").onclick = function() {
+        window.location.href = `/politicianPage.html?name=${repName}`};
 
     //Fetches the list of tabs for a particular rep
     var response = await fetch(`rep_tabs?repName=${repName}`);
