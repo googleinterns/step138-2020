@@ -14,54 +14,63 @@
 
 //Displays the posts from a tab 
 async function displayTab() {
+    
     var rep = localStorage.getItem("rep");
     var urlParams = new URLSearchParams(window.location.search);
 
     //Pull values from the url
     var repName = decodeURI(urlParams.get('name')); 
+    if (rep.trim() == "true") {
+        localStorage.setItem("nickname", repName);
+    }
     var tabName = decodeURI(urlParams.get('tab'));
-    document.getElementById("tabName").innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+
+    //fetch the representative entity corresponding to repName
+    var response = await fetch(`/feed?repName=${repName}`);
+    var representative = await response.json();
 
     //fetch the tabEntity corresponding to tabName
     var tabResponse = await fetch(`tab_entity?tabName=${tabName}`);
     var tabEntity = await tabResponse.json();
+
+    //Set values for tabname, title, image, and platform
+    document.getElementById("tabName").innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+    document.getElementById("repTitle").innerText = representative.title;
+    document.getElementById("repProfilePic").src = representative.blobKeyUrl;
     document.getElementById("platform").innerText = tabEntity.propertyMap.Platform;
 
-    if (rep.trim() == "true") {
-        localStorage.setItem("nickname", repName);
-    }
+    //Add a button to return to feed
+    var feedElement = document.getElementById("feed");
+    var feedButton = document.createElement("button");
+    feedButton.onclick = function() {window.location.href = `/feed.html?name=${repName}`};
+    feedButton.className = "w3-button w3-block w3-theme-l1 w3-left-align";
+    feedButton.innerText = "Back to Feed";
+    feedElement.appendChild(feedButton);
 
     //Pull the posts under a particular tag
     var tabPostsResponse = await fetch(`/tab_posts?repName=${repName}&tab=${tabName}`);
     var posts = await tabPostsResponse.json();
-    var feed = document.getElementById("mid_col");
-
-    //display rep name 
-    var displayRepName = document.createElement("div");
-    displayRepName.innerText = repName;
-    feed.appendChild(displayRepName);
 
     if (rep.trim() != "true") {
         createQuestionForm(repName, [{"name" : tabName}], false);
     }
-    else if(posts.length == 0) {
-        var emptyTab = document.createElement("p");
-        emptyTab.innerText = "There are currently no questions associated with this tab."
-        feed.appendChild(emptyTab);
+    else if (posts.length == 0) {
+        var emptyFeed = document.createElement("p");
+        emptyFeed.innerText = "There are currently no questions under this tab."
+        emptyFeed.className = "col-sm-10";
+        document.getElementById("posts").appendChild(emptyFeed);
     }
-    returnHomeAnchor(feed);
-    returnToFeed(repName, feed);
-    returnPoliticianPageAnchor(feed, repName);
+    
     posts.forEach((post) => {
-        displayPost(post, feed);
+        displayPost(post);
         var question = document.getElementById(post.id);
-
-        //reply button
-        createReplyButton(post.id, repName, question);
 
         //answer button
         if (rep.trim() == "true") {
             createAnswerButton(post.id, repName, question);
+        }
+        else {
+            createReplyButton(post.id, repName, question);
         }
 
         displayRepAnswer(post, repName);
@@ -69,7 +78,7 @@ async function displayTab() {
     })
 }
 
-//Displays the feed for a particular rep
+//display the feed
 async function displayFeed() {
     var rep = localStorage.getItem("rep");
     var urlParams = new URLSearchParams(window.location.search);
@@ -77,76 +86,76 @@ async function displayFeed() {
     if (rep.trim() == "true") {
         localStorage.setItem("nickname", repName);
     }
-
-    //Fetches the list of tabs for a particular rep
-    var response = await fetch(`rep_tabs?repName=${repName}`);
-    var tabList = await response.json();
-
-    //Displays button on side bar for each tab linking to tab feed
-    var leftCol = document.getElementById("left_col");
-    tabList.forEach((tab) => {
-        addTabButton(tab.name, leftCol, repName);
-    });
+    document.getElementById("repName").innerText = repName;
 
     //Fetches the representative entity associated with name
     var response = await fetch(`/feed?repName=${repName}`);
     var representative = await response.json();
+    document.getElementById("repTitle").innerText = representative.title;
+    document.getElementById("repProfilePic").src = representative.blobKeyUrl;
+
+    //Fetches the list of tabs for a particular rep
+    var response = await fetch(`rep_tabs?repName=${repName}`);
+    var tabList = await response.json();
+    var tabs = document.getElementById("tabs");
+    tabList.forEach((tab) => {
+        addTabButton(tab.name, tabs, repName);
+    });
+
     postList = representative.posts;
-    repName = representative.name;
-
-    var feed = document.getElementById("mid_col");
-
-    //display rep name 
-    var displayRepName = document.createElement("div");
-    displayRepName.innerText = repName;
-    feed.appendChild(displayRepName);
-
     if (rep.trim() != "true") {
         createQuestionForm(repName, tabList, true);
     }
     else if (postList.length == 0) {
         var emptyFeed = document.createElement("p");
         emptyFeed.innerText = "There are currently no questions on your feed."
-        feed.appendChild(emptyFeed);
+        emptyFeed.className = "col-sm-10";
+        document.getElementById("posts").appendChild(emptyFeed);
     }
-    returnHomeAnchor(feed);
-    returnPoliticianPageAnchor(feed, repName);
     postList.forEach((post) => {
-        displayPost(post, feed);
+        displayPost(post);
         var question = document.getElementById(post.id);
-
-        //reply button
-        createReplyButton(post.id, repName, question);
-
         //answer button
         if (rep.trim() == "true") {
             createAnswerButton(post.id, repName, question);
         }
-
+        else {
+            createReplyButton(post.id, repName, question);
+        }
         displayRepAnswer(post, repName);
         displayReplyList(post);
     })
-};
-
-//Displays the question for a post
-function displayPost(post, feed) {
-    var newQuestion = document.createElement("div");
-    newQuestion.setAttribute("class", "newComment");
-    newQuestion.setAttribute("id", post.id);
-    var qText = document.createElement("p");
-    qText.innerText = post.question.name + ": " + post.question.comment;
-    newQuestion.appendChild(qText);
-    feed.appendChild(newQuestion);
 }
 
-//Creates an anchor tag for returning home
-function returnHomeAnchor(feed) {
-    var returnHome = document.createElement("a");
-    returnHome.href = "index.html";
-    returnHome.innerText = "Return to Login";
+//Adds a tab button
+function addTabButton(tabName, container, repName) {
+    var tab = document.createElement("button");
+    tab.onclick = function() {return getTab(tabName);} 
+    tab.className = "w3-button w3-block w3-theme-l1 w3-left-align";
+    tab.innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+    container.appendChild(tab);
+}
+
+//Displays the question for a post
+function displayPost(post) {
+    var posts = document.getElementById("posts");
+    var newQuestion = document.createElement("div");
+    newQuestion.className = "w3-container w3-card w3-white w3-round w3-margin";
+    newQuestion.setAttribute("id", post.id);
+    var name = document.createElement("h4");
+    name.innerText = post.question.name;
+    var hrElement = document.createElement("hr");
+    hrElement.className = "w3-clear";
+    var question = document.createElement("p");
+    question.innerText = post.question.comment;
     linebreak = document.createElement("br");
-    returnHome.appendChild(linebreak);
-    feed.appendChild(returnHome);
+    hrElement.appendChild(linebreak);
+
+    newQuestion.appendChild(linebreak);
+    newQuestion.appendChild(name);
+    newQuestion.appendChild(hrElement);
+    newQuestion.appendChild(question);
+    posts.appendChild(newQuestion);
 }
 
 //Creates anchor tag that links back to representative's feed
@@ -159,45 +168,33 @@ function returnToFeed(repName, feed) {
     feed.appendChild(returnToFeed);
 }
 
-//Creates an anchor tag for going to politician's page
-function returnPoliticianPageAnchor(feed, repName) {
-    var politicianPage = document.createElement("a");
-    politicianPage.href = `politicianPage.html?name=${repName}`;
-    politicianPage.innerText = "Beyond the Politician";
-    linebreak = document.createElement("br");
-    politicianPage.appendChild(linebreak);
-    feed.appendChild(politicianPage);
-}
-
 //Creates an button for representative answer
 function createAnswerButton(postId, repName, question) {
     var repAnswer = document.createElement("button");
-    repAnswer.addEventListener("click", createAnswerForm(postId, repName));
-    repAnswer.setAttribute("class", "btn");
-    var repAnswerIcon = document.createElement("i");
-    repAnswerIcon.setAttribute("class", "fa fa-envelope-open");
-    repAnswer.appendChild(repAnswerIcon);
+    repAnswer.onclick = function() {createAnswerForm(postId, repName)};
+    repAnswer.className = "w3-button w3-theme-d2 w3-margin-bottom";
+    repAnswer.innerText = "Answer";
+    var icon = document.createElement("i");
+    icon.className = "fa fa-comment";
+    repAnswer.appendChild(icon);
+    var formDiv = document.createElement("div");
+    formDiv.id = "answerForm" + postId;
     question.appendChild(repAnswer);
+    question.appendChild(formDiv);
 }
 
-//Creates a button for users or the representative to add a reply
+//Creates a button for users to respond to a question
 function createReplyButton(postId, repName, question) {
     var replyBtn = document.createElement("button");
-    replyBtn.addEventListener("click", createReplyForm(postId, repName));
-    replyBtn.setAttribute("class", "btn");
+    replyBtn.onclick = function() {createReplyForm(postId, repName)};
+    replyBtn.className = "w3-button w3-theme-d2 w3-margin-bottom";
     var replyIcon = document.createElement("i");
     replyIcon.setAttribute("class", "fa fa-comments");
     replyBtn.appendChild(replyIcon);
+    var formDiv = document.createElement("div");
+    formDiv.id = "replyForm" + postId;
     question.appendChild(replyBtn);
-}
-
-//Adds a tab button
-function addTabButton(tabName, leftCol, repName) {
-    var inputElement = document.createElement("input");
-    inputElement.type = "button";
-    inputElement.value = tabName.replace(repName.replace(/\s/g, ''), "");
-    inputElement.onclick = function() {return getTab(tabName);} 
-    leftCol.appendChild(inputElement);
+    question.appendChild(formDiv);
 }
 
 //Navigate to a particular tab
@@ -209,20 +206,20 @@ function getTab(tab) {
 
 //Creates a reply form
 function createReplyForm(questionID, repName) {
-    var question = document.getElementById(questionID);
+    var question = document.getElementById("replyForm" + questionID);
     var nickname = localStorage.getItem("nickname");
 
     var replyForm = document.createElement("form");
     replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}&repName=${repName}`);
     replyForm.setAttribute("method", "post");
 
-    var inputForm = document.createElement("input");
-    inputForm.setAttribute("type", "text");
-    inputForm.setAttribute("name", "reply");
-    replyForm.appendChild(inputForm);
+    var inputElement = document.createElement("input");
+    inputElement.setAttribute("type", "text");
+    inputElement.setAttribute("name", "reply");
+    replyForm.appendChild(inputElement);
 
-    var submitBtn = document.createElement("button");
-    submitBtn.setAttribute("class", "btn submit-btn");
+    var submitBtn = document.createElement("input");
+    submitBtn.type = "submit";
 
     replyForm.appendChild(submitBtn);
     question.appendChild(replyForm);       
@@ -230,21 +227,22 @@ function createReplyForm(questionID, repName) {
 
 //Creates an answer form 
 function createAnswerForm(questionID, repName) {
-    var question = document.getElementById(questionID);
+    var question = document.getElementById("answerForm" + questionID);
 
     var ansForm = document.createElement("form");
     ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${repName}`);
     ansForm.setAttribute("method", "post");
 
-    var inputForm = document.createElement("input");
-    inputForm.setAttribute("type", "text");
-    inputForm.setAttribute("name", "answer");
-    ansForm.appendChild(inputForm);
+    var inputElement = document.createElement("input");
+    inputElement.type = "text";
+    inputElement.name = "answer";
+    ansForm.appendChild(inputElement);
 
-    var submitBtn = document.createElement("button");
-    submitBtn.setAttribute("class", "btn submit-btn");
+    var submitBtn = document.createElement("input");
+    submitBtn.type = "submit";
+    
+    ansForm.appendChild(inputElement);
     ansForm.appendChild(submitBtn);
-
     question.appendChild(ansForm);
 }
 
@@ -272,37 +270,18 @@ function displayRepAnswer(post, repName) {
 
 //Creates form for user to ask a new question on rep's feed
 function createQuestionForm(repName, tabList, feedBool) {
-    var feed = document.getElementsByClassName("newComment")[0];
+    document.getElementById("feedContainer").style.display = "block";
     var nickname = localStorage.getItem("nickname");
-    var newQuestionForm = document.createElement("form");
+
+    var newQuestionForm = document.getElementById("newQuestionForm");
     newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${repName}&feed=${feedBool}`);
     newQuestionForm.setAttribute("method", "post");
 
-    var inputForm = document.createElement("input");
-    inputForm.setAttribute("type", "text");
-    inputForm.setAttribute("name", "comment");
-    newQuestionForm.appendChild(inputForm);
-
-    var tabLabel = document.createElement("label");
-    tabLabel.setAttribute("for", "tab");
-    tabLabel.innerText = "Choose a label: ";
-    newQuestionForm.appendChild(tabLabel);
-
-    var tabDropdown = document.createElement("select");
-    tabDropdown.name = "tab";
-    tabDropdown.id = "tab";
+    var tabDropdown = document.getElementById("tabDropDown");
 
     tabList.forEach((tab) => {
         addTabDropdown(tabDropdown, tab.name, repName);
     });
-
-    newQuestionForm.appendChild(tabDropdown);
-
-    var submitBtn = document.createElement("button");
-    submitBtn.setAttribute("class", "btn submit-btn");
-    newQuestionForm.appendChild(submitBtn);
-
-    feed.appendChild(newQuestionForm);
 };
 
 //Add an option in the tab dropdown menu
