@@ -375,34 +375,76 @@ async function getRepList() {
     var officials = representatives.officials;
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]) {
-            var bool = await checkIfRepInDatastore(officials[number]["name"]);
-            representativeList.appendChild(displayFunction(offices[i]["name"] + ": " + 
-            officials[number]["name"], offices[i]["name"], officials[number]["name"], bool));
+            var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
+            var rep;
+            if (repInDatastore) {
+                var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
+                rep = await repResponse.json();
+            }
+            representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
 }
 
 //Adds list element for each rep with link to rep's feed if account created
-function displayRepListUser(text, title, name, inDatastore) {
-    const listElement = document.createElement('li')
-    const anchorElement = document.createElement('a');
+function displayRepListUser(title, name, inDatastore, image) {
+    var listElement = document.createElement('li')
+    listElement.className = "w3-bar";
+    
+    var imageElement = document.createElement("img");
+    imageElement.className = "w3-bar-item w3-circle w3-hide-small";
+    imageElement.style = "width:85px";
+
     if (inDatastore) {
-        anchorElement.href = `feed.html?name=${name}`;
+        listElement.onclick = function() {window.location.href = `feed.html?name=${name}`};
+        imageElement.src = image;
     }
-    anchorElement.innerText = text;
-    listElement.appendChild(anchorElement);
-    return listElement;
+    else{
+        imageElement.src = "/images/defaultProfilePicture.png";
+    }
+
+    return displayRepList(listElement, imageElement, title, name);
 }
 
 //Displays rep list and adds href linking to create account html if rep not already in datastore
-function displayRepListLogin(text, title, name, inDatastore) {
+function displayRepListLogin(title, name, inDatastore, image) {
     const listElement = document.createElement('li')
-    const anchorElement = document.createElement('a');
+    listElement.className = "w3-bar";
+    
+    const imageElement = document.createElement("img");
+    imageElement.className = "w3-bar-item w3-circle w3-hide-small";
+    imageElement.style = "width:85px";
+
     if (inDatastore == false) {
-        anchorElement.href = `repUsernamePassword.html?name=${name}&title=${title}`;
+        listElement.onclick = function() {window.location.href = `repUsernamePassword.html?name=${name}&title=${title}`};
+        imageElement.src = "/images/defaultProfilePicture.png";
     }
-    anchorElement.innerText = text;
-    listElement.appendChild(anchorElement);
+    else{
+        imageElement.src = image;
+    }
+
+    return displayRepList(listElement, imageElement, title, name);
+}
+
+//Abstracts out the common aspects of repList regardless of user or rep
+function displayRepList(listElement, imageElement, title, name) {
+    const divElement = document.createElement("div");
+    divElement.className = "w3-bar-item";
+
+    const titleSpanElement = document.createElement("span");
+    titleSpanElement.innerText = title;
+    
+    const nameSpanElement = document.createElement("span");
+    nameSpanElement.innerText = name;
+    nameSpanElement.className = "w3-large";
+    linebreak = document.createElement("br");
+    nameSpanElement.appendChild(linebreak);
+
+    divElement.appendChild(nameSpanElement);
+    divElement.appendChild(titleSpanElement);
+    listElement.appendChild(imageElement);
+    listElement.appendChild(divElement);
+
     return listElement;
 }
 
@@ -511,15 +553,12 @@ function questionnaireInnerDiv(){
     return innerDiv;
 }
 
-
 //Grab tabs from questionnaire
 async function submitRepQuestionnaire() {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name'));
     var topics = document.getElementsByClassName("topic");
-    console.log("These are the topics: " + topics);
     var platforms = document.getElementsByClassName("platform");
-    console.log("These are the platforms: " + platforms);
     var intro = document.getElementById("intro").value;
     var listOfTopics = [];
     var listOfPlatforms = [];
