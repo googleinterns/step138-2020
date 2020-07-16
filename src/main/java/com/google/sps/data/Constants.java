@@ -24,7 +24,7 @@ public final class Constants {
     public static final String COMMENT_ENTITY_TYPE = "Comment";
     public static final String COMMENT_NAME = "Nick Name";
     public static final String COMMENT_MSG = "Message";
-    public static final String CIVIC_API_KEY = "CIVIC_API_KEY";
+    public static final String CIVIC_API_KEY = "AIzaSyAHQRFZpZBZSOeUI-4pmfoHV4SM0eBSlS4";
     public static final String CIVIC_API_ENDPOINT = 
         "www.googleapis.com/civicinfo/v2/representatives";
     public static final String DEFAULT_POLITICIAN_IMAGE_URL = 

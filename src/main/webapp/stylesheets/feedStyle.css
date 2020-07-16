@@ -1,88 +1,13 @@
-@import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i,900,900i');
-
-body {
-  font-family: 'Merriweather', serif;
-  font-size: 0.5em;
-  margin: 0px;
-  padding: 0px;
+#left_col{
+    float: left;
+    padding-left: -15px;
 }
 
-.wrap {
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background-color: aqua;
+#page_container{
+    max-width: 1400px;
+    margin-top: 80px;
 }
 
-.navigationBar {
-  width: 100%;
-  height: 55px;
-  overflow: hidden;
-  background-color: aquamarine;
-}
-
-.body_main {
-  width: 1024px;
-  height: auto;
-  margin-top: 10px;
-  overflow: hidden;
-  background-color: white;
-}
-
-.leftCol {
-  width: 23%;
-  height: 300px;
-  float: left;
-  background-color: tomato;
-}
-
-.midCol {
-  width: 50%;
-  height: 100%;
-  margin-left: 2%;
-  float: left;
-  background-color: tomato;
-}
-
-.newComment {
-  width: 90%;
-  height: auto;
-  margin: 7px;
-  float: left;
-  background-color: aqua;
-}
-
-p {
-  color: #383838;
-  font-size: 1.5em;
-  font-weight: 900;
-}
-
-.btn {
-  height: 5%;
-  width: 5%;
-  background-color: aqua; 
-  border: none; 
-  color: black; 
-  margin-right: 2.5%;
-  cursor: pointer; 
-}
-
-.btn:hover {
-  background-color: RoyalBlue;
-}
-
-i {
-    height: 5%;
-}
-
-.username {
-    font-size: .75em;
-}
-
-.submit-btn {
-    font-size: 1.2em;
-    color: black;
-    text-align: center;
-    padding: 0px;
+#repProfilePic{
+    height: 106px;
 }
