@@ -9,9 +9,9 @@ import java.util.Map;
 import com.google.sps.data.Constants;
 
 public final class ToxicityDetector {
-    private final String apiKey; 
+    private static final String apiKey = System.getenv(Constants.PERSPECTIVE_API_KEY); 
 
-    public boolean isCommentToxic(String msg) {
+    public static boolean isCommentToxic(String msg) {
         PerspectiveAPI pAPI = PerspectiveAPI.create(apiKey); 
         AnalyzeCommentResponse response = pAPI.analyze(msg); 
         if (response == null) {
@@ -28,7 +28,5 @@ public final class ToxicityDetector {
         return toxicity >= Constants.COMMENT_TOXICITY_THRESHOLD; 
     }
 
-    public ToxicityDetector() {
-        apiKey = System.getenv(Constants.PERSPECTIVE_API_KEY); 
-    }
+    private ToxicityDetector() {}
 }

@@ -36,8 +36,7 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertCommentInDatastore(String name, String message) {
-        ToxicityDetector detector = new ToxicityDetector(); 
-        if (detector.isCommentToxic(message)) {
+        if (ToxicityDetector.isCommentToxic(message)) {
             throw new IllegalArgumentException("Can't enter toxic comments."); 
         }
         Entity commentEntity = new Entity(Constants.COMMENT_ENTITY_TYPE); 
