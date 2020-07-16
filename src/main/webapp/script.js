@@ -483,11 +483,7 @@ function questionnaireContainerDiv(){
 function questionnaireLabel(topic){
     var label = document.createElement("label");
     label.className = "control-label col-sm-2";
-    if (topic) {
-        label.innerText = "Topic: "
-    } else {
-        label.innerText = "Platform: "
-    }
+    label.innerText = topic ? "Topic: " : "Platform: ";
     return label;
 }
 
