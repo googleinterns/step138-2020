@@ -375,13 +375,13 @@ async function getRepList() {
     var officials = representatives.officials;
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]) {
-            var bool = await checkIfRepInDatastore(officials[number]["name"]);
+            var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
             var rep;
-            if (bool) {
+            if (repInDatastore) {
                 var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
                 rep = await repResponse.json();
             }
-            representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], bool, rep.blobKeyUrl));
+            representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
 }

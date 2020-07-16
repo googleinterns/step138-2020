@@ -58,6 +58,8 @@ public class InsertRepDatastoreServlet extends HttpServlet {
         if (rep == null) {
             //Initializes rep's tab list with an Other tab prepended by repName for uniqueness
             List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                //Prepend the Other tag with repName for uniqueness and 
+                // remove spaces in repName with replaceAll
                 Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
                 Arrays.asList("This is my Other tab for all the 
                     posts that don't fit into any existing tab"));

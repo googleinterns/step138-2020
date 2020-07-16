@@ -161,8 +161,7 @@ public final class DatastoreManagerTest {
     @Test
     public void testQueryForRepresentativeObjectWithName() {
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList("Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+            Arrays.asList("Other"), Arrays.asList(""));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
             "President of the US", "username", "password", tabIds);
         
