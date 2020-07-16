@@ -128,18 +128,22 @@ function displayReaction(post, repName, reactionDiv, reaction) {
     var btn = document.createElement("button");
     btn.setAttribute("class", "btn"); 
     var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
-    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
-    //btn.innerHTML = '<img src="reaction_icons/thumbs_down.jpg" width="20px" height="20px">';
+    if (localStorage.getItem(post.id + reaction) === "reacted") {
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px" border="1">';
+    }
+    else {
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    }
     btn.innerHTML += post.reactions[reaction]; 
     btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
     reactionDiv.appendChild(btn); 
 }
 
 async function reactToPost(reaction, postId, repName) {
-    if (localStorage.getItem(postId + reaction) === null) {
+    var reactionState = localStorage.getItem(postId + reaction); 
+    if (reactionState === null) {
         localStorage.setItem(postId + reaction, "unreacted");
     }
-    var reactionState = localStorage.getItem(postId + reaction); 
     if (reactionState === "unreacted") {
         await fetch(`/react_to_post?repName=${repName}&postId=
             ${postId}&reaction=${reaction}`);
