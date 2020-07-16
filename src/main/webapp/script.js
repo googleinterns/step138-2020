@@ -363,6 +363,7 @@ function addTabDropdown(tabDropdown, tabName, repName) {
 function storeZipCodeAndNickname() {
     event.preventDefault();
     var nickname = document.getElementById("nickname").value;
+    nickname = (nickname == "") ? "Anonymous" : nickname;
     var zipcode = document.getElementById("zipcode").value;
     localStorage.setItem("nickname", nickname);
     localStorage.setItem("zipcode", zipcode);
@@ -398,6 +399,7 @@ async function getRepList() {
         window.location.href = "/errors/zipcodeNotFound.html";
         return;
     }
+    document.getElementById("repListTitle").innerText = "Representative List";
     var representativeList = document.getElementById("repList");
     var offices = representatives.offices;
     var officials = representatives.officials;
