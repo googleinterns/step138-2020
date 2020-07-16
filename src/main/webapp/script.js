@@ -351,6 +351,7 @@ async function getRepList() {
         window.location.href = "/errors/zipcodeNotFound.html";
         return;
     }
+    document.getElementById("repListTitle").innerText = "Representative List";
     var representativeList = document.getElementById("repList");
     var offices = representatives.offices;
     var officials = representatives.officials;
