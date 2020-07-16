@@ -57,6 +57,8 @@ public class InsertRepDatastoreServlet extends HttpServlet {
         }
         if (rep == null) {
             List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                //Prepend the Other tag with repName for uniqueness and 
+                // remove spaces in repName with replaceAll
                 Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
                 Arrays.asList(""));
             DatastoreManager.insertRepresentativeInDatastore(
