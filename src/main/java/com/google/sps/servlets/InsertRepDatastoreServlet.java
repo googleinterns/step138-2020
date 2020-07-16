@@ -57,8 +57,8 @@ public class InsertRepDatastoreServlet extends HttpServlet {
         }
         if (rep == null) {
             List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList(repName.replaceAll("\\s+","") + "Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+                Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
+                Arrays.asList(""));
             DatastoreManager.insertRepresentativeInDatastore(
                 repName, title, username, password, tabIds);   
         }

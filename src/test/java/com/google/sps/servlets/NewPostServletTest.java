@@ -55,8 +55,7 @@ public class NewPostServletTest{
         when(request.getParameter("name")).thenReturn("Bob");
         when(request.getParameter("comment")).thenReturn("Why are you president?");
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList("Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+            Arrays.asList("Other"), Arrays.asList(""));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
         "President", "username", "password", tabIds);
 

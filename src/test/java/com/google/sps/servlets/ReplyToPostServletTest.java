@@ -57,8 +57,7 @@ public class ReplyToPostServletTest{
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
         Long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList("Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+            Arrays.asList("Other"), Arrays.asList(""));
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("name")).thenReturn("Alice");
         when(request.getParameter("reply")).thenReturn("Yeah bro, why are you?");
