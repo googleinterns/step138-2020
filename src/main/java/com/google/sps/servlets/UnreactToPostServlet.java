@@ -11,6 +11,7 @@ import com.google.sps.data.Comment;
 import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
+import com.google.sps.data.Reaction;
 import com.google.sps.data.Representative;
 import java.lang.UnsupportedOperationException; 
 import java.io.IOException;
@@ -38,9 +39,9 @@ public class UnreactToPostServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException{
-        long postId = Long.parseLong(request.getParameter(POST_ID));
+        long postId = Long.parseLong(request.getParameter(POST_ID).trim());
         String repName = request.getParameter(REP_NAME);
-        String reaction = request.getParameter(REACTION);
+        String reaction = Reaction.valueOf(request.getParameter(REACTION)).getValue();
        
         try {
             DatastoreManager.removeReactionFromPost(postId, reaction); 

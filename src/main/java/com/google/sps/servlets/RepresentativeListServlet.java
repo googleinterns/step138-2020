@@ -45,7 +45,7 @@ public class RepresentativeListServlet extends HttpServlet {
         HttpClient httpclient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder();
         URI uri = null;
-
+        
         builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
         .setParameter("key", apiKey)
         .setParameter("address", zipcode);
