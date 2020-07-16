@@ -1,5 +1,6 @@
 package com.google.sps.data;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -17,6 +18,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import java.lang.UnsupportedOperationException; 
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
@@ -159,8 +161,7 @@ public final class DatastoreManagerTest {
     @Test
     public void testQueryForRepresentativeObjectWithName() {
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                new ArrayList<String> (Arrays.asList("Other")), 
-                new ArrayList<String> (Arrays.asList("")));
+            Arrays.asList("Other"), Arrays.asList(""));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
             "President of the US", "username", "password", tabIds);
         
@@ -250,7 +251,49 @@ public final class DatastoreManagerTest {
     }
 
     @Test
-    public void testqueryForTabListWithRepName() throws EntityNotFoundException {
+    public void testAddReactionToPost() 
+    throws EntityNotFoundException{
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
+
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
+        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
+        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
+
+        assertTrue(reactionCount == 1);
+    }
+
+    @Test
+    public void testRemoveReactionFromPostWithZeroReactions() 
+    throws EntityNotFoundException {
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
+
+        assertThrows(UnsupportedOperationException.class, () -> {
+            DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
+        });
+    }
+
+    @Test
+    public void testRemoveReactionFromPostWithOneReaction() 
+    throws EntityNotFoundException{
+        long commentIdQuestion = DatastoreManager.insertCommentInDatastore
+            ("Anonymous", "Why are you in office?");
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
+        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
+
+        DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
+        Post post = DatastoreManager.queryForPostObjectWithId(postId); 
+        long reactionCount = post.getReactions().get(Reaction.THUMBS_UP); 
+
+        assertTrue(reactionCount == 0);
+    }
+
+    @Test
+    public void testqueryForTabListWithRepName() 
+    throws EntityNotFoundException {
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
         new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police")));
         Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));

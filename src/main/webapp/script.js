@@ -210,6 +210,23 @@ function createReplyButton(postId, repName, question) {
     createReplyForm(postId, repName);
 }
 
+//Adds tabs to politician page
+function addPoliticianTab(tabName, repName){
+    var tabsElement = document.getElementById("tabs");
+    var div = document.createElement("div");
+    div.setAttribute("class", "w3-quarter w3-section");
+    var span = document.createElement("span");
+    span.setAttribute("class", "w3-xlarge");
+    var tabAnchor = document.createElement("a");
+    tabAnchor.href = `tab.html?name=${repName}&tab=${tabName}`;
+    tabAnchor.innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+    span.appendChild(tabAnchor);
+    linebreak = document.createElement("br");
+    span.appendChild(linebreak);
+    div.appendChild(span);
+    tabsElement.appendChild(div);
+}
+
 //Navigate to a particular tab
 function getTab(tab) {
     var urlParams = new URLSearchParams(window.location.search);
@@ -357,13 +374,13 @@ async function getRepList() {
     var officials = representatives.officials;
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]) {
-            var bool = await checkIfRepInDatastore(officials[number]["name"]);
+            var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
             var rep;
-            if (bool) {
+            if (repInDatastore) {
                 var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
                 rep = await repResponse.json();
             }
-            representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], bool, rep.blobKeyUrl));
+            representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
 }
@@ -519,11 +536,7 @@ function questionnaireContainerDiv(){
 function questionnaireLabel(topic){
     var label = document.createElement("label");
     label.className = "control-label col-sm-2";
-    if (topic) {
-        label.innerText = "Topic: "
-    } else {
-        label.innerText = "Platform: "
-    }
+    label.innerText = topic ? "Topic: " : "Platform: ";
     return label;
 }
 
@@ -584,19 +597,22 @@ async function displayPoliticianPage(imgUrl) {
     var repName = decodeURI(urlParams.get('name')); 
     var representativeResponse = await fetch(`feed?repName=${repName}`)
     var repJson = await representativeResponse.json();
-    var bodyElement = document.getElementById('body_main');
-    const nameElement = document.createElement("p");
+    
+    const titleElement = document.getElementById("title");
+    titleElement.innerText = repJson.title;
+
+    const nameElement = document.getElementById("repName");
     nameElement.innerText = repName;
-    const imgElement = document.createElement("img");
-    imgElement.setAttribute("src", repJson.blobKeyUrl);
-    imgElement.setAttribute("class", "floated");
-    const introElement = document.createElement("p");
+
+    const imgElement = (document.getElementsByClassName("bgimg"))[0];
+    imgElement.style.backgroundImage = `url(${repJson.blobKeyUrl})`;
+    
+    const introElement = document.getElementById("about");
     introElement.innerText = repJson.intro;
-    bodyElement.appendChild(nameElement);
-    bodyElement.appendChild(imgElement);
-    bodyElement.appendChild(introElement);
+
     repJson.tabs.forEach((tab) => {
-        addTabButton(tab.name, bodyElement, repName);
+        addPoliticianTab(tab.name, repName);
     });
-    returnToFeed(repName, bodyElement);
+
+    returnToFeed(repName, document.getElementById("feed"));
 }
