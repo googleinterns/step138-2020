@@ -1,17 +1,3 @@
-// Copyright 2019 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     https://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 //Displays the posts from a tab 
 async function displayTab() {
     var rep = localStorage.getItem("rep");
@@ -125,8 +111,51 @@ async function displayFeed() {
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
+
+        //show reaction buttons 
+        var reactionDiv = document.createElement("div");
+        displayReaction(post, repName, reactionDiv, "ANGRY"); 
+        displayReaction(post, repName, reactionDiv, "CRYING"); 
+        displayReaction(post, repName, reactionDiv, "LAUGHING"); 
+        displayReaction(post, repName, reactionDiv, "HEART"); 
+        displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
+        displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
+        document.getElementById(post.id).appendChild(reactionDiv);
     })
 };
+
+function displayReaction(post, repName, reactionDiv, reaction) {
+    var btn = document.createElement("button");
+    btn.setAttribute("class", "btn"); 
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
+    if (localStorage.getItem(post.id + reaction) === "reacted") {
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px" border="1">';
+    }
+    else {
+        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    }
+    btn.innerHTML += post.reactions[reaction]; 
+    btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
+    reactionDiv.appendChild(btn); 
+}
+
+async function reactToPost(reaction, postId, repName) {
+    var reactionState = localStorage.getItem(postId + reaction); 
+    if (reactionState === null) {
+        localStorage.setItem(postId + reaction, "unreacted");
+    }
+    if (reactionState === "unreacted") {
+        await fetch(`/react_to_post?repName=${repName}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, "reacted");
+    }
+    else {
+        await fetch(`/unreact_to_post?repName=${repName}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, "unreacted");
+    }
+    window.location.reload(false); 
+}
 
 //Displays the question for a post
 function displayPost(post, feed) {
@@ -137,6 +166,17 @@ function displayPost(post, feed) {
     qText.innerText = post.question.name + ": " + post.question.comment;
     newQuestion.appendChild(qText);
     feed.appendChild(newQuestion);
+}
+
+//Displays the representative's answer to a particular post
+function displayRepAnswer(post, repName) {
+    var answer = post.answer;
+    if (answer != undefined) {    
+        var postElement = document.getElementById(post.id);
+        var repAnswer = document.createElement("div");
+        repAnswer.innerText = repName + ": " + answer.comment;
+        postElement.appendChild(repAnswer);
+    }
 }
 
 //Creates an anchor tag for returning home
@@ -200,6 +240,23 @@ function addTabButton(tabName, leftCol, repName) {
     leftCol.appendChild(inputElement);
 }
 
+//Adds tabs to politician page
+function addPoliticianTab(tabName, repName){
+    var tabsElement = document.getElementById("tabs");
+    var div = document.createElement("div");
+    div.setAttribute("class", "w3-quarter w3-section");
+    var span = document.createElement("span");
+    span.setAttribute("class", "w3-xlarge");
+    var tabAnchor = document.createElement("a");
+    tabAnchor.href = `tab.html?name=${repName}&tab=${tabName}`;
+    tabAnchor.innerText = tabName.replace(repName.replace(/\s/g, ''), "");
+    span.appendChild(tabAnchor);
+    linebreak = document.createElement("br");
+    span.appendChild(linebreak);
+    div.appendChild(span);
+    tabsElement.appendChild(div);
+}
+
 //Navigate to a particular tab
 function getTab(tab) {
     var urlParams = new URLSearchParams(window.location.search);
@@ -257,17 +314,6 @@ function displayReplyList(post) {
         newReply.innerText = reply.name + ": " + reply.comment;
         postElement.appendChild(newReply);
     })
-}
-
-//Displays the representative's answer to a particular post
-function displayRepAnswer(post, repName) {
-    var answer = post.answer;
-    if (answer != undefined) {    
-        var postElement = document.getElementById(post.id);
-        var repAnswer = document.createElement("div");
-        repAnswer.innerText = repName + ": " + answer.comment;
-        postElement.appendChild(repAnswer);
-    }
 }
 
 //Creates form for user to ask a new question on rep's feed
@@ -341,7 +387,7 @@ function storeRepBooleanAndZipcodeAndRedirect() {
     window.location.href = "/repList.html";
 }
 
-//Makes fetch to repListSerlvet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
+//Makes fetch to repListServlet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList() {
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
@@ -358,34 +404,76 @@ async function getRepList() {
     var officials = representatives.officials;
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]) {
-            var bool = await checkIfRepInDatastore(officials[number]["name"]);
-            representativeList.appendChild(displayFunction(offices[i]["name"] + ": " + 
-            officials[number]["name"], offices[i]["name"], officials[number]["name"], bool));
+            var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
+            var rep;
+            if (repInDatastore) {
+                var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
+                rep = await repResponse.json();
+            }
+            representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
 }
 
 //Adds list element for each rep with link to rep's feed if account created
-function displayRepListUser(text, title, name, inDatastore) {
-    const listElement = document.createElement('li')
-    const anchorElement = document.createElement('a');
+function displayRepListUser(title, name, inDatastore, image) {
+    var listElement = document.createElement('li')
+    listElement.className = "w3-bar";
+    
+    var imageElement = document.createElement("img");
+    imageElement.className = "w3-bar-item w3-circle w3-hide-small";
+    imageElement.style = "width:85px";
+
     if (inDatastore) {
-        anchorElement.href = `feed.html?name=${name}`;
+        listElement.onclick = function() {window.location.href = `feed.html?name=${name}`};
+        imageElement.src = image;
     }
-    anchorElement.innerText = text;
-    listElement.appendChild(anchorElement);
-    return listElement;
+    else{
+        imageElement.src = "/images/defaultProfilePicture.png";
+    }
+
+    return displayRepList(listElement, imageElement, title, name);
 }
 
 //Displays rep list and adds href linking to create account html if rep not already in datastore
-function displayRepListLogin(text, title, name, inDatastore) {
+function displayRepListLogin(title, name, inDatastore, image) {
     const listElement = document.createElement('li')
-    const anchorElement = document.createElement('a');
+    listElement.className = "w3-bar";
+    
+    const imageElement = document.createElement("img");
+    imageElement.className = "w3-bar-item w3-circle w3-hide-small";
+    imageElement.style = "width:85px";
+
     if (inDatastore == false) {
-        anchorElement.href = `repUsernamePassword.html?name=${name}&title=${title}`;
+        listElement.onclick = function() {window.location.href = `repUsernamePassword.html?name=${name}&title=${title}`};
+        imageElement.src = "/images/defaultProfilePicture.png";
     }
-    anchorElement.innerText = text;
-    listElement.appendChild(anchorElement);
+    else{
+        imageElement.src = image;
+    }
+
+    return displayRepList(listElement, imageElement, title, name);
+}
+
+//Abstracts out the common aspects of repList regardless of user or rep
+function displayRepList(listElement, imageElement, title, name) {
+    const divElement = document.createElement("div");
+    divElement.className = "w3-bar-item";
+
+    const titleSpanElement = document.createElement("span");
+    titleSpanElement.innerText = title;
+    
+    const nameSpanElement = document.createElement("span");
+    nameSpanElement.innerText = name;
+    nameSpanElement.className = "w3-large";
+    linebreak = document.createElement("br");
+    nameSpanElement.appendChild(linebreak);
+
+    divElement.appendChild(nameSpanElement);
+    divElement.appendChild(titleSpanElement);
+    listElement.appendChild(imageElement);
+    listElement.appendChild(divElement);
+
     return listElement;
 }
 
@@ -430,28 +518,68 @@ function goBack() {
 }
 
 //Add another topic to the representative questionnaire
-function addTopic() {
+function addTopicAndPlatform() {
     var additionalTopics = document.getElementById("additionalTopics");
 
-    var paragraphTopic = document.createElement("p");
-    paragraphTopic.innerText = "Topic: ";
+    additionalTopics.appendChild(addTopic());
+    additionalTopics.appendChild(addPlatform());
+}
 
-    var input = document.createElement("input");
-    input.type = "text";
-    input.className = "topic";
-    input.value = "Additional Topic";
+//Adds a topic element
+function addTopic(){
+    var topicDivContainer = questionnaireContainerDiv();
+    var topicLabel = questionnaireLabel(true);
+    var innerDivTopic = questionnaireInnerDiv();
 
-    var paragraphPlatform = document.createElement("p");
-    paragraphPlatform.innerText = "Platform: "
+    var topicInput = document.createElement("input");
+    topicInput.className = "topic";
+    topicInput.type = "text";
+    topicInput.placeholder = "Additional Topic";
 
-    var inputPlatform = document.createElement("input");
-    inputPlatform.type = "text";
-    inputPlatform.className = "platform";
+    innerDivTopic.appendChild(topicInput);
+    topicDivContainer.appendChild(topicLabel);
+    topicDivContainer.appendChild(innerDivTopic);
+    return topicDivContainer;
+}
 
-    additionalTopics.appendChild(paragraphTopic);
-    additionalTopics.appendChild(input);
-    additionalTopics.appendChild(paragraphPlatform);
-    additionalTopics.appendChild(inputPlatform);
+//Adds an element for the platform
+function addPlatform(){
+    var platformDivContainer = questionnaireContainerDiv();
+    var platformLabel = questionnaireLabel(false);
+    var innerDiv = questionnaireInnerDiv();
+
+    var platformText = document.createElement("textarea");
+    platformText.className = "form-control platform";
+    platformText.rows = 3;
+    platformText.placeholder = "Platform on additional topic";
+
+    innerDiv.appendChild(platformText);
+    platformDivContainer.appendChild(platformLabel);
+    platformDivContainer.appendChild(innerDiv);
+
+    return platformDivContainer;
+}
+
+//Returns questionnaire form container div
+function questionnaireContainerDiv(){
+    var divContainer = document.createElement("div");
+    divContainer.className = "form-group";
+    return divContainer;
+}
+
+//Returns questionnaire label
+function questionnaireLabel(topic){
+    var label = document.createElement("label");
+    label.className = "control-label col-sm-2";
+    label.innerText = topic ? "Topic: " : "Platform: ";
+    return label;
+}
+
+//Return questionnaire inner div
+function questionnaireInnerDiv(){
+    var innerDiv = document.createElement("div");
+    innerDiv.className = "col-sm-10";
+    return innerDiv;
 }
 
 //Grab tabs from questionnaire
@@ -464,8 +592,10 @@ async function submitRepQuestionnaire() {
     var listOfTopics = [];
     var listOfPlatforms = [];
     for (var i = 0; i < topics.length; i++) {
-        listOfTopics.push(topics[i].value);
-        listOfPlatforms.push(platforms[i].value + "*");
+        if (topics[i].value != "") {
+            listOfTopics.push(topics[i].value);
+            listOfPlatforms.push(platforms[i].value + "*");
+        }
     }
     var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
         ${listOfPlatforms}&intro=${intro}&repName=${repName}`);
@@ -499,19 +629,22 @@ async function displayPoliticianPage(imgUrl) {
     var repName = decodeURI(urlParams.get('name')); 
     var representativeResponse = await fetch(`feed?repName=${repName}`)
     var repJson = await representativeResponse.json();
-    var bodyElement = document.getElementById('body_main');
-    const nameElement = document.createElement("p");
+    
+    const titleElement = document.getElementById("title");
+    titleElement.innerText = repJson.title;
+
+    const nameElement = document.getElementById("repName");
     nameElement.innerText = repName;
-    const imgElement = document.createElement("img");
-    imgElement.setAttribute("src", repJson.blobKeyUrl);
-    imgElement.setAttribute("class", "floated");
-    const introElement = document.createElement("p");
+
+    const imgElement = (document.getElementsByClassName("bgimg"))[0];
+    imgElement.style.backgroundImage = `url(${repJson.blobKeyUrl})`;
+    
+    const introElement = document.getElementById("about");
     introElement.innerText = repJson.intro;
-    bodyElement.appendChild(nameElement);
-    bodyElement.appendChild(imgElement);
-    bodyElement.appendChild(introElement);
+
     repJson.tabs.forEach((tab) => {
-        addTabButton(tab.name, bodyElement, repName);
+        addPoliticianTab(tab.name, repName);
     });
-    returnToFeed(repName, bodyElement);
+
+    returnToFeed(repName, document.getElementById("feed"));
 }

@@ -16,6 +16,7 @@ import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import com.google.sps.data.DatastoreManager;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -55,7 +56,13 @@ public class InsertRepDatastoreServlet extends HttpServlet {
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         if (rep == null) {
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);   
+            List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                //Prepend the Other tag with repName for uniqueness and 
+                // remove spaces in repName with replaceAll
+                Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
+                Arrays.asList(""));
+            DatastoreManager.insertRepresentativeInDatastore(
+                repName, title, username, password, tabIds);   
         }
         response.setContentType("text/html");
         response.getWriter().println(Boolean.toString(rep != null));
