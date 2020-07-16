@@ -447,42 +447,87 @@ function goBack() {
 }
 
 //Add another topic to the representative questionnaire
-function addTopic() {
+function addTopicAndPlatform() {
     var additionalTopics = document.getElementById("additionalTopics");
 
-    var paragraphTopic = document.createElement("p");
-    paragraphTopic.innerText = "Topic: ";
-
-    var input = document.createElement("input");
-    input.type = "text";
-    input.className = "topic";
-    input.value = "Additional Topic";
-
-    var paragraphPlatform = document.createElement("p");
-    paragraphPlatform.innerText = "Platform: "
-
-    var inputPlatform = document.createElement("input");
-    inputPlatform.type = "text";
-    inputPlatform.className = "platform";
-
-    additionalTopics.appendChild(paragraphTopic);
-    additionalTopics.appendChild(input);
-    additionalTopics.appendChild(paragraphPlatform);
-    additionalTopics.appendChild(inputPlatform);
+    additionalTopics.appendChild(addTopic());
+    additionalTopics.appendChild(addPlatform());
 }
+
+//Adds a topic element
+function addTopic(){
+    var topicDivContainer = questionnaireContainerDiv();
+    var topicLabel = questionnaireLabel(true);
+    var innerDivTopic = questionnaireInnerDiv();
+
+    var topicInput = document.createElement("input");
+    topicInput.className = "topic";
+    topicInput.type = "text";
+    topicInput.placeholder = "Additional Topic";
+
+    innerDivTopic.appendChild(topicInput);
+    topicDivContainer.appendChild(topicLabel);
+    topicDivContainer.appendChild(innerDivTopic);
+    return topicDivContainer;
+}
+
+//Adds an element for the platform
+function addPlatform(){
+    var platformDivContainer = questionnaireContainerDiv();
+    var platformLabel = questionnaireLabel(false);
+    var innerDiv = questionnaireInnerDiv();
+
+    var platformText = document.createElement("textarea");
+    platformText.className = "form-control platform";
+    platformText.rows = 3;
+    platformText.placeholder = "Platform on additional topic";
+
+    innerDiv.appendChild(platformText);
+    platformDivContainer.appendChild(platformLabel);
+    platformDivContainer.appendChild(innerDiv);
+
+    return platformDivContainer;
+}
+
+//Returns questionnaire form container div
+function questionnaireContainerDiv(){
+    var divContainer = document.createElement("div");
+    divContainer.className = "form-group";
+    return divContainer;
+}
+
+//Returns questionnaire label
+function questionnaireLabel(topic){
+    var label = document.createElement("label");
+    label.className = "control-label col-sm-2";
+    label.innerText = topic ? "Topic: " : "Platform: ";
+    return label;
+}
+
+//Return questionnaire inner div
+function questionnaireInnerDiv(){
+    var innerDiv = document.createElement("div");
+    innerDiv.className = "col-sm-10";
+    return innerDiv;
+}
+
 
 //Grab tabs from questionnaire
 async function submitRepQuestionnaire() {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name'));
     var topics = document.getElementsByClassName("topic");
+    console.log("These are the topics: " + topics);
     var platforms = document.getElementsByClassName("platform");
+    console.log("These are the platforms: " + platforms);
     var intro = document.getElementById("intro").value;
     var listOfTopics = [];
     var listOfPlatforms = [];
     for (var i = 0; i < topics.length; i++) {
-        listOfTopics.push(topics[i].value);
-        listOfPlatforms.push(platforms[i].value + "*");
+        if (topics[i].value != "") {
+            listOfTopics.push(topics[i].value);
+            listOfPlatforms.push(platforms[i].value + "*");
+        }
     }
     var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
         ${listOfPlatforms}&intro=${intro}&repName=${repName}`);

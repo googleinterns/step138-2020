@@ -14,6 +14,7 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,12 +56,14 @@ public class ReplyToPostServletTest{
         // add Representative entity to Datastore 
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
         Long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Other"), Arrays.asList(""));
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("name")).thenReturn("Alice");
         when(request.getParameter("reply")).thenReturn("Yeah bro, why are you?");
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President", "username", "password");
+        "President", "username", "password", tabIds);
         DatastoreManager.updateRepresentativePostList(repId, postId); 
         
         // make Representative object for comparison purposes 
