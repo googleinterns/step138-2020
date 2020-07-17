@@ -16,6 +16,7 @@ import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
 import java.lang.IllegalArgumentException; 
+import java.lang.System; 
 import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertRepresentativeInDatastore(
-        String name, String title, String username, String password) {
+    String name, String title, String username, String password, List<Long> tabIds) {
         Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, name); 
         repEntity.setProperty(Constants.REP_TITLE, title); 
@@ -63,7 +64,7 @@ public class DatastoreManager {
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
         repEntity.setProperty(Constants.REP_INTRO, "");
         repEntity.setProperty(Constants.REP_BLOB_KEY_URL, "");
-        repEntity.setProperty(Constants.REP_TABS, new ArrayList<>());
+        repEntity.setProperty(Constants.REP_TABS, tabIds);
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(repEntity); 
@@ -85,6 +86,7 @@ public class DatastoreManager {
             postEntity.setProperty(reaction, (long) 0);
         }
         postEntity.setProperty(Constants.POST_TAB, tab);
+        postEntity.setProperty(Constants.POST_TIMESTAMP, System.currentTimeMillis());
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 

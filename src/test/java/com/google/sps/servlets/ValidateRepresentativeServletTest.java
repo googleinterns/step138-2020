@@ -15,7 +15,9 @@ import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -53,7 +55,8 @@ public class ValidateRepresentativeServletTest{
     public void testLoginInformationCorrect() throws Exception {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President of the U.S.", "username", "password");
+        "President of the U.S.", "username", "password",
+        new ArrayList<Long> (Arrays.asList(Long.valueOf(1))));
         when(request.getParameter("username")).thenReturn("username");
         when(request.getParameter("password")).thenReturn("password");
 
@@ -66,14 +69,16 @@ public class ValidateRepresentativeServletTest{
     @Test
     public void testLoginInformationIncorrect() throws Exception {
         ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Other"), Arrays.asList(""));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
-        "President of the U.S.", "username", "password");
+        "President of the U.S.", "username", "password", tabIds);
         when(request.getParameter("username")).thenReturn("user");
         when(request.getParameter("password")).thenReturn("password");
 
         servlet.doPost(request, response);
 
         verify(response).sendRedirect(captor.capture());
-        assertTrue(("invalidAuthRep.html").equals(captor.getValue()));
+        assertTrue(("/errors/invalidAuthRep.html").equals(captor.getValue()));
     }
 }

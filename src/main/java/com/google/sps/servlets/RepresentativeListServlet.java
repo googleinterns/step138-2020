@@ -34,7 +34,8 @@ public class RepresentativeListServlet extends HttpServlet {
     private final String apiKey;
 
     public RepresentativeListServlet() {
-        apiKey = System.getenv(Constants.CIVIC_API_KEY);
+        // apiKey = System.getenv(Constants.CIVIC_API_KEY);
+        apiKey = "AIzaSyAHQRFZpZBZSOeUI-4pmfoHV4SM0eBSlS4";
     }
 
     @Override
@@ -44,7 +45,7 @@ public class RepresentativeListServlet extends HttpServlet {
         HttpClient httpclient = HttpClients.createDefault();
         URIBuilder builder = new URIBuilder();
         URI uri = null;
-
+        
         builder.setScheme("https").setHost(Constants.CIVIC_API_ENDPOINT)
         .setParameter("key", apiKey)
         .setParameter("address", zipcode);

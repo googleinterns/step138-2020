@@ -47,13 +47,12 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         String topics = request.getParameter(TOPIC_LIST);
         String intro = request.getParameter(INTRO);
 
-        List<String> topicList = new ArrayList<String>(Arrays.asList(topics.split(",")));
+        List<String> topicList = Arrays.asList(topics.split(","));
+        //Adds repName to the front of every tab for uniqueness
         topicList.replaceAll(s -> repName.replaceAll("\\s+","") + s);
         String platforms = request.getParameter(PLATFORM_LIST);
-        List<String> platformList = new ArrayList<String>(Arrays.asList(platforms.split("\\*,")));
-        //Remove the * from the string of the last platform
-        platformList.get(platformList.size() - 1).replace("\\*", "");
-       
+        //Splits the platforms by "*," which was added as divider in script function
+        List<String> platformList = Arrays.asList(platforms.split("\\*,"));
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
 
         Entity rep;

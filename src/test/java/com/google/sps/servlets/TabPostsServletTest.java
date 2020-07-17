@@ -51,11 +51,12 @@ public class TabPostsServletTest{
 
     @Test
     public void testTabHasPosts() throws Exception {
-        List<Long> tabId = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education")), 
-            new ArrayList<String> (Arrays.asList("Platform")));
+        List<Long> tabId = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Other, Education"), Arrays.asList(" , Platform"));
         when(request.getParameter("tab")).thenReturn("Education");
         when(request.getParameter("repName")).thenReturn("Donald Trump");
-        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President", "username", "password");
+        long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
+        "President", "username", "password", tabId);
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Comment");
         long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
         DatastoreManager.updateRepresentativePostList(repId, postId);

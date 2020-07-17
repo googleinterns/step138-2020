@@ -16,6 +16,7 @@ import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
 import com.google.sps.data.DatastoreManager;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -38,6 +39,8 @@ public class InsertRepDatastoreServlet extends HttpServlet {
     private static final String PASSWORD = "password";
     private static final String REP_NAME = "repName";
     private static final String TITLE = "title";
+    private static final String OTHER_TAB_PLATFORM = 
+        "This is my Other tab for all the posts that don't fit into any existing tab";
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -55,7 +58,14 @@ public class InsertRepDatastoreServlet extends HttpServlet {
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         if (rep == null) {
-            DatastoreManager.insertRepresentativeInDatastore(repName, title, username, password);   
+            //Initializes rep's tab list with an Other tab prepended by repName for uniqueness
+            List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+                //Prepend the Other tag with repName for uniqueness and 
+                // remove spaces in repName with replaceAll
+                Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
+                Arrays.asList(OTHER_TAB_PLATFORM));
+            DatastoreManager.insertRepresentativeInDatastore(
+                repName, title, username, password, tabIds);   
         }
         response.setContentType("text/html");
         response.getWriter().println(Boolean.toString(rep != null));

@@ -17,6 +17,7 @@ public final class Constants {
     public static final String POST_ANSWER = "Answer";
     public static final String POST_REPLIES = "Replies";
     public static final String POST_TAB = "Tab";
+    public static final String POST_TIMESTAMP = "Timestamp";
 
     public static final String TAB_ENTITY_TYPE = "Tab";
     public static final String TAB_NAME = "Name";
@@ -26,7 +27,8 @@ public final class Constants {
     public static final String COMMENT_NAME = "Nick Name";
     public static final String COMMENT_MSG = "Message";
     public static final double COMMENT_TOXICITY_THRESHOLD = 0.7;
-    public static final String CIVIC_API_KEY = "CIVIC_API_KEY";
+   // public static final String CIVIC_API_KEY = "CIVIC_API_KEY";
+    public static final String CIVIC_API_KEY = "AIzaSyAHQRFZpZBZSOeUI-4pmfoHV4SM0eBSlS4";
     public static final String CIVIC_API_ENDPOINT = 
         "www.googleapis.com/civicinfo/v2/representatives";
     public static final String DEFAULT_POLITICIAN_IMAGE_URL = 
