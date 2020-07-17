@@ -116,8 +116,7 @@ public final class Post {
             long currTime = System.currentTimeMillis(); 
             double aRecency = a.getTimestamp()/currTime; 
             double bRecency = b.getTimestamp()/currTime; 
-            // more recent posts should go first in feed
-            return Double.compare(bRecency, aRecency); 
+            return Double.compare(aRecency, bRecency); 
         }
     }
 }
