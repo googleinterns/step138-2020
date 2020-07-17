@@ -47,7 +47,7 @@ public class RepTabsServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        response.setContentType("application/json;");
+        response.setContentType("application/json; charset=utf-8");
         response.getWriter().println(new Gson().toJson(tabList));
     }
 }
