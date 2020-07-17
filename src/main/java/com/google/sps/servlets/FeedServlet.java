@@ -38,7 +38,7 @@ public class FeedServlet extends HttpServlet {
         if (rep == null) {
             throw new ServletException("Rep was not found in the datastore"); 
         }
-        response.setContentType("application/json;");
+        response.setContentType("application/json; charset=utf-8");
         response.getWriter().println(new Gson().toJson(rep));
     }
 }
