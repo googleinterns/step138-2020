@@ -58,12 +58,17 @@ public class InsertRepDatastoreServlet extends HttpServlet {
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         if (rep == null) {
-            //Initializes rep's tab list with an Other tab prepended by repName for uniqueness
-            List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
-                //Prepend the Other tag with repName for uniqueness and 
-                // remove spaces in repName with replaceAll
-                Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
-                Arrays.asList(OTHER_TAB_PLATFORM));
+            List<Long> tabIds;
+            //Initializes rep's tab list with an Other tab prepended by repName for 
+            //uniqueness and remove spaces in repName with replaceAll
+            try {
+                tabIds = DatastoreManager.insertTabsInDatastore( 
+                    Arrays.asList(repName.replaceAll("\\s+","") + "Other"), 
+                    Arrays.asList(OTHER_TAB_PLATFORM));
+            } catch(EntityNotFoundException e) {
+                logger.error(e);
+                throw new ServletException("Error: " + e.getMessage(), e);
+            } 
             DatastoreManager.insertRepresentativeInDatastore(
                 repName, title, username, password, tabIds);   
         }
