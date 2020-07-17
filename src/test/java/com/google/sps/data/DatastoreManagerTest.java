@@ -342,6 +342,7 @@ public final class DatastoreManagerTest {
         String name2 = (String) (tabEntity2.getProperty(Constants.TAB_NAME));
         String platform2 = (String) (tabEntity2.getProperty(Constants.TAB_PLATFORM));
 
+        assertTrue(tabIds.get(0).equals(newTabIds.get(0)));
         assertTrue(name1.equals("Education")); 
         assertTrue(name2.equals("Police"));         
         assertTrue(platform1.equals("New platform on education")); 
