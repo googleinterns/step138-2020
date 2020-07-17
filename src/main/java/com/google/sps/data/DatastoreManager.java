@@ -14,6 +14,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import java.lang.System; 
 import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
@@ -80,6 +81,7 @@ public class DatastoreManager {
             postEntity.setProperty(reaction, (long) 0);
         }
         postEntity.setProperty(Constants.POST_TAB, tab);
+        postEntity.setProperty(Constants.POST_TIMESTAMP, System.currentTimeMillis());
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
