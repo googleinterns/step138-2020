@@ -158,6 +158,7 @@ async function reactToPost(reaction, postId, repName) {
     var reactionState = localStorage.getItem(postId + reaction); 
     if (reactionState === null) {
         localStorage.setItem(postId + reaction, "unreacted");
+        reactionState = "unreacted";
     }
     if (reactionState === "unreacted") {
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
