@@ -10,6 +10,13 @@ async function displayTab() {
         localStorage.setItem("nickname", repName);
     }
     var tabName = decodeURI(urlParams.get('tab'));
+    if (tabName.includes("Other") && rep.trim() == "true") {
+        var addTab = document.getElementById("addTab");
+        addTab.style.display = "block";
+        addTab.onclick = function() {
+            window.location.href = window.location.href + "&addTab=true"
+        }
+    }
 
     //fetch the representative entity corresponding to repName
     var response = await fetch(`/feed?repName=${encodeURI(repName)}`);
@@ -30,12 +37,8 @@ async function displayTab() {
         window.location.href = `/politicianPage.html?name=${encodeURI(repName)}`};
 
     //Add a button to return to feed
-    var feedElement = document.getElementById("feed");
-    var feedButton = document.createElement("button");
+    var feedButton = document.getElementById("feed");
     feedButton.onclick = function() {window.location.href = `/feed.html?name=${encodeURI(repName)}`};
-    feedButton.className = "w3-button w3-block w3-theme-l1 w3-left-align";
-    feedButton.innerText = "Back to Feed";
-    feedElement.appendChild(feedButton);
 
     //Pull the posts under a particular tag
     var tabPostsResponse = await fetch(`/tab_posts?repName=${encodeURI(repName)}&tab=${tabName}`);
@@ -52,12 +55,26 @@ async function displayTab() {
         document.getElementById("posts").appendChild(emptyFeed);
     }
     
+    var addTab = decodeURI(urlParams.get("addTab"));
+    newTabForm; 
+    if (addTab == "true") {
+        var postsElement = document.getElementById("posts")
+        var newTabForm = document.createElement("form");
+        newTabForm.style.marginLeft = "10px";
+        postsElement.appendChild(newTabForm);
+    }
+
     posts.forEach((post) => {
-        displayPost(post, false);
+        if (addTab == "true") {
+            var lastPost = (rep.trim() == "true" && post == posts[posts.length - 1]) ? true : false;
+            addPostToNewTabForm(newTabForm, post, lastPost)
+        } else { 
+            displayPostWithoutNewTab(post, false);
+        }
         var question = document.getElementById(post.id);
 
         //answer button
-        if (rep.trim() == "true") {
+        if (rep.trim() == "true" && addTab != "true") {
             createAnswerButton(post.id, repName, question);
         }
         else {
@@ -108,7 +125,7 @@ async function displayFeed() {
     }
     postList.forEach((post) => {
         var firstPost = (rep.trim() == "true" && post == postList[0]) ? true : false;
-        displayPost(post, firstPost);
+        displayPostWithoutNewTab(post, firstPost);
         var question = document.getElementById(post.id);
         //answer button
         if (rep.trim() == "true") {
@@ -181,8 +198,58 @@ async function reactToPost(reaction, postId, repName) {
 }
 
 //Displays the question for a post
-function displayPost(post, firstPost) {
+function displayPostWithoutNewTab(post, firstPost) {
     var posts = document.getElementById("posts");
+    var postElement = displayPost(post, firstPost);
+    posts.appendChild(postElement);
+}
+
+//Displays posts with checkboxes for selecting particular ones to
+//move to another tab
+function addPostToNewTabForm(form, post, lastPost) {
+    var wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.alignItems = "center";
+    var checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "checkbox";
+    checkbox.value = post.id;
+    var postElement = displayPost(post, false);
+    postElement.style.flexGrow = 1;
+    wrapper.appendChild(checkbox);
+    wrapper.appendChild(postElement);
+    form.appendChild(wrapper);
+    if (lastPost == true) {
+        linebreak = document.createElement("br");
+        var tabName = document.createElement("input");
+        tabName.placeholder = "Name of new tab";
+        tabName.type = "text";
+        tabName.id = "tabName";
+        var submitButton = document.createElement("button");
+        submitButton.className = "btn btn-default";
+        submitButton.innerText = "Submit";
+        submitButton.type = "button";
+        submitButton.onclick = function() {addNewTab()};
+        form.appendChild(linebreak);
+        form.appendChild(tabName);
+        form.appendChild(submitButton);
+    }
+}
+
+//Adds a new tab and migrates posts accordingly
+function addNewTab() {
+    var checkboxes= document.getElementsByName("checkbox")
+    var checked = [];
+    for (check of checkboxes) {
+        if (check.checked == true) {
+            checked.push(check.value);
+        }
+    }
+    //TODO(create new tab and move posts that were checked to that tab)
+}
+
+//Abstract out display of Post
+function displayPost(post, firstPost) {
     var newQuestion = document.createElement("div");
     newQuestion.className = "w3-container w3-card w3-white w3-round";
     newQuestion.style.margin = (firstPost) ? "0px 16px 16px" : "16px";
@@ -207,7 +274,7 @@ function displayPost(post, firstPost) {
     newQuestion.appendChild(name);
     newQuestion.appendChild(hrElement);
     newQuestion.appendChild(question);
-    posts.appendChild(newQuestion);
+    return newQuestion
 }
 
 //Creates anchor tag that links back to representative's feed
