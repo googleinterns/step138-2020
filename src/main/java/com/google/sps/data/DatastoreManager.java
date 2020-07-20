@@ -16,6 +16,7 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
+import java.lang.System; 
 import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class DatastoreManager {
      * @return ID of entity inserted into datastore
      */ 
     public static long insertRepresentativeInDatastore(
-        String name, String title, String username, String password) {
+    String name, String title, String username, String password, List<Long> tabIds) {
         Entity repEntity = new Entity(Constants.REP_ENTITY_TYPE); 
         repEntity.setProperty(Constants.REP_NAME, name); 
         repEntity.setProperty(Constants.REP_TITLE, title); 
@@ -74,7 +75,7 @@ public class DatastoreManager {
         repEntity.setProperty(Constants.REP_POSTS, new ArrayList<>());
         repEntity.setProperty(Constants.REP_INTRO, "");
         repEntity.setProperty(Constants.REP_BLOB_KEY_URL, "");
-        repEntity.setProperty(Constants.REP_TABS, new ArrayList<>());
+        repEntity.setProperty(Constants.REP_TABS, tabIds);
         List<Long> postIds = (ArrayList<Long>) repEntity.getProperty(Constants.REP_POSTS); 
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(repEntity); 
@@ -96,6 +97,7 @@ public class DatastoreManager {
             postEntity.setProperty(reaction, (long) 0);
         }
         postEntity.setProperty(Constants.POST_TAB, tab);
+        postEntity.setProperty(Constants.POST_TIMESTAMP, System.currentTimeMillis());
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
         return postEntity.getKey().getId(); 
@@ -107,15 +109,25 @@ public class DatastoreManager {
      * @param platform description of representative's platform for particular tab
      * @return ID of entity inserted into datastore
      */ 
-    public static List<Long> insertTabsInDatastore(List<String> names, List<String> platforms) {
+    public static List<Long> insertTabsInDatastore(List<String> names, List<String> platforms) 
+    throws EntityNotFoundException {
         List<Long> tabIds = new ArrayList<>();
+        Entity existingTab;
         for (int i = 0 ; i < names.size() ; i++) {
-            Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
-            tabEntity.setProperty(Constants.TAB_NAME, names.get(i)); 
-            tabEntity.setProperty(Constants.TAB_PLATFORM, platforms.get(i)); 
             DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-            ds.put(tabEntity); 
-            tabIds.add(tabEntity.getKey().getId());
+            existingTab = DatastoreManager.queryForTabEntityWithName(names.get(i));
+            if (existingTab == null) {
+                Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
+                tabEntity.setProperty(Constants.TAB_NAME, names.get(i)); 
+                tabEntity.setProperty(Constants.TAB_PLATFORM, platforms.get(i)); 
+                ds.put(tabEntity); 
+                tabIds.add(tabEntity.getKey().getId());
+            }
+            else {
+                existingTab.setProperty(Constants.TAB_PLATFORM, platforms.get(i));
+                ds.put(existingTab);
+                tabIds.add(existingTab.getKey().getId());
+            }
         }
         return tabIds;
     }

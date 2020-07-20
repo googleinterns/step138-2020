@@ -1,8 +1,12 @@
 package com.google.sps.data;
 
 import com.google.sps.data.Post;
+import java.lang.Double; 
+import java.lang.System; 
 import java.util.ArrayList;
+import java.util.Collections; 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public final class Representative {
@@ -27,6 +31,8 @@ public final class Representative {
         this.blobKeyUrl = blobKeyUrl;
         this.tabs = tabs;
         this.id = id; 
+
+        Collections.sort(this.posts, new Post.PostComparator());
     }
 
     public String getName() {

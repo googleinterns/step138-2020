@@ -91,13 +91,10 @@ public final class DatastoreEntityToObjectConverterTest {
         Comment commentAnswer = new Comment("Donald Trump", "Because I want to be.", 
             commentIdAnswer); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
-        reactions.put(Reaction.THUMBS_UP, (long) 0);
-        reactions.put(Reaction.THUMBS_DOWN, (long) 0);
-        reactions.put(Reaction.ANGRY, (long) 0);
-        reactions.put(Reaction.CRYING, (long) 0);
-        reactions.put(Reaction.HEART, (long) 0);
-        reactions.put(Reaction.LAUGHING, (long) 0);
-        this.post = new Post(commentQuestion, commentAnswer, replies, tab.getTabName(), postId, reactions); 
+        for (Reaction reaction : Reaction.values()) { 
+            reactions.put(reaction, (long) 0);
+        }
+        this.post = new Post(commentQuestion, commentAnswer, replies, tab.getTabName(), postId, reactions, 0); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", "username", 

@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import java.util.ArrayList;
+import java.util.Comparator; 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,17 +15,18 @@ public final class Post {
     private final List<Comment> replies;
     private final String tab;
     private final long id; 
-    private final Map<Reaction, Long> reactions; 
-
+    private final Map<Reaction, Long> reactions;
+    private final long timestamp;  
 
     public Post(Comment question, Comment answer, List<Comment> replies, String tab, 
-                long id, Map<Reaction, Long> reactions) {
+                long id, Map<Reaction, Long> reactions, long timestamp) {
         this.question = question;
         this.answer = answer;
         this.replies = replies;
         this.tab = tab;
         this.id = id;
         this.reactions = reactions; 
+        this.timestamp = timestamp; 
     }
 
     public Map<Reaction, Long> getReactions() {
@@ -49,6 +51,10 @@ public final class Post {
 
     public long getID() {
         return id; 
+    }
+
+    public long getTimestamp() {
+        return timestamp; 
     }
 
     @Override
@@ -102,5 +108,15 @@ public final class Post {
         sb.append("Tab: ").append(System.getProperty("line.separator")); 
         sb.append(tab.toString());         
         return sb.toString();
+    }
+
+    static class PostComparator implements Comparator<Post> {
+        @Override
+        public int compare(Post a, Post b) {
+            long currTime = System.currentTimeMillis(); 
+            double aRecency = a.getTimestamp()/currTime; 
+            double bRecency = b.getTimestamp()/currTime; 
+            return Double.compare(aRecency, bRecency); 
+        }
     }
 }

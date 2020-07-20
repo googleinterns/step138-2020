@@ -17,6 +17,7 @@ public final class Constants {
     public static final String POST_ANSWER = "Answer";
     public static final String POST_REPLIES = "Replies";
     public static final String POST_TAB = "Tab";
+    public static final String POST_TIMESTAMP = "Timestamp";
 
     public static final String TAB_ENTITY_TYPE = "Tab";
     public static final String TAB_NAME = "Name";

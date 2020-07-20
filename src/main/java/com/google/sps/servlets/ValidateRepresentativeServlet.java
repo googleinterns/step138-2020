@@ -49,7 +49,7 @@ public class ValidateRepresentativeServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect =  (repName != null) ?  "feed.html?name=" + URLEncoder.encode(repName) : "invalidAuthRep.html";
+        String redirect =  (repName != null) ?  "feed.html?name=" + URLEncoder.encode(repName) : "/errors/invalidAuthRep.html";
         response.sendRedirect(redirect);
     }
 }
