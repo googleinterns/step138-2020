@@ -353,6 +353,7 @@ function displayRepAnswer(post, repName) {
 function displayCommentWithLinking(postElement, container, commentObject) {
     container.innerHTML = commentObject.name + ": ";
     var wordsInComment = commentObject.comment.split(" ");
+    //Captures links that start with "@" and are followed by the 16 digits corresponding to postId
     var regex = /@\d{16}/g;
     var linksToPosts = commentObject.comment.match(regex);
     for (word of wordsInComment) {
