@@ -26,6 +26,7 @@ import com.google.sps.data.DatastoreManager;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -44,6 +45,7 @@ public class RepUploadImageServlet extends HttpServlet {
     private static final String IMAGE_UPLOAD = "imageUpload";
     private static final String REP_NAME = "repName";
     private static final String SERVE_URL = "/serve_blob?blobKey=";
+    private static final String FEED_URL = "/feed.html?name=";
 
     private BlobstoreService blobstoreService = BlobstoreServiceFactory.getBlobstoreService();
 
@@ -62,7 +64,7 @@ public class RepUploadImageServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        response.sendRedirect("/loginRep.html");
+        response.sendRedirect(FEED_URL + URLEncoder.encode(repName));
     }
 
     private String getBlobKeyUrl(HttpServletRequest request, String formInputElementName) {

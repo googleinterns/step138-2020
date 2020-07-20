@@ -43,6 +43,7 @@ async function displayTab() {
 
     if (rep.trim() != "true") {
         createQuestionForm(repName, [{"name" : tabName}], false);
+        turnOnRepListIcon();
     }
     else if (posts.length == 0) {
         var emptyFeed = document.createElement("p");
@@ -97,6 +98,7 @@ async function displayFeed() {
     postList = representative.posts;
     if (rep.trim() != "true") {
         createQuestionForm(repName, tabList, true);
+        turnOnRepListIcon();
     }
     else if (postList.length == 0) {
         var emptyFeed = document.createElement("p");
@@ -128,6 +130,11 @@ async function displayFeed() {
         displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
         document.getElementById(post.id).appendChild(reactionDiv);
     })
+}
+
+//Add a link for returning to rep list
+function turnOnRepListIcon() {
+    document.getElementById("repListIcon").style.display = "block";
 }
 
 //Adds a tab button
@@ -614,7 +621,7 @@ async function submitRepQuestionnaire() {
     }
     else {
         event.preventDefault();
-        window.href.location = "loginRep.html";
+        window.href.location = `/feed.html?name=${repName}`;
         return false;
     }
 }
@@ -657,4 +664,10 @@ async function displayPoliticianPage(imgUrl) {
     });
 
     returnToFeed(repName, document.getElementById("feed"));
+}
+
+//Logs out a user or rep
+function resetLocalStorage() {
+    localStorage.setItem("nickname", "Anonymous");
+    localStorage.setItem("rep", false);
 }
