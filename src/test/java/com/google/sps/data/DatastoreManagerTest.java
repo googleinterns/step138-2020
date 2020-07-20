@@ -18,6 +18,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import com.google.sps.data.ToxicCommentException; 
 import java.lang.UnsupportedOperationException; 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -57,6 +58,15 @@ public final class DatastoreManagerTest {
 
         assertTrue(name.equals("Anonymous")); 
         assertTrue(msg.equals("Nice dude")); 
+    }
+
+    @Test
+    public void testInsertCommentInDatastoreIfNonToxic() 
+    throws EntityNotFoundException{
+        String toxicComment = "I hate you and everything you stand for."; 
+        assertThrows(ToxicCommentException.class, () -> {
+            DatastoreManager.insertCommentInDatastoreIfNonToxic("Anonymous", toxicComment); 
+        });
     }
 
     @Test
@@ -312,7 +322,8 @@ public final class DatastoreManagerTest {
     }
 
     @Test
-    public void testqueryForTabEntityWithName() throws EntityNotFoundException {
+    public void testqueryForTabEntityWithName() 
+    throws EntityNotFoundException {
         Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
         tabEntity.setProperty(Constants.TAB_NAME, "Education");
         tabEntity.setProperty(Constants.TAB_PLATFORM, "Platform");
