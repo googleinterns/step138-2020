@@ -4,7 +4,6 @@ import perspective.src.au.com.origma.perspectiveapi.v1alpha1.models.AnalyzeComme
 import perspective.src.au.com.origma.perspectiveapi.v1alpha1.models.AttributeScore;
 import perspective.src.au.com.origma.perspectiveapi.v1alpha1.models.AttributeType;
 import perspective.src.au.com.origma.perspectiveapi.v1alpha1.PerspectiveAPI;
-import java.lang.IllegalStateException; 
 import java.util.Map;
 import com.google.sps.data.Constants;
 
@@ -15,7 +14,7 @@ public final class ToxicityDetector {
         PerspectiveAPI pAPI = PerspectiveAPI.create(apiKey); 
         AnalyzeCommentResponse response = pAPI.analyze(msg); 
         if (response == null) {
-            throw new IllegalStateException("Perspective API was unable to analyze your comment"); 
+            return false; 
         }
 
         Map<AttributeType, AttributeScore> scores = response.getAttributeScores(); 

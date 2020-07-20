@@ -10,6 +10,7 @@ import com.google.appengine.api.datastore.KeyFactory;
 import com.google.sps.data.Comment;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Representative;
+import com.google.sps.data.ToxicCommentException;
 import java.io.IOException;
 import java.net.URLEncoder; 
 import javax.servlet.annotation.WebServlet;
@@ -45,15 +46,26 @@ public class NewPostServlet extends HttpServlet {
         String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
+
         try {
             repEntity = DatastoreManager.queryForRepresentativeEntityWithName(repName);         
         } catch(EntityNotFoundException e) {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
+
         long repId = repEntity.getKey().getId();
-        long commentId = DatastoreManager.insertCommentInDatastore(name, comment);
+
+        long commentId; 
+        try {
+            commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(name, comment);
+        } catch(ToxicCommentException e) {
+            logger.error(e);
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
+        
         long postId = DatastoreManager.insertPostInDatastore(commentId, tab);
+
         try {
             DatastoreManager.updateRepresentativePostList(repId, postId);
         } 
@@ -61,6 +73,7 @@ public class NewPostServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
+
         String redirect = (feedBool == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
             "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tab);
         response.sendRedirect(redirect);

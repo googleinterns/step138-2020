@@ -14,6 +14,7 @@ import com.google.sps.data.Constants;
 import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
+import com.google.sps.data.ToxicCommentException;
 import java.io.IOException;
 import java.net.URLEncoder; 
 import java.util.ArrayList;
@@ -44,7 +45,15 @@ public class ReplyToPostServlet extends HttpServlet {
         String nickName = request.getParameter(NICKNAME);
         String comment = request.getParameter(REPLY);
         String repName = request.getParameter(REP_NAME);
-        long commentId = DatastoreManager.insertCommentInDatastore(nickName, comment); 
+        
+        long commentId; 
+        try {
+            commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(nickName, comment);
+        } catch(ToxicCommentException e) {
+            logger.error(e);
+            throw new ServletException("Error: " + e.getMessage(), e);
+        }
+
         try {
             DatastoreManager.updatePostWithComment(postId, commentId); 
         } 

@@ -18,7 +18,7 @@ import com.google.sps.data.DatastoreManager;
 import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Representative;
-import java.lang.IllegalArgumentException; 
+import com.google.sps.data.ToxicCommentException; 
 import java.lang.UnsupportedOperationException; 
 import java.util.Arrays;
 import java.util.ArrayList;
@@ -61,11 +61,11 @@ public final class DatastoreManagerTest {
     }
 
     @Test
-    public void testInsertToxicCommentInDatastore() 
+    public void testInsertCommentInDatastoreIfNonToxic() 
     throws EntityNotFoundException{
         String toxicComment = "I hate you and everything you stand for."; 
-        assertThrows(IllegalArgumentException.class, () -> {
-            DatastoreManager.insertCommentInDatastore("Anonymous", toxicComment); 
+        assertThrows(ToxicCommentException.class, () -> {
+            DatastoreManager.insertCommentInDatastoreIfNonToxic("Anonymous", toxicComment); 
         });
     }
 

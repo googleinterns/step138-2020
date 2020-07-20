@@ -6,6 +6,7 @@ import com.google.sps.data.DatastoreEntityToObjectConverter;
 import com.google.sps.data.Post;
 import com.google.sps.data.Reaction;
 import com.google.sps.data.Representative;
+import com.google.sps.data.ToxicCommentException;
 import com.google.sps.data.ToxicityDetector;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -15,7 +16,6 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import com.google.appengine.api.datastore.Key; 
 import com.google.appengine.api.datastore.KeyFactory;
-import java.lang.IllegalArgumentException; 
 import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
@@ -30,15 +30,26 @@ public class DatastoreManager {
     private static final Logger logger = LogManager.getLogger("DatastoreManager");
 
     /**
+     * Inserts a comment entity into datastore if not toxic 
+     * @param name nickname of user submitting the comment 
+     * @param message 
+     * @return ID of entity inserted into datastore
+     */ 
+    public static long insertCommentInDatastoreIfNonToxic(String name, String message) 
+    throws ToxicCommentException {
+        if (ToxicityDetector.isCommentToxic(message)) {
+            throw new ToxicCommentException("Can't enter toxic comments."); 
+        }
+        return insertCommentInDatastore(name, message); 
+    }
+
+    /**
      * Inserts a comment entity into datastore 
      * @param name nickname of user submitting the comment 
      * @param message 
      * @return ID of entity inserted into datastore
      */ 
     public static long insertCommentInDatastore(String name, String message) {
-        if (ToxicityDetector.isCommentToxic(message)) {
-            throw new IllegalArgumentException("Can't enter toxic comments."); 
-        }
         Entity commentEntity = new Entity(Constants.COMMENT_ENTITY_TYPE); 
         commentEntity.setProperty(Constants.COMMENT_MSG, message); 
         commentEntity.setProperty(Constants.COMMENT_NAME, name); 
