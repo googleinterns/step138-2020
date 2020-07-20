@@ -93,15 +93,25 @@ public class DatastoreManager {
      * @param platform description of representative's platform for particular tab
      * @return ID of entity inserted into datastore
      */ 
-    public static List<Long> insertTabsInDatastore(List<String> names, List<String> platforms) {
+    public static List<Long> insertTabsInDatastore(List<String> names, List<String> platforms) 
+    throws EntityNotFoundException {
         List<Long> tabIds = new ArrayList<>();
+        Entity existingTab;
         for (int i = 0 ; i < names.size() ; i++) {
-            Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
-            tabEntity.setProperty(Constants.TAB_NAME, names.get(i)); 
-            tabEntity.setProperty(Constants.TAB_PLATFORM, platforms.get(i)); 
             DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-            ds.put(tabEntity); 
-            tabIds.add(tabEntity.getKey().getId());
+            existingTab = DatastoreManager.queryForTabEntityWithName(names.get(i));
+            if (existingTab == null) {
+                Entity tabEntity = new Entity(Constants.TAB_ENTITY_TYPE); 
+                tabEntity.setProperty(Constants.TAB_NAME, names.get(i)); 
+                tabEntity.setProperty(Constants.TAB_PLATFORM, platforms.get(i)); 
+                ds.put(tabEntity); 
+                tabIds.add(tabEntity.getKey().getId());
+            }
+            else {
+                existingTab.setProperty(Constants.TAB_PLATFORM, platforms.get(i));
+                ds.put(existingTab);
+                tabIds.add(existingTab.getKey().getId());
+            }
         }
         return tabIds;
     }

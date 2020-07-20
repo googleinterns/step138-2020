@@ -159,7 +159,8 @@ public final class DatastoreManagerTest {
     }
 
     @Test
-    public void testQueryForRepresentativeObjectWithName() {
+    public void testQueryForRepresentativeObjectWithName() 
+    throws EntityNotFoundException {
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
             Arrays.asList("Other"), Arrays.asList(""));
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
@@ -294,8 +295,9 @@ public final class DatastoreManagerTest {
     @Test
     public void testqueryForTabListWithRepName() 
     throws EntityNotFoundException {
-        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
-        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police")));
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Education", "Police"), 
+            Arrays.asList("Platform on education", "Platform on police"));
         Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
         Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));
         List<Tab> tabList = new ArrayList<Tab> (Arrays.asList(tab1, tab2));
@@ -324,8 +326,12 @@ public final class DatastoreManagerTest {
     @Test
     public void testInsertTabsInDatastore() 
     throws EntityNotFoundException{
-        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
-        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Education", "Police"), 
+            Arrays.asList("Platform on education", "Platform on police")); 
+        List<Long> newTabIds = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Education"), 
+            Arrays.asList("New platform on education")); 
         Key tabEntityKey1 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(0));
         Entity tabEntity1 = (Entity) ds.get(tabEntityKey1);
         Key tabEntityKey2 = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabIds.get(1));
@@ -336,17 +342,19 @@ public final class DatastoreManagerTest {
         String name2 = (String) (tabEntity2.getProperty(Constants.TAB_NAME));
         String platform2 = (String) (tabEntity2.getProperty(Constants.TAB_PLATFORM));
 
+        assertTrue(tabIds.get(0).equals(newTabIds.get(0)));
         assertTrue(name1.equals("Education")); 
         assertTrue(name2.equals("Police"));         
-        assertTrue(platform1.equals("Platform on education")); 
+        assertTrue(platform1.equals("New platform on education")); 
         assertTrue(platform2.equals("Platform on police"));
     }
 
     @Test
     public void testUpdateRepresentativeTabList() 
     throws EntityNotFoundException{
-        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(new ArrayList<String> (Arrays.asList("Education", "Police")), 
-        new ArrayList<String> (Arrays.asList("Platform on education", "Platform on police"))); 
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
+            Arrays.asList("Education", "Police"), 
+            Arrays.asList("Platform on education", "Platform on police")); 
         Tab tab1 = new Tab("Education", "Platform on education", tabIds.get(0));
         Tab tab2 = new Tab("Police", "Platform on police", tabIds.get(1));
         List<Tab> tabList = new ArrayList<Tab> (Arrays.asList(tab1, tab2));

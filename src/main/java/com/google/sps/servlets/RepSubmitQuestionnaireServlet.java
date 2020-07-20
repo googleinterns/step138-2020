@@ -53,11 +53,11 @@ public class RepSubmitQuestionnaireServlet extends HttpServlet {
         String platforms = request.getParameter(PLATFORM_LIST);
         //Splits the platforms by "*," which was added as divider in script function
         List<String> platformList = Arrays.asList(platforms.split("\\*,"));
-        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
 
         Entity rep;
         long repId;
         try {
+            List<Long> tabIds = DatastoreManager.insertTabsInDatastore(topicList, platformList);
             rep = DatastoreManager.queryForRepresentativeEntityWithName(repName.trim()); 
             repId = rep.getKey().getId(); 
             DatastoreManager.updateRepresentativeTabList(repId, tabIds);
