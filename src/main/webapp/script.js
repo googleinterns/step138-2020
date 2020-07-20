@@ -190,6 +190,9 @@ function displayPost(post, firstPost) {
         newQuestion.style.marginTop = 0;
     }
     newQuestion.setAttribute("id", post.id);
+    var postId = document.createElement("span");
+    postId.className = "w3-right w3-opacity";
+    postId.innerText = post.id;
     var name = document.createElement("h4");
     name.innerText = post.question.name;
     var hrElement = document.createElement("hr");
@@ -200,6 +203,7 @@ function displayPost(post, firstPost) {
     hrElement.appendChild(linebreak);
 
     newQuestion.appendChild(linebreak);
+    newQuestion.appendChild(postId);
     newQuestion.appendChild(name);
     newQuestion.appendChild(hrElement);
     newQuestion.appendChild(question);
@@ -331,8 +335,7 @@ function displayReplyList(post) {
     replyList.forEach((reply)=> {
         var postElement = document.getElementById(post.id);
         var newReply = document.createElement("p");
-        newReply.innerText = reply.name + ": " + reply.comment;
-        postElement.appendChild(newReply);
+        displayCommentWithLinking(postElement, newReply, reply);
     })
 }
 
@@ -342,9 +345,27 @@ function displayRepAnswer(post, repName) {
     if (answer != undefined) {    
         var postElement = document.getElementById(post.id);
         var repAnswer = document.createElement("p");
-        repAnswer.innerText = repName + ": " + answer.comment;
-        postElement.appendChild(repAnswer);
+        displayCommentWithLinking(postElement, repAnswer, answer);
     }
+}
+
+//Displays comment and links to other posts if applicable
+function displayCommentWithLinking(postElement, container, commentObject) {
+    container.innerHTML = commentObject.name + ": ";
+    var wordsInComment = commentObject.comment.split(" ");
+    //Captures links that start with "@" and are followed by the 16 digits corresponding to postId
+    var regex = /@\d{16}/g;
+    var linksToPosts = commentObject.comment.match(regex);
+    for (word of wordsInComment) {
+        if (linksToPosts.includes(word)) {
+            var anchor = `<a href="${window.location.href + "#" + word.substring(1, word.length)}">${word + " "}</a>`;
+            container.innerHTML += anchor;
+        }
+        else {
+            container.innerHTML += (word + " ");
+        }
+    }
+    postElement.appendChild(container);
 }
 
 //Creates form for user to ask a new question on rep's feed
