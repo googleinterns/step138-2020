@@ -43,6 +43,7 @@ public class NewPostServlet extends HttpServlet {
         String feedBooleanAsString = request.getParameter(FEED_BOOLEAN);
         Boolean feedBool = Boolean.parseBoolean(feedBooleanAsString);
         String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
+        System.out.println("THIS IS THE TAB: " + tab);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
         try {

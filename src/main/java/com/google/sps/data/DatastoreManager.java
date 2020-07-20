@@ -228,6 +228,19 @@ public class DatastoreManager {
     }
 
     /**
+     * Updates the tab associated with a post entity
+     * @param postId ID of the post entity 
+     * @param tabName name of the new tab post is associated with
+     */ 
+    public static void updatePostTab(long postId, String tabName) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
+        postEntity.setProperty(Constants.POST_TAB, tabName); 
+        datastore.put(postEntity);
+    }
+
+    /**
      * Searches datastore for a particular representative and converts the entity 
      * to a Representative instance 
      * @param repName name of the representative to search datastore for 

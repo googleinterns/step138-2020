@@ -56,18 +56,12 @@ async function displayTab() {
     }
     
     var addTab = decodeURI(urlParams.get("addTab"));
-    newTabForm; 
     if (addTab == "true") {
-        var postsElement = document.getElementById("posts")
-        var newTabForm = document.createElement("form");
-        newTabForm.style.marginLeft = "10px";
-        postsElement.appendChild(newTabForm);
+        document.getElementById("postsForm").style.display = "block";
     }
-
     posts.forEach((post) => {
         if (addTab == "true") {
-            var lastPost = (rep.trim() == "true" && post == posts[posts.length - 1]) ? true : false;
-            addPostToNewTabForm(newTabForm, post, lastPost)
+            addPostToNewTabForm(post)
         } else { 
             displayPostWithoutNewTab(post, false);
         }
@@ -206,7 +200,8 @@ function displayPostWithoutNewTab(post, firstPost) {
 
 //Displays posts with checkboxes for selecting particular ones to
 //move to another tab
-function addPostToNewTabForm(form, post, lastPost) {
+function addPostToNewTabForm(post) {
+    var div = document.getElementById("post");
     var wrapper = document.createElement("div");
     wrapper.style.display = "flex";
     wrapper.style.alignItems = "center";
@@ -218,34 +213,24 @@ function addPostToNewTabForm(form, post, lastPost) {
     postElement.style.flexGrow = 1;
     wrapper.appendChild(checkbox);
     wrapper.appendChild(postElement);
-    form.appendChild(wrapper);
-    if (lastPost == true) {
-        linebreak = document.createElement("br");
-        var tabName = document.createElement("input");
-        tabName.placeholder = "Name of new tab";
-        tabName.type = "text";
-        tabName.id = "tabName";
-        var submitButton = document.createElement("button");
-        submitButton.className = "btn btn-default";
-        submitButton.innerText = "Submit";
-        submitButton.type = "button";
-        submitButton.onclick = function() {addNewTab()};
-        form.appendChild(linebreak);
-        form.appendChild(tabName);
-        form.appendChild(submitButton);
-    }
+    div.appendChild(wrapper);
 }
 
 //Adds a new tab and migrates posts accordingly
-function addNewTab() {
-    var checkboxes= document.getElementsByName("checkbox")
+async function addNewTab() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = decodeURI(urlParams.get('name')); 
+    var tabName = document.getElementById("newTabName").value;
+    var platform = document.getElementById("newTabPlatform").value;
+    var checkboxes= document.getElementsByName("checkbox");
     var checked = [];
     for (check of checkboxes) {
         if (check.checked == true) {
             checked.push(check.value);
         }
     }
-    //TODO(create new tab and move posts that were checked to that tab)
+    var response = await fetch(`/add_new_tab?tabName=${tabName}&platform=${platform}&posts=${checked}&repName=${repName}`);
+    window.location.href = "/feed.html?name=" + encodeURI(repName);
 }
 
 //Abstract out display of Post
