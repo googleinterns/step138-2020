@@ -8,8 +8,7 @@ import java.util.Map;
 import com.google.sps.data.Constants;
 
 public final class ToxicityDetector {
-    // private static final String apiKey = System.getenv(Constants.PERSPECTIVE_API_KEY); 
-    private static final String apiKey = "AIzaSyCXm5gaDw0xGSeuhwIAurQECqkLEiVzm-k";
+    private static final String apiKey = System.getenv(Constants.PERSPECTIVE_API_KEY); 
 
     public static boolean isCommentToxic(String msg) {
         PerspectiveAPI pAPI = PerspectiveAPI.create(apiKey); 
