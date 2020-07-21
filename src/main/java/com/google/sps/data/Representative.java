@@ -31,8 +31,7 @@ public final class Representative {
         this.blobKeyUrl = blobKeyUrl;
         this.tabs = tabs;
         this.id = id; 
-
-        Collections.sort(this.posts, new Post.PostComparator());
+        Collections.sort(this.posts, new Post.PostComparator()); 
     }
 
     public String getName() {

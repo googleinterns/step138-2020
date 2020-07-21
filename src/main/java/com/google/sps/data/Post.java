@@ -106,7 +106,7 @@ public final class Post {
             sb.append(String.valueOf(entry.getValue())).append(System.getProperty("line.separator")); 
         }
         sb.append("Tab: ").append(System.getProperty("line.separator")); 
-        sb.append(tab.toString());         
+        sb = (tab == null) ? sb.append("") : sb.append(tab.toString());        
         return sb.toString();
     }
 
@@ -114,8 +114,8 @@ public final class Post {
         @Override
         public int compare(Post a, Post b) {
             long currTime = System.currentTimeMillis(); 
-            double aRecency = a.getTimestamp()/currTime; 
-            double bRecency = b.getTimestamp()/currTime; 
+            double aRecency = (double)a.getTimestamp() / (double)currTime; 
+            double bRecency = (double)b.getTimestamp() / (double)currTime; 
             return Double.compare(aRecency, bRecency); 
         }
     }
