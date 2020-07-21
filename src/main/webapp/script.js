@@ -702,11 +702,12 @@ async function submitRepQuestionnaire() {
         }
     }
     //Remove * on the end of the last platform string if it exists
-    var lastPlatform = listOfPlatforms[listOfPlatforms.length - 1];
-    lastPlatform = (lastPlatform[lastPlatform.length - 1] == "*") ? 
+    if (listOfPlatforms != []) {
+        var lastPlatform = listOfPlatforms[listOfPlatforms.length - 1];
+        lastPlatform = (lastPlatform[lastPlatform.length - 1] == "*") ? 
         lastPlatform.substring(0, lastPlatform.length - 1): lastPlatform;
-    listOfPlatforms[listOfPlatforms.length - 1] = lastPlatform;
-
+        listOfPlatforms[listOfPlatforms.length - 1] = lastPlatform;
+    }
     var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
         ${listOfPlatforms}&intro=${intro}&repName=${encodeURI(repName)}`);
     if (document.getElementById("imageUpload") != null) {
