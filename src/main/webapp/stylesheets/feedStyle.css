@@ -58,17 +58,29 @@ p {
   font-weight: 900;
 }
 
-.btn {
+.notselected {
   height: 5%;
   width: 5%;
   background-color: white; 
-  border: none; 
-  color: black; 
-  margin-right: 2.5%;
+  border: 1px solid white; 
   cursor: pointer; 
+  justify-content: left;
 }
 
-.btn:hover {
+.notselected:hover {
+  background-color: RoyalBlue;
+}
+
+.selected {
+  height: 5%;
+  width: 5%;
+  background-color: white; 
+  border: 1px solid RoyalBlue; 
+  cursor: pointer; 
+  justify-content: left;
+}
+
+.selected:hover {
   background-color: RoyalBlue;
 }
 

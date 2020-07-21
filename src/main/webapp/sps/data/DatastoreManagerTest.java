@@ -362,7 +362,7 @@ public final class DatastoreManagerTest {
 
     @Test
     public void testUpdateRepresentativeTabList() 
-    throws EntityNotFoundException{
+    throws EntityNotFoundException {
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
             Arrays.asList("Education", "Police"), 
             Arrays.asList("Platform on education", "Platform on police")); 
@@ -376,5 +376,18 @@ public final class DatastoreManagerTest {
         List<Tab> actualTabList = DatastoreManager.queryForTabListWithRepName("Donald Trump");
 
         assertTrue(tabList.equals(actualTabList));
+    }
+
+    @Test
+    public void testupdatePostTab() 
+    throws EntityNotFoundException {
+        long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
+            "Why are you president?"); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
+
+        DatastoreManager.updatePostTab(postId, "Police");
+        Post post = DatastoreManager.queryForPostObjectWithId(postId);
+
+        assertTrue(post.getTab().equals("Police"));
     }
 }
