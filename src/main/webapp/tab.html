@@ -45,10 +45,11 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                 <br>
 
                 <!-- Return to feed -->
-                <div class="w3-card w3-round">
+                <div id="buttons" class="w3-card w3-round">
                     <div class="w3-white">
-                        <div id="feed"></div>
-                    </div>      
+                        <button id="feed" class="w3-button w3-block w3-theme-l1 w3-left-align" >Back to Feed</button>
+                        <button id="addTab" style="display: none" class="w3-button w3-block w3-theme-l1 w3-left-align" >Add Tab</button>
+                    </div>  
                 </div>
 
             <!-- End Left Column -->
@@ -78,7 +79,7 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                                     <div class="form-group">
                                         <div class="col-sm-10">
                                             <label for="tabDropDown">Tab</label>
-                                            <select class="form-control" id="tabDropDown">
+                                            <select name="tab" class="form-control" id="tabDropDown">
                                             </select>
                                         </div>
                                     </div>
@@ -92,7 +93,31 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                         </div>
                     </div>
                 </div>
-                <div id="posts">
+                <div id="posts"></div>
+                <div id="postsForm" style="display: none; margin-left : 10px">
+                    <form id="repQuestionnaire" class="form-horizontal">
+                        <div id="post"></div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="newTabName">New tab name: </label>
+                            <div class="col-sm-10">
+                                <input id="newTabName" type="text" placeholder="New tab name"><br>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="newTabPlatform">Platform:  </label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" id="newTabPlatform" name="newTabPlatform"
+                                    placeholder="Platform for new tab" rows="3"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">        
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button onclick="addNewTab()" type="button" class="btn btn-default">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
             <!-- End Middle Column -->
 
             </div>    
