@@ -183,40 +183,6 @@ async function reactToPost(reaction, postId, repName) {
     window.location.reload(false); 
 }
 
-// function displayReaction(post, repName, reactionDiv, reaction) {
-//     var btn = document.createElement("button");
-//     if (localStorage.getItem(post.id + reaction) === "reacted") {
-//         btn.setAttribute("class", "selected"); 
-//     }
-//     else {
-//         btn.setAttribute("class", "notselected"); 
-//     }
-//     var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
-//     btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
-//     btn.innerHTML += post.reactions[reaction]; 
-//     btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
-//     reactionDiv.appendChild(btn); 
-// }
-
-// async function reactToPost(reaction, postId, repName) {
-//     var reactionState = localStorage.getItem(postId + reaction); 
-//     if (reactionState === null) {
-//         localStorage.setItem(postId + reaction, "unreacted");
-//         reactionState = "unreacted";
-//     }
-//     if (reactionState === "unreacted") {
-//         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
-//             ${postId}&reaction=${reaction}`);
-//         localStorage.setItem(postId + reaction, "reacted");
-//     }
-//     else {
-//         await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
-//             ${postId}&reaction=${reaction}`);
-//         localStorage.setItem(postId + reaction, "unreacted");
-//     }
-//     window.location.reload(false); 
-// }
-
 //Displays the question for a post
 function displayPost(post, firstPost) {
     var posts = document.getElementById("posts");
