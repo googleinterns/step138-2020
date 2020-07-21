@@ -65,7 +65,7 @@ public final class DatastoreEntityToObjectConverterTest {
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
         postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
-        postEntity.setProperty(Constants.POST_TAB, "Education");
+        postEntity.setProperty(Constants.POST_TABS, Arrays.asList("Education"));
         ds.put(postEntity); 
         long postId = postEntity.getKey().getId(); 
         List<Long> postIds = new ArrayList<>(); 
@@ -94,7 +94,7 @@ public final class DatastoreEntityToObjectConverterTest {
         for (Reaction reaction : Reaction.values()) { 
             reactions.put(reaction, (long) 0);
         }
-        this.post = new Post(commentQuestion, commentAnswer, replies, tab.getTabName(), postId, reactions, 0); 
+        this.post = new Post(commentQuestion, commentAnswer, replies, Arrays.asList(tab.getTabName()), postId, reactions, 0); 
         List<Post> posts = new ArrayList<>();
         posts.add(post); 
         donaldTrump = new Representative("Donald Trump", "President of the US", "username", 

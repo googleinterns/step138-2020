@@ -20,6 +20,7 @@ import java.lang.System;
 import java.lang.UnsupportedOperationException; 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,7 +88,7 @@ public class DatastoreManager {
      * @param question ID of comment entity representing question made by the user 
      * @return ID of entity inserted into datastore
      */ 
-    public static long insertPostInDatastore(long question, String tab) {
+    public static long insertPostInDatastore(long question, List<String> tabs) {
         Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
         postEntity.setProperty(Constants.POST_QUESTION, question); 
         postEntity.setProperty(Constants.POST_ANSWER, -1); 
@@ -96,7 +97,7 @@ public class DatastoreManager {
         for (String reaction : reactions) {
             postEntity.setProperty(reaction, (long) 0);
         }
-        postEntity.setProperty(Constants.POST_TAB, tab);
+        postEntity.setProperty(Constants.POST_TABS, tabs);
         postEntity.setProperty(Constants.POST_TIMESTAMP, System.currentTimeMillis());
         DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
         ds.put(postEntity); 
@@ -352,7 +353,7 @@ public class DatastoreManager {
         if (rep != null) {
             List<Post> postList= rep.getPosts();
             for (Post post : postList) {
-                if (post.getTab().equals(tab)) {
+                if (post.getTabs().contains(tab)) {
                     postListForTab.add(post);
                 }
             }
