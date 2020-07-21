@@ -148,34 +148,37 @@ function addTabButton(tabName, container, repName) {
 
 function displayReaction(post, repName, reactionDiv, reaction) {
     var btn = document.createElement("button");
-    btn.setAttribute("class", "btn"); 
-    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
-    if (localStorage.getItem(post.id + reaction) === "reacted") {
-        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px" border="1">';
+    if (localStorage.getItem(post.id) === reaction) {
+        btn.setAttribute("class", "selected"); 
     }
     else {
-        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+        btn.setAttribute("class", "notselected"); 
     }
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
+    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
     btn.innerHTML += post.reactions[reaction]; 
     btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
     reactionDiv.appendChild(btn); 
 }
 
 async function reactToPost(reaction, postId, repName) {
-    var reactionState = localStorage.getItem(postId + reaction); 
+    var reactionState = localStorage.getItem(postId); 
     if (reactionState === null) {
-        localStorage.setItem(postId + reaction, "unreacted");
-        reactionState = "unreacted";
-    }
-    if (reactionState === "unreacted") {
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
-        localStorage.setItem(postId + reaction, "reacted");
+        localStorage.setItem(postId, reaction);
+    }
+    else if (reactionState === reaction) {
+        await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+            ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId, null);
     }
     else {
         await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+            ${postId}&reaction=${reactionState}`);
+        await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
-        localStorage.setItem(postId + reaction, "unreacted");
+        localStorage.setItem(postId, reaction);
     }
     window.location.reload(false); 
 }
