@@ -3,6 +3,9 @@
 <title>Politician Page</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -10,32 +13,40 @@
 <script src="script.js"></script>
 
 <body id="body" onload="displayPoliticianPage()">
-    <!-- Sidebar with image -->
-    <nav class="w3-sidebar w3-hide-medium w3-hide-small" style="width:40%">
-        <div class="bgimg"></div>
-    </nav>
 
-    <!-- Page Content -->
-    <div id="content" class="w3-main w3-padding-large" style="margin-left:40%">
-
-        <!-- Header -->
-        <header class="w3-container w3-center" style="padding:128px 16px 64px 16px" id="home">
-            <h1 class="w3-jumbo" id="repName"><b></b></h1>
-            <p id="title"></p>
-        </header>
-
-        <!-- About Section -->
-        <div class="w3-content w3-justify w3-text-grey w3-padding-32 " >
-            <h2>About</h2>
-            <hr class="w3-opacity">
-            <p id="about"></p>
+    <!-- Navbar -->
+    <div class="w3-top">
+        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+            <a id="feed" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>Feed</a>
         </div>
+    </div>
+    
+    <div style="margin-top:80px">
+        <!-- Sidebar with image -->
+        <nav class="w3-sidebar w3-hide-medium w3-hide-small" style="width:40%">
+            <div class="bgimg"></div>
+        </nav>
 
-        <!-- Tabs Section -->
-        <h3 class="w3-padding-16" style="padding-bottom=16px">My Tabs</h3>
-        <div class="w3-row w3-center w3-dark-grey w3-padding-16 w3-section" id="tabs"></div>
-        <div id="feed"> </div>
-        
+        <!-- Page Content -->
+        <div id="content" class="w3-main w3-padding-large" style="margin-left:40%">
+
+            <!-- Header -->
+            <header class="w3-container w3-center" style="padding:128px 16px 64px 16px" id="home">
+                <h1 class="w3-jumbo" id="repName"><b></b></h1>
+                <h2 id="title"></h2>
+            </header>
+
+            <!-- About Section -->
+            <div class="w3-content w3-justify w3-text-grey w3-padding-32 " >
+                <h2>About</h2>
+                <hr class="w3-opacity">
+                <h3 id="about"></h3>
+            </div>
+
+            <!-- Tabs Section -->
+            <h3 class="w3-padding-16" style="padding-bottom=16px">My Tabs</h3>
+            <div class="w3-row w3-center w3-dark-grey w3-padding-16 w3-section" id="tabs"></div>
+        </div>
     </div>
 </body>
 </html>

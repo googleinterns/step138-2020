@@ -18,6 +18,16 @@ async function displayTab() {
         }
     }
 
+    //Add tabs the sidebar
+    var response = await fetch(`rep_tabs?repName=${encodeURI(repName)}`);
+    var tabList = await response.json();
+    var tabs = document.getElementById("tabs");
+    tabList.forEach((tab) => {
+        if (tab.name != tabName) {
+            addTabButton(tab.name, tabs, repName);
+        }
+    });
+
     //fetch the representative entity corresponding to repName
     var response = await fetch(`/feed?repName=${encodeURI(repName)}`);
     var representative = await response.json();
@@ -267,12 +277,7 @@ function displayPost(post, firstPost) {
 
 //Creates anchor tag that links back to representative's feed
 function returnToFeed(repName, feed) {
-    var returnToFeed = document.createElement("a");
-    returnToFeed.href = "feed.html?name=" + encodeURI(repName);    
-    returnToFeed.innerText = "Return to Feed";
-    linebreak = document.createElement("br");
-    returnToFeed.appendChild(linebreak);
-    feed.appendChild(returnToFeed);
+    feed.href = "feed.html?name=" + encodeURI(repName);    
 }
 
 //Creates an button for representative answer
@@ -482,6 +487,16 @@ function storeRepBooleanAndZipcodeAndRedirect() {
 async function getRepList() {
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
+    //Change navbar based on rep v user 
+    var backToLogin = document.getElementById("backToLogin");
+    var logout = document.getElementById("logout");
+    if (rep.trim() == "true") {
+        logout.style.display = "none";
+        backToLogin.style.display = "block";
+    } else {
+        logout.style.display = "block";
+        backToLogin.style.display = "none";
+    }
     var zipcode = localStorage.getItem("zipcode");
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
