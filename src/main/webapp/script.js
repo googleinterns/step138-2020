@@ -412,9 +412,11 @@ function displayCommentWithLinking(postElement, container, commentObject) {
     var regex = /@\d{16}/g;
     var linksToPosts = commentObject.comment.match(regex);
     for (word of wordsInComment) {
-        if (linksToPosts.includes(word)) {
+        if (linksToPosts) {
+            if (linksToPosts.includes(word)) {
             var anchor = `<a href="${window.location.href + "#" + word.substring(1, word.length)}">${word + " "}</a>`;
             container.innerHTML += anchor;
+            }
         }
         else {
             container.innerHTML += (word + " ");

@@ -95,7 +95,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education")); 
         Key postEntityKey = KeyFactory.createKey(Constants.POST_ENTITY_TYPE, postId); 
         Entity postEntity = (Entity) ds.get(postEntityKey); 
 
@@ -122,7 +122,7 @@ public final class DatastoreManagerTest {
             "President of the US", "username", "password", tabIds);
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education")); 
         
         DatastoreManager.updateRepresentativePostList(repId, postId); 
         Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump"); 
@@ -139,7 +139,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education")); 
         long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude."); 
 
         DatastoreManager.updatePostWithComment(postId, commentId);
@@ -156,7 +156,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education"); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education")); 
         long answerId = DatastoreManager.insertCommentInDatastore("Donald Trump", 
             "Because I want to."); 
 
@@ -266,7 +266,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, Arrays.asList("education")); 
 
         DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
         Post post = DatastoreManager.queryForPostObjectWithId(postId); 
@@ -280,7 +280,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, Arrays.asList("education")); 
 
         assertThrows(UnsupportedOperationException.class, () -> {
             DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 
@@ -292,7 +292,7 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException{
         long commentIdQuestion = DatastoreManager.insertCommentInDatastore
             ("Anonymous", "Why are you in office?");
-        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, "education"); 
+        long postId = DatastoreManager.insertPostInDatastore(commentIdQuestion, Arrays.asList("education")); 
         DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
 
         DatastoreManager.removeReactionFromPost(postId, Reaction.THUMBS_UP.getValue()); 

@@ -57,7 +57,7 @@ public final class DatastoreEntityToObjectConverter {
         long timestamp = (long) (postEntity.getProperty(Constants.POST_ANSWER));
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
-        String tab = (String) postEntity.getProperty(Constants.POST_TAB);
+        List<String> tabs = (List<String>) postEntity.getProperty(Constants.POST_TABS);
         long id = postEntity.getKey().getId();
         List<String> reactionStrings = Reaction.allValues(); 
         Map<Reaction, Long> reactions = new HashMap<Reaction, Long>(); 
@@ -68,7 +68,7 @@ public final class DatastoreEntityToObjectConverter {
             }
             reactions.put(Reaction.fromString(reactionString), reactionCount); 
         }
-        return new Post(question, answer, comments, tab, id, reactions, timestamp); 
+        return new Post(question, answer, comments, tabs, id, reactions, timestamp); 
     }
 
     /**
