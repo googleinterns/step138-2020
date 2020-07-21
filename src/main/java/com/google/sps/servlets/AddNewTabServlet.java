@@ -36,7 +36,7 @@ Trump into the datastore as a hard code for the MVP.
 @WebServlet ("/add_new_tab")
 public class AddNewTabServlet extends HttpServlet {
     private static final Logger logger = LogManager.getLogger("AddNewTabServlet");
-    private static final String NEW_TAB_NAME = "tabName";
+    private static final String NEW_TAB_NAME_PARAM = "tabName";
     private static final String PLATFORM = "platform";
     private static final String POSTS = "posts";
     private static final String REP_NAME = "repName";
@@ -44,10 +44,11 @@ public class AddNewTabServlet extends HttpServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException {
-        String newTabName = request.getParameter(NEW_TAB_NAME);
+        String repName = request.getParameter(REP_NAME);
+        String newTabNameParam = request.getParameter(NEW_TAB_NAME_PARAM);
+        String newTabName = repName.replaceAll("\\s+","") + newTabNameParam;
         String platform = request.getParameter(PLATFORM);
         String postIdsString = request.getParameter(POSTS);
-        String repName = request.getParameter(REP_NAME);
         List<String> postIds = Arrays.asList(postIdsString.split(","));
 
         List<Long> newTabId;
@@ -55,10 +56,11 @@ public class AddNewTabServlet extends HttpServlet {
         try {
             repEntity = DatastoreManager.queryForRepresentativeEntityWithName(repName);
             Long repId = repEntity.getKey().getId();
-            newTabId = DatastoreManager.insertTabsInDatastore(Arrays.asList(repName.replaceAll("\\s+","") + newTabName), Arrays.asList(platform)); 
+            newTabId = DatastoreManager.insertTabsInDatastore(
+                Arrays.asList(newTabName), Arrays.asList(platform)); 
             DatastoreManager.updateRepresentativeTabList(repId, newTabId);
             for (String postId : postIds) {
-                DatastoreManager.updatePostTab(Long.parseLong(postId), repName.replaceAll("\\s+","") + newTabName);
+                DatastoreManager.updatePostTab(Long.parseLong(postId), newTabName);
             }
         } 
         catch(EntityNotFoundException e) {
