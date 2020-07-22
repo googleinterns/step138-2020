@@ -80,7 +80,7 @@ p {
   justify-content: left;
 }
 
-.selected:hover {
+.selected:hover, .politicianPage:hover{
   background-color: RoyalBlue;
 }
 
