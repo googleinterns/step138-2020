@@ -1,6 +1,7 @@
 package com.google.sps.data;
 
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,8 +58,6 @@ public final class DatastoreEntityToObjectConverter {
         long timestamp = (long) (postEntity.getProperty(Constants.POST_ANSWER));
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
-        System.out.println("these r the tabs"); 
-        System.out.println(postEntity.getProperty(Constants.POST_TABS));
         List<String> tabs = (List<String>) postEntity.getProperty(Constants.POST_TABS);
         long id = postEntity.getKey().getId();
         List<String> reactionStrings = Reaction.allValues(); 
