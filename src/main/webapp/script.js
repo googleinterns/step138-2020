@@ -455,6 +455,9 @@ function displayCommentWithLinking(postElement, container, commentObject) {
             var anchor = `<a href="${window.location.href + "#" + word.substring(1, word.length)}">${word + " "}</a>`;
             container.innerHTML += anchor;
             }
+            else {
+                container.innerHTML += (word + " ");
+            }
         }
         else {
             container.innerHTML += (word + " ");
