@@ -10,6 +10,13 @@ async function displayTab() {
         localStorage.setItem("nickname", repName);
     }
     var tabName = decodeURI(urlParams.get('tab'));
+    if (tabName.includes("Other") && rep.trim() == "true") {
+        var addTab = document.getElementById("addTab");
+        addTab.style.display = "block";
+        addTab.onclick = function() {
+            window.location.href = window.location.href + "&addTab=true"
+        }
+    }
 
     //fetch the representative entity corresponding to repName
     var response = await fetch(`/feed?repName=${encodeURI(repName)}`);
@@ -30,12 +37,8 @@ async function displayTab() {
         window.location.href = `/politicianPage.html?name=${encodeURI(repName)}`};
 
     //Add a button to return to feed
-    var feedElement = document.getElementById("feed");
-    var feedButton = document.createElement("button");
+    var feedButton = document.getElementById("feed");
     feedButton.onclick = function() {window.location.href = `/feed.html?name=${encodeURI(repName)}`};
-    feedButton.className = "w3-button w3-block w3-theme-l1 w3-left-align";
-    feedButton.innerText = "Back to Feed";
-    feedElement.appendChild(feedButton);
 
     //Pull the posts under a particular tag
     var tabPostsResponse = await fetch(`/tab_posts?repName=${encodeURI(repName)}&tab=${tabName}`);
@@ -52,12 +55,20 @@ async function displayTab() {
         document.getElementById("posts").appendChild(emptyFeed);
     }
     
+    var addTab = decodeURI(urlParams.get("addTab"));
+    if (addTab == "true") {
+        document.getElementById("postsForm").style.display = "block";
+    }
     posts.forEach((post) => {
-        displayPost(post, false);
+        if (addTab == "true") {
+            addPostToNewTabForm(post)
+        } else { 
+            displayPostWithoutNewTab(post, false);
+        }
         var question = document.getElementById(post.id);
 
         //answer button
-        if (rep.trim() == "true") {
+        if (rep.trim() == "true" && addTab != "true") {
             createAnswerButton(post.id, repName, question);
         }
         else {
@@ -108,7 +119,7 @@ async function displayFeed() {
     }
     postList.forEach((post) => {
         var firstPost = (rep.trim() == "true" && post == postList[0]) ? true : false;
-        displayPost(post, firstPost);
+        displayPostWithoutNewTab(post, firstPost);
         var question = document.getElementById(post.id);
         //answer button
         if (rep.trim() == "true") {
@@ -146,43 +157,120 @@ function addTabButton(tabName, container, repName) {
     container.appendChild(tab);
 }
 
+//Displays specified reaction button in post 
 function displayReaction(post, repName, reactionDiv, reaction) {
     var btn = document.createElement("button");
-    btn.setAttribute("class", "btn"); 
-    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
-    if (localStorage.getItem(post.id + reaction) === "reacted") {
-        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px" border="1">';
+    var reactionCount = parseInt(post.reactions[reaction]);
+    localStorage.setItem(post.id + reaction, reactionCount);
+    if (localStorage.getItem(post.id) === reaction) {
+        reactedBtn = btn; 
+        setReactionButtonContent(btn, reaction, reactionCount, "selected");
     }
     else {
-        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+        setReactionButtonContent(btn, reaction, reactionCount, "notselected");
     }
-    btn.innerHTML += post.reactions[reaction]; 
-    btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
+
+    btn.onclick = function() {reactToPost(btn, reaction, post.id, repName);}; 
     reactionDiv.appendChild(btn); 
 }
 
-async function reactToPost(reaction, postId, repName) {
-    var reactionState = localStorage.getItem(postId + reaction); 
-    if (reactionState === null) {
-        localStorage.setItem(postId + reaction, "unreacted");
-        reactionState = "unreacted";
-    }
-    if (reactionState === "unreacted") {
+//Sets content inside the reaction button 
+function setReactionButtonContent(btn, reaction, reactionCount, selected) {
+    if (btn === null) {
+        return; 
+    } 
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg";
+    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    btn.innerHTML += reactionCount; 
+    btn.setAttribute("class", selected);
+}
+
+//On click function for clicking on reaction button 
+async function reactToPost(btn, reaction, postId, repName) {  
+    var oldReaction = localStorage.getItem(postId);
+    var reactionCount = parseInt(localStorage.getItem(postId + reaction)); 
+    if (oldReaction === null || oldReaction === "null") { 
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
-        localStorage.setItem(postId + reaction, "reacted");
+        reactedBtn = btn; 
+        localStorage.setItem(postId, reaction);
+        localStorage.setItem(postId + reaction, reactionCount + 1); 
+        setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
+        return; 
+    }
+
+    var oldReactionCount = parseInt(localStorage.getItem(postId + oldReaction));
+
+    if (oldReaction === reaction) {
+        if (reactionCount > 0) {
+            await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+                ${postId}&reaction=${reaction}`);
+            localStorage.setItem(postId, null);
+            reactedBtn = null; 
+            localStorage.setItem(postId + reaction, reactionCount - 1); 
+            setReactionButtonContent(btn, reaction, reactionCount - 1, "notselected"); 
+        }
     }
     else {
-        await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+        if (oldReactionCount > 0) {
+            await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+                ${postId}&reaction=${oldReaction}`);
+            localStorage.setItem(postId + oldReaction, oldReactionCount - 1); 
+            setReactionButtonContent(reactedBtn, oldReaction, oldReactionCount - 1, "notselected"); 
+        }
+        await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
-        localStorage.setItem(postId + reaction, "unreacted");
+        localStorage.setItem(postId + reaction, reactionCount + 1); 
+        setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
+        localStorage.setItem(postId, reaction);
+        reactedBtn = btn; 
     }
-    window.location.reload(false); 
 }
 
 //Displays the question for a post
-function displayPost(post, firstPost) {
+function displayPostWithoutNewTab(post, firstPost) {
     var posts = document.getElementById("posts");
+    var postElement = displayPost(post, firstPost);
+    posts.appendChild(postElement);
+}
+
+//Displays posts with checkboxes for selecting particular ones to
+//move to another tab
+function addPostToNewTabForm(post) {
+    var div = document.getElementById("post");
+    var wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.alignItems = "center";
+    var checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = "checkbox";
+    checkbox.value = post.id;
+    var postElement = displayPost(post, false);
+    postElement.style.flexGrow = 1;
+    wrapper.appendChild(checkbox);
+    wrapper.appendChild(postElement);
+    div.appendChild(wrapper);
+}
+
+//Adds a new tab and migrates posts accordingly
+async function addNewTab() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = decodeURI(urlParams.get('name')); 
+    var tabName = document.getElementById("newTabName").value;
+    var platform = document.getElementById("newTabPlatform").value;
+    var checkboxes= document.getElementsByName("checkbox");
+    var checked = [];
+    for (check of checkboxes) {
+        if (check.checked == true) {
+            checked.push(check.value);
+        }
+    }
+    var response = await fetch(`/add_new_tab?tabName=${tabName}&platform=${platform}&posts=${checked}&repName=${repName}`);
+    window.location.href = "/feed.html?name=" + encodeURI(repName);
+}
+
+//Abstract out display of Post
+function displayPost(post, firstPost) {
     var newQuestion = document.createElement("div");
     newQuestion.className = "w3-container w3-card w3-white w3-round";
     newQuestion.style.margin = (firstPost) ? "0px 16px 16px" : "16px";
@@ -207,7 +295,7 @@ function displayPost(post, firstPost) {
     newQuestion.appendChild(name);
     newQuestion.appendChild(hrElement);
     newQuestion.appendChild(question);
-    posts.appendChild(newQuestion);
+    return newQuestion
 }
 
 //Creates anchor tag that links back to representative's feed
@@ -357,9 +445,11 @@ function displayCommentWithLinking(postElement, container, commentObject) {
     var regex = /@\d{16}/g;
     var linksToPosts = commentObject.comment.match(regex);
     for (word of wordsInComment) {
-        if (linksToPosts.includes(word)) {
+        if (linksToPosts) {
+            if (linksToPosts.includes(word)) {
             var anchor = `<a href="${window.location.href + "#" + word.substring(1, word.length)}">${word + " "}</a>`;
             container.innerHTML += anchor;
+            }
         }
         else {
             container.innerHTML += (word + " ");

@@ -53,9 +53,6 @@ public class NewPostServletTest{
     public void newPost() throws Exception {
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(request.getParameter("name")).thenReturn("Bob");
-        String[] tabs = new String[1]; 
-        tabs[0] = "Education"; 
-        when(request.getParameterValues("tabs")).thenReturn(tabs);
         when(request.getParameter("comment")).thenReturn("Why are you president?");
         List<Long> tabIds = DatastoreManager.insertTabsInDatastore(
             Arrays.asList("Other"), Arrays.asList(""));

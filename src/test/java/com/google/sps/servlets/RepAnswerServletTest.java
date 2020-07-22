@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.After;
@@ -50,7 +51,7 @@ public class RepAnswerServletTest{
     @Test
     public void testRepAnswerPostFound() throws Exception {
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "How are you doing?");
-        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
+        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education"));
         String postID = String.valueOf(postId);
         when(request.getParameter("postId")).thenReturn(postID);
         when(request.getParameter("repName")).thenReturn("Donald Trump");
