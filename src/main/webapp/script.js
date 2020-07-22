@@ -450,6 +450,9 @@ function createQuestionForm(repName, tabList, feedBool) {
 function addTabDropdown(tabDropdown, tabName, repName) {
     var stripTabName = tabName.replace(repName.replace(/\s/g, ''), "");
     var tabElement = document.createElement("option");
+    if (stripTabName == "Other") {
+        tabElement.selected = true;
+    }
     tabElement.value = stripTabName;
     tabElement.innerText = stripTabName;
     tabDropdown.appendChild(tabElement);
