@@ -157,41 +157,74 @@ function addTabButton(tabName, container, repName) {
     container.appendChild(tab);
 }
 
+//Displays specified reaction button in post 
 function displayReaction(post, repName, reactionDiv, reaction) {
     var btn = document.createElement("button");
+    var reactionCount = parseInt(post.reactions[reaction]);
+    localStorage.setItem(post.id + reaction, reactionCount);
     if (localStorage.getItem(post.id) === reaction) {
-        btn.setAttribute("class", "selected"); 
+        reactedBtn = btn; 
+        setReactionButtonContent(btn, reaction, reactionCount, "selected");
     }
     else {
-        btn.setAttribute("class", "notselected"); 
+        setReactionButtonContent(btn, reaction, reactionCount, "notselected");
     }
-    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg"
-    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
-    btn.innerHTML += post.reactions[reaction]; 
-    btn.onclick = function() {reactToPost(reaction, post.id, repName);} 
+
+    btn.onclick = function() {reactToPost(btn, reaction, post.id, repName);}; 
     reactionDiv.appendChild(btn); 
 }
 
-async function reactToPost(reaction, postId, repName) {
-    var reactionState = localStorage.getItem(postId); 
-    if (reactionState === null) {
+//Sets content inside the reaction button 
+function setReactionButtonContent(btn, reaction, reactionCount, selected) {
+    if (btn === null) {
+        return; 
+    } 
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg";
+    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    btn.innerHTML += reactionCount; 
+    btn.setAttribute("class", selected);
+}
+
+//On click function for clicking on reaction button 
+async function reactToPost(btn, reaction, postId, repName) {  
+    var oldReaction = localStorage.getItem(postId);
+    var reactionCount = parseInt(localStorage.getItem(postId + reaction)); 
+    if (oldReaction === null || oldReaction === "null") { 
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
+        reactedBtn = btn; 
         localStorage.setItem(postId, reaction);
+        localStorage.setItem(postId + reaction, reactionCount + 1); 
+        setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
+        return; 
     }
-    else if (reactionState === reaction) {
-        await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
-            ${postId}&reaction=${reaction}`);
-        localStorage.setItem(postId, null);
+
+    var oldReactionCount = parseInt(localStorage.getItem(postId + oldReaction));
+
+    if (oldReaction === reaction) {
+        if (reactionCount > 0) {
+            await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+                ${postId}&reaction=${reaction}`);
+            localStorage.setItem(postId, null);
+            reactedBtn = null; 
+            localStorage.setItem(postId + reaction, reactionCount - 1); 
+            setReactionButtonContent(btn, reaction, reactionCount - 1, "notselected"); 
+        }
     }
     else {
-        await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
-            ${postId}&reaction=${reactionState}`);
+        if (oldReactionCount > 0) {
+            await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
+                ${postId}&reaction=${oldReaction}`);
+            localStorage.setItem(postId + oldReaction, oldReactionCount - 1); 
+            setReactionButtonContent(reactedBtn, oldReaction, oldReactionCount - 1, "notselected"); 
+        }
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
+        localStorage.setItem(postId + reaction, reactionCount + 1); 
+        setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
         localStorage.setItem(postId, reaction);
+        reactedBtn = btn; 
     }
-    window.location.reload(false); 
 }
 
 //Displays the question for a post
