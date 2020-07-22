@@ -152,24 +152,26 @@ function displayReaction(post, repName, reactionDiv, reaction) {
     var reactionCount = parseInt(post.reactions[reaction]);
     localStorage.setItem(post.id + reaction, reactionCount);
     if (localStorage.getItem(post.id) === reaction) {
+        reactedBtn = btn; 
         setReactionButtonContent(btn, reaction, reactionCount, "selected");
     }
     else {
         setReactionButtonContent(btn, reaction, reactionCount, "notselected");
     }
+
     btn.onclick = function() {reactToPost(btn, reaction, post.id, repName);}; 
     reactionDiv.appendChild(btn); 
 }
 
 //Sets content inside the reaction button 
 function setReactionButtonContent(btn, reaction, reactionCount, selected) {
-    if (btn !== null) {
-        var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg";
-        btn.innerHTML = ""; 
-        btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
-        btn.innerHTML += reactionCount; 
-        btn.setAttribute("class", selected);
-    }
+    if (btn === null) {
+        return; 
+    } 
+    var imageSrc = "reaction_icons/" + reaction.toLowerCase() + ".jpg";
+    btn.innerHTML = '<img src="'+ imageSrc +'" width="20px" height="20px">';
+    btn.innerHTML += reactionCount; 
+    btn.setAttribute("class", selected);
 }
 
 //On click function for clicking on reaction button 
