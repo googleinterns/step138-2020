@@ -23,12 +23,12 @@ public final class PostComparatorTest {
     public void setUp() {
         Comment oldQuestion = new Comment("Bob", "Why are you president?", -1); 
         Comment oldAnswer = new Comment("Donald", "Because I want to be.", -1); 
-        older = new Post(oldQuestion, oldAnswer, new ArrayList<>(), "", -1, 
+        older = new Post(oldQuestion, oldAnswer, new ArrayList<>(), new ArrayList<>(), -1, 
             new HashMap<Reaction, Long>(), 15953616469L); 
 
         Comment newQuestion = new Comment("Sally", "What about climate change?", -1); 
         Comment newAnswer = new Comment("Donald", "It's fake.", -1); 
-        newer = new Post(newQuestion, newAnswer, new ArrayList<>(), "", -1, 
+        newer = new Post(newQuestion, newAnswer, new ArrayList<>(), new ArrayList<>(), -1, 
             new HashMap<Reaction, Long>(), 15953616479L); 
 
         posts = new ArrayList<>(); 
