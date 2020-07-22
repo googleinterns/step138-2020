@@ -76,8 +76,8 @@ public class ReplyToPostServletTest{
         for (Reaction reaction : Reaction.values()) { 
             reactions.put(reaction, (long) 0);
         }
-        String tab = "Education";
-        Post post = new Post(question, null, replies, Arrays.asList(tab), postId, reactions, 0); 
+        List<String> tabs = Arrays.asList("Education");
+        Post post = new Post(question, null, replies, tabs, postId, reactions, 0); 
         posts.add(post); 
 
         servlet.doPost(request, response);

@@ -383,11 +383,11 @@ public final class DatastoreManagerTest {
     throws EntityNotFoundException {
         long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you president?"); 
-        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education"));
+        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
 
         DatastoreManager.updatePostTab(postId, "Police");
         Post post = DatastoreManager.queryForPostObjectWithId(postId);
 
-        assertTrue(post.getTabs().get(0).equals("Police"));
+        assertTrue(post.getTab().equals("Police"));
     }
 }

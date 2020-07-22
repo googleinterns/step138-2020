@@ -13,6 +13,8 @@ import com.google.sps.data.Representative;
 import com.google.sps.data.ToxicCommentException;
 import java.io.IOException;
 import java.net.URLEncoder; 
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +34,7 @@ public class NewPostServlet extends HttpServlet {
     private static final String REP_NAME = "repName";
     private static final String NAME = "name";
     private static final String COMMENT = "comment";
-    private static final String TAB = "tab";
+    private static final String TABS = "tabs";
     private static final String FEED_BOOLEAN = "feed";
 
     @Override
@@ -43,7 +45,8 @@ public class NewPostServlet extends HttpServlet {
         String comment = request.getParameter(COMMENT);
         String feedBooleanAsString = request.getParameter(FEED_BOOLEAN);
         Boolean feedBool = Boolean.parseBoolean(feedBooleanAsString);
-        String tab = repName.replaceAll("\\s+","") + request.getParameter(TAB);
+        List<String> tabs = Arrays.asList(request.getParameterValues(TABS)); 
+        tabs.replaceAll(tab -> repName.replaceAll("\\s+","") + tab);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity repEntity;
 
@@ -64,7 +67,7 @@ public class NewPostServlet extends HttpServlet {
             throw new ServletException("Error: " + e.getMessage(), e);
         }
         
-        long postId = DatastoreManager.insertPostInDatastore(commentId, tab);
+        long postId = DatastoreManager.insertPostInDatastore(commentId, tabs);
 
         try {
             DatastoreManager.updateRepresentativePostList(repId, postId);
@@ -75,7 +78,7 @@ public class NewPostServlet extends HttpServlet {
         }
 
         String redirect = (feedBool == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
-            "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tab);
+            "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabs.get(0));
         response.sendRedirect(redirect);
     }
 }

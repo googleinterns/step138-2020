@@ -15,6 +15,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,7 @@ public class ReactToPostServletTest{
     @Test
     public void testDoPost() throws Exception {
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
-        Long postId = DatastoreManager.insertPostInDatastore(questionId, "education"); 
+        Long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("education")); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("reaction")).thenReturn(Reaction.THUMBS_UP.toString());
         when(request.getParameter("repName")).thenReturn("Donald Trump");
