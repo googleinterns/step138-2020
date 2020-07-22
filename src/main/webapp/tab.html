@@ -19,8 +19,8 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
     <!-- Navbar -->
     <div class="w3-top">
         <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
-            <a href="/index.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>Logout</a>
-            <a id="repListIcon" href="/repList.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4" style="display:none"><i class="fa fa-search w3-margin-right"></i>Representative List</a>
+            <a href="/index.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-sign-out w3-margin-right"></i>Logout</a>
+            <a id="repListIcon" href="/repList.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4" style="display:none"><i class="fa fa-home w3-margin-right"></i>Representative List</a>
         </div>
     </div>
 
@@ -47,6 +47,7 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                 <!-- Return to feed -->
                 <div id="buttons" class="w3-card w3-round">
                     <div class="w3-white">
+                        <div id="tabs"></div>
                         <button id="feed" class="w3-button w3-block w3-theme-l1 w3-left-align" >Back to Feed</button>
                         <button id="addTab" style="display: none" class="w3-button w3-block w3-theme-l1 w3-left-align" >Add Tab</button>
                     </div>  
@@ -93,6 +94,7 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                     </div>
                 </div>
                 <div id="posts"></div>
+                <br>
                 <div id="postsForm" style="display: none; margin-left : 10px">
                     <form id="repQuestionnaire" class="form-horizontal">
                         <div id="post"></div>
