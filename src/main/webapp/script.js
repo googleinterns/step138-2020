@@ -525,20 +525,17 @@ async function getRepList() {
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
     //Change navbar based on rep v user 
     var backToLogin = document.getElementById("backToLogin");
+    backToLogin.style.display = rep.trim() == "true" ? "block" : "none";
+    
     var logout = document.getElementById("logout");
-    if (rep.trim() == "true") {
-        logout.style.display = "none";
-        backToLogin.style.display = "block";
-    } else {
-        logout.style.display = "block";
-        backToLogin.style.display = "none";
-    }
+    logout.style.display = rep.trim() == "true" ? "none" : "block";
+    
     var zipcode = localStorage.getItem("zipcode");
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
     if (representatives["error"]) {
-        window.location.href = "/errors/zipcodeNotFound.html";
+        window.location.href = `/errors/zipcodeNotFound.html?rep=${rep.trim()}`;
         return;
     }
     document.getElementById("repListTitle").innerText = "Representative List";
@@ -788,7 +785,6 @@ async function displayPoliticianPage(imgUrl) {
     
     const introElement = document.getElementById("about");
     introElement.innerText = repJson.intro;
-
     repJson.tabs.forEach((tab) => {
         addPoliticianTab(tab.name, repName);
     });
@@ -800,4 +796,16 @@ async function displayPoliticianPage(imgUrl) {
 function resetLocalStorage() {
     localStorage.setItem("nickname", "Anonymous");
     localStorage.setItem("rep", false);
+}
+
+//Picks a particular return link for the zipcode error page
+function zipcodelink() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var isRep = decodeURI(urlParams.get('rep')); 
+    console.log(isRep);
+    var backToLogin = document.getElementById("backToUserLogin");
+    backToLogin.style.display = isRep.trim() == "true" ? "none" : "block";
+
+    var zipcode = document.getElementById("backToRepZipcode");
+    zipcode.style.display = isRep.trim() == "true" ? "block" : "none"; 
 }

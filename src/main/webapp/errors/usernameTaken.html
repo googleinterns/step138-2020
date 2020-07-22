@@ -4,16 +4,27 @@
     <title>Username Error</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-    <script src="script.js"></script>
+    <script src="../script.js"></script>
 </head>
 <body>
-    <div class="container">
+
+    <!-- Navbar -->
+    <div class="w3-top">
+        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+            <a onclick="goBack()" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-arrow-left w3-margin-right"></i>Create Account</a>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top:80px">
         <h2>Username Taken</h2>
         <p> Sorry, that username is already taken. Please try another one. </p>
-        <a onclick="goBack()">Go Back</a>
     </div>
 </body>
 </html>
