@@ -72,9 +72,9 @@ public class RepUploadImageServlet extends HttpServlet {
         List<BlobKey> blobKeys = blobs.get(formInputElementName);
 
         if (blobKeys == null || blobKeys.isEmpty()) {
-            return(Constants.DEFAULT_POLITICIAN_IMAGE_URL);
+            return Constants.DEFAULT_POLITICIAN_IMAGE_URL;
         } else {
-            return (SERVE_URL + blobKeys.get(0).getKeyString());
+            return SERVE_URL + blobKeys.get(0).getKeyString();
         }
     }
 }

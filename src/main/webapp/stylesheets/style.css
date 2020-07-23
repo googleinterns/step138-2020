@@ -80,7 +80,7 @@ p {
   justify-content: left;
 }
 
-.selected:hover {
+.selected:hover, .politicianPage:hover{
   background-color: RoyalBlue;
 }
 
@@ -97,4 +97,8 @@ i {
     color: black;
     text-align: center;
     padding: 0px;
+}
+
+.underNavBar {
+    margin-top:80px
 }

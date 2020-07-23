@@ -34,7 +34,7 @@ public class RepresentativeListServlet extends HttpServlet {
     private final String apiKey;
 
     public RepresentativeListServlet() {
-        apiKey = System.getenv(Constants.CIVIC_API_KEY); 
+        apiKey = System.getenv(Constants.CIVIC_API_KEY);
     }
 
     @Override

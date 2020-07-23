@@ -18,6 +18,16 @@ async function displayTab() {
         }
     }
 
+    //Add tabs the sidebar
+    var response = await fetch(`rep_tabs?repName=${encodeURI(repName)}`);
+    var tabList = await response.json();
+    var tabs = document.getElementById("tabs");
+    tabList.forEach((tab) => {
+        if (tab.name != tabName) {
+            addTabButton(tab.name, tabs, repName);
+        }
+    });
+
     //fetch the representative entity corresponding to repName
     var response = await fetch(`/feed?repName=${encodeURI(repName)}`);
     var representative = await response.json();
@@ -300,12 +310,7 @@ function displayPost(post, firstPost) {
 
 //Creates anchor tag that links back to representative's feed
 function returnToFeed(repName, feed) {
-    var returnToFeed = document.createElement("a");
-    returnToFeed.href = "feed.html?name=" + encodeURI(repName);    
-    returnToFeed.innerText = "Return to Feed";
-    linebreak = document.createElement("br");
-    returnToFeed.appendChild(linebreak);
-    feed.appendChild(returnToFeed);
+    feed.href = "feed.html?name=" + encodeURI(repName);    
 }
 
 //Creates an button for representative answer
@@ -450,6 +455,9 @@ function displayCommentWithLinking(postElement, container, commentObject) {
             var anchor = `<a href="${window.location.href + "#" + word.substring(1, word.length)}">${word + " "}</a>`;
             container.innerHTML += anchor;
             }
+            else {
+                container.innerHTML += (word + " ");
+            }
         }
         else {
             container.innerHTML += (word + " ");
@@ -478,6 +486,9 @@ function createQuestionForm(repName, tabList, feedBool) {
 function addTabDropdown(tabDropdown, tabName, repName) {
     var stripTabName = tabName.replace(repName.replace(/\s/g, ''), "");
     var tabElement = document.createElement("option");
+    if (stripTabName == "Other") {
+        tabElement.selected = true;
+    }
     tabElement.value = stripTabName;
     tabElement.innerText = stripTabName;
     tabDropdown.appendChild(tabElement);
@@ -515,12 +526,19 @@ function storeRepBooleanAndZipcodeAndRedirect() {
 async function getRepList() {
     var rep = localStorage.getItem("rep");
     var displayFunction = (rep.trim() == "true") ? displayRepListLogin : displayRepListUser;
+    //Change navbar based on rep v user 
+    var backToLogin = document.getElementById("backToLogin");
+    backToLogin.style.display = rep.trim() == "true" ? "block" : "none";
+    
+    var logout = document.getElementById("logout");
+    logout.style.display = rep.trim() == "true" ? "none" : "block";
+    
     var zipcode = localStorage.getItem("zipcode");
     var response = await fetch(`/rep_list?zipcode=${zipcode}`)
     var representatives = await response.json();
     representatives = JSON.parse(representatives);
     if (representatives["error"]) {
-        window.location.href = "/errors/zipcodeNotFound.html";
+        window.location.href = `/errors/zipcodeNotFound.html?rep=${rep.trim()}`;
         return;
     }
     document.getElementById("repListTitle").innerText = "Representative List";
@@ -720,11 +738,12 @@ async function submitRepQuestionnaire() {
         }
     }
     //Remove * on the end of the last platform string if it exists
-    var lastPlatform = listOfPlatforms[listOfPlatforms.length - 1];
-    lastPlatform = (lastPlatform[lastPlatform.length - 1] == "*") ? 
+    if (listOfPlatforms != []) {
+        var lastPlatform = listOfPlatforms[listOfPlatforms.length - 1];
+        lastPlatform = (lastPlatform[lastPlatform.length - 1] == "*") ? 
         lastPlatform.substring(0, lastPlatform.length - 1): lastPlatform;
-    listOfPlatforms[listOfPlatforms.length - 1] = lastPlatform;
-
+        listOfPlatforms[listOfPlatforms.length - 1] = lastPlatform;
+    }
     var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
         ${listOfPlatforms}&intro=${intro}&repName=${encodeURI(repName)}`);
     if (document.getElementById("imageUpload") != null) {
@@ -769,7 +788,6 @@ async function displayPoliticianPage(imgUrl) {
     
     const introElement = document.getElementById("about");
     introElement.innerText = repJson.intro;
-
     repJson.tabs.forEach((tab) => {
         addPoliticianTab(tab.name, repName);
     });
@@ -781,4 +799,16 @@ async function displayPoliticianPage(imgUrl) {
 function resetLocalStorage() {
     localStorage.setItem("nickname", "Anonymous");
     localStorage.setItem("rep", false);
+}
+
+//Picks a particular return link for the zipcode error page
+function zipcodelink() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var isRep = decodeURI(urlParams.get('rep')); 
+    console.log(isRep);
+    var backToLogin = document.getElementById("backToUserLogin");
+    backToLogin.style.display = isRep.trim() == "true" ? "none" : "block";
+
+    var zipcode = document.getElementById("backToRepZipcode");
+    zipcode.style.display = isRep.trim() == "true" ? "block" : "none"; 
 }
