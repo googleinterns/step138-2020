@@ -817,9 +817,9 @@ function zipcodelink() {
 }
 
 function closeWindow(){
-    if(localStorage.getItem("rep").trim() == "true"){
+    if(localStorage.getItem("rep").trim() == "true") {
         var exit = confirm("Do you want to go offline?");  
-        if(exit==true){
+        if(exit == true) {
             goOffline();
         }
     }
@@ -838,7 +838,7 @@ function goOffline(){
 }
 
 function setStatus(){
-     if(localStorage.getItem("online").trim() == "false"){
+     if(localStorage.getItem("online").trim() == "false") {
         var online = document.getElementById("online");
         var offline = document.getElementById("offline");
         offline.style.backgroundColor = "tomato";
