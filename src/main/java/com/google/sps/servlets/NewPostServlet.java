@@ -43,8 +43,8 @@ public class NewPostServlet extends HttpServlet {
         String repName = request.getParameter(REP_NAME);
         String name = request.getParameter(NAME);
         String comment = request.getParameter(COMMENT);
-        String feedBooleanAsString = request.getParameter(FEED_BOOLEAN);
-        Boolean feedBool = Boolean.parseBoolean(feedBooleanAsString);
+        String postMadeFromFeedString = request.getParameter(FEED_BOOLEAN);
+        Boolean postMadeFromFeed = Boolean.parseBoolean(postMadeFromFeedString);
         List<String> tabs = Arrays.asList(request.getParameterValues(TABS)); 
         tabs.replaceAll(tab -> repName.replaceAll("\\s+","") + tab);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -64,7 +64,7 @@ public class NewPostServlet extends HttpServlet {
             commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(name, comment);
         } catch(ToxicCommentException e) {
             logger.error(e);
-            String redirect = feedBool ? "feed.html?name=" + URLEncoder.encode(repName) : 
+            String redirect = postMadeFromFeed ? "feed.html?name=" + URLEncoder.encode(repName) : 
                 "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabs.get(0));
             response.sendRedirect(redirect);
             return;
@@ -80,7 +80,7 @@ public class NewPostServlet extends HttpServlet {
             throw new ServletException("Error: " + e.getMessage(), e);
         }
 
-        String redirect = feedBool ? "feed.html?name=" + URLEncoder.encode(repName) : 
+        String redirect = postMadeFromFeed ? "feed.html?name=" + URLEncoder.encode(repName) : 
             "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabs.get(0));
         response.sendRedirect(redirect);
     }

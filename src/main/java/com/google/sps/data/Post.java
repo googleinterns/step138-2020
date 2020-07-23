@@ -116,8 +116,8 @@ public final class Post {
         @Override
         public int compare(Post a, Post b) {
             long currTime = System.currentTimeMillis(); 
-            double aRecency = (double)a.getTimestamp() / (double)currTime; 
-            double bRecency = (double)b.getTimestamp() / (double)currTime; 
+            double aRecency = (double) a.getTimestamp() / (double) currTime; 
+            double bRecency = (double) b.getTimestamp() / (double) currTime; 
             return Double.compare(aRecency, bRecency); 
         }
     }

@@ -805,7 +805,7 @@ function resetLocalStorage() {
 function zipcodelink() {
     var urlParams = new URLSearchParams(window.location.search);
     var isRep = decodeURI(urlParams.get('rep')); 
-    console.log(isRep);
+
     var backToLogin = document.getElementById("backToUserLogin");
     backToLogin.style.display = isRep.trim() == "true" ? "none" : "block";
 

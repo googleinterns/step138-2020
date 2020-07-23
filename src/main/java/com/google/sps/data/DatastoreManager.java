@@ -253,7 +253,7 @@ public class DatastoreManager {
     throws EntityNotFoundException {
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         Entity postEntity = DatastoreManager.queryForPostEntityWithId(postId); 
-        postEntity.setProperty(Constants.POST_TABS, tabName); 
+        postEntity.setProperty(Constants.POST_TABS, Arrays.asList(tabName)); 
         datastore.put(postEntity);
     }
 
