@@ -64,7 +64,7 @@ public class NewPostServlet extends HttpServlet {
             commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(name, comment);
         } catch(ToxicCommentException e) {
             logger.error(e);
-            String redirect = (feedBool == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
+            String redirect = feedBool ? "feed.html?name=" + URLEncoder.encode(repName) : 
                 "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabs.get(0));
             response.sendRedirect(redirect);
             return;
@@ -80,7 +80,7 @@ public class NewPostServlet extends HttpServlet {
             throw new ServletException("Error: " + e.getMessage(), e);
         }
 
-        String redirect = (feedBool == true) ? "feed.html?name=" + URLEncoder.encode(repName) : 
+        String redirect = feedBool ? "feed.html?name=" + URLEncoder.encode(repName) : 
             "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabs.get(0));
         response.sendRedirect(redirect);
     }
