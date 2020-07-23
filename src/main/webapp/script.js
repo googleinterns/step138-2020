@@ -151,6 +151,9 @@ async function displayFeed() {
         displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
         document.getElementById(post.id).appendChild(reactionDiv);
     })
+    
+    //checks if the rep is on or offline
+    setStatus();
 }
 
 //Add a link for returning to rep list
@@ -814,30 +817,41 @@ function zipcodelink() {
 }
 
 function closeWindow(){
- var exit = confirm("Do you want to go offline?");  
-     if(exit==true){
-        goOffline();
-     }
+    if(localStorage.getItem("rep").trim() == "true"){
+        var exit = confirm("Do you want to go offline?");  
+        if(exit==true){
+            goOffline();
+        }
+    }
 }
 
 function goOnline(){
-    if(localStorage.getItem("rep").trim() == "true"){
+        localStorage.setItem("online", true);
+        localStorage.setItem("offline", false);
+        setStatus();
+}
+
+function goOffline(){
+        localStorage.setItem("online", false);
+        localStorage.setItem("offline", true);
+        setStatus();
+}
+
+function setStatus(){
+     if(localStorage.getItem("online").trim() == "false"){
+        var online = document.getElementById("online");
+        var offline = document.getElementById("offline");
+        offline.style.backgroundColor = "tomato";
+        offline.style.color = "white";
+        online.style.backgroundColor = "white";
+        online.style.color = "lightgreen";
+    }
+    else{
         var online = document.getElementById("online");
         var offline = document.getElementById("offline");
         offline.style.backgroundColor = "white";
         offline.style.color = "tomato";
         online.style.backgroundColor = "lightgreen";
-        online.style.color = "white";
-
-
-    }
-}
-
-function goOffline(){
-    if(localStorage.getItem("rep").trim() == "true"){
-        offline.style.backgroundColor = "tomato";
-        offline.style.color = "white";
-        online.style.backgroundColor = "white";
-        online.style.color = "lightgreen";
+        online.style.color = "white";      
     }
 }
