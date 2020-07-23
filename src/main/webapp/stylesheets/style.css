@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i,900,900i');
+@import "compass/css3";
 
 body {
   font-family: 'Merriweather', serif;
@@ -68,20 +69,20 @@ p {
 }
 
 .notselected:hover {
-  background-color: RoyalBlue;
+  background-color: #4d636f;
 }
 
 .selected {
   height: 5%;
   width: 5%;
   background-color: white; 
-  border: 1px solid RoyalBlue; 
+  border: 1px solid #4d636f; 
   cursor: pointer; 
   justify-content: left;
 }
 
 .selected:hover, .politicianPage:hover{
-  background-color: RoyalBlue;
+  background-color: #4d636f;
 }
 
 i {
@@ -101,4 +102,22 @@ i {
 
 .underNavBar {
     margin-top:80px
+}
+
+#online{
+    color: lightgreen;
+}
+
+#offline{
+    color: tomato;
+}
+
+.onlineClicked{
+    background-color: lightgreen;
+    color: white;
+}
+
+offlineClicked{
+    background-color: tomato;
+    color: white;
 }

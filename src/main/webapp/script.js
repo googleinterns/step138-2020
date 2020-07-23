@@ -812,3 +812,32 @@ function zipcodelink() {
     var zipcode = document.getElementById("backToRepZipcode");
     zipcode.style.display = isRep.trim() == "true" ? "block" : "none"; 
 }
+
+function closeWindow(){
+ var exit = confirm("Do you want to go offline?");  
+     if(exit==true){
+        goOffline();
+     }
+}
+
+function goOnline(){
+    if(localStorage.getItem("rep").trim() == "true"){
+        var online = document.getElementById("online");
+        var offline = document.getElementById("offline");
+        offline.style.backgroundColor = "white";
+        offline.style.color = "tomato";
+        online.style.backgroundColor = "lightgreen";
+        online.style.color = "white";
+
+
+    }
+}
+
+function goOffline(){
+    if(localStorage.getItem("rep").trim() == "true"){
+        offline.style.backgroundColor = "tomato";
+        offline.style.color = "white";
+        online.style.backgroundColor = "white";
+        online.style.color = "lightgreen";
+    }
+}
