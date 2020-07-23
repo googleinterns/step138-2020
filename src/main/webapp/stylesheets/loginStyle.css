@@ -4,10 +4,17 @@
 }
 
 .container{
-    padding-top: 10%;
+    padding-top: 5%;
+    width: 100%;
+    float: left;
 }
 
-h2{
-    float: center;
-    align-content: center;
+h1{
+    padding-left: 50%;
+    float: top;
+}
+
+.navBar{
+    width: 100%;
+    float: left;
 }

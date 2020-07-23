@@ -9,11 +9,12 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.DatastoreManager;
-import com.google.sps.servlets.UnreactToPostServlet;
+import com.google.sps.servlets.ReactToPostServlet;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,8 +29,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(JUnit4.class)
-public class UnreactToPostServletTest{
-    private UnreactToPostServlet servlet;
+public class ReactToPostServletTest{
+    private ReactToPostServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private LocalServiceTestHelper helper;
@@ -37,7 +38,7 @@ public class UnreactToPostServletTest{
 
     @Before
     public void setUp() {
-        servlet = new UnreactToPostServlet();
+        servlet = new ReactToPostServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -53,12 +54,10 @@ public class UnreactToPostServletTest{
     @Test
     public void testDoPost() throws Exception {
         long questionId = DatastoreManager.insertCommentInDatastore("Bob", "Why are you president?"); 
-        Long postId = DatastoreManager.insertPostInDatastore(questionId, "education"); 
+        Long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("education")); 
         when(request.getParameter("postId")).thenReturn(postId.toString());
         when(request.getParameter("reaction")).thenReturn(Reaction.THUMBS_UP.toString());
         when(request.getParameter("repName")).thenReturn("Donald Trump");
-        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
-        DatastoreManager.addReactionToPost(postId, Reaction.THUMBS_UP.getValue()); 
 
         servlet.doGet(request, response);
     

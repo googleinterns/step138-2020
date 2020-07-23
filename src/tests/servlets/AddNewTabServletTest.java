@@ -9,14 +9,15 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.DatastoreManager;
-import com.google.sps.servlets.RepAnswerServlet;
+import com.google.sps.servlets.AddNewTabServlet;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,8 +26,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(JUnit4.class)
-public class RepAnswerServletTest{
-    private RepAnswerServlet servlet;
+public class AddNewTabServletTest{
+    private AddNewTabServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private LocalServiceTestHelper helper;
@@ -34,7 +35,7 @@ public class RepAnswerServletTest{
 
     @Before
     public void setUp() {
-        servlet = new RepAnswerServlet();
+        servlet = new AddNewTabServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
@@ -48,23 +49,25 @@ public class RepAnswerServletTest{
     }
 
     @Test
-    public void testRepAnswerPostFound() throws Exception {
-        long questionId = DatastoreManager.insertCommentInDatastore("Bob", "How are you doing?");
-        long postId = DatastoreManager.insertPostInDatastore(questionId, "Education");
-        String postID = String.valueOf(postId);
-        when(request.getParameter("postId")).thenReturn(postID);
+    public void testAddTab() throws Exception {
+        long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
+            "What are you doing about schools?"); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, Arrays.asList("Education"));
+        when(request.getParameter("tabName")).thenReturn("Schools");
+        when(request.getParameter("platform")).thenReturn("platform");
+        when(request.getParameter("posts")).thenReturn(Long.toString(postId));
         when(request.getParameter("repName")).thenReturn("Donald Trump");
-        when(request.getParameter("answer")).thenReturn("I am well");
-    
-        StringWriter stringWriter = new StringWriter();
-        PrintWriter writer = new PrintWriter(stringWriter);
-        when(response.getWriter()).thenReturn(writer);
+        List<Long> tabIds = DatastoreManager.insertTabsInDatastore(Arrays.asList("Education"), Arrays.asList("Platform on education"));
+        Long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", "President", 
+            "username", "password", tabIds);
 
-        servlet.doPost(request, response);
-    
+        servlet.doGet(request, response);
         Post post = DatastoreManager.queryForPostObjectWithId(postId);
-        Comment answer = post.getAnswer();
-        assertTrue(answer.getDisplayName().equals("Donald Trump"));
-        assertTrue(answer.getComment().equals("I am well"));
+        Representative rep = DatastoreManager.queryForRepresentativeObjectWithName("Donald Trump");
+        Entity tab = DatastoreManager.queryForTabEntityWithName("DonaldTrumpSchools");
+
+        assertTrue(post.getTab().equals("DonaldTrumpSchools"));
+        assertTrue(rep.getTabs().get(1).getTabName().equals("DonaldTrumpSchools"));
+        assertTrue(tab != null);
     }
 }

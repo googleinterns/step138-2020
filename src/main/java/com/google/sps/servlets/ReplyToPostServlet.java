@@ -51,7 +51,9 @@ public class ReplyToPostServlet extends HttpServlet {
             commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(nickName, comment);
         } catch(ToxicCommentException e) {
             logger.error(e);
-            throw new ServletException("Error: " + e.getMessage(), e);
+            String redirect = "feed.html?name=" + URLEncoder.encode(repName);
+            response.sendRedirect(redirect);
+            return;
         }
 
         try {

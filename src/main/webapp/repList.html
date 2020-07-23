@@ -3,11 +3,24 @@
 <head>
     <title>Representative List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="script.js"></script>
 </head>
 <body onload="getRepList();">
-    <div class="w3-container">
+    <!-- Navbar -->
+    <div class="w3-top">
+        <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
+            <a id="logout" href="/index.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4" style="display: none"><i class="fa fa-sign-out w3-margin-right"></i>Logout</a>
+            <a id="backToLogin" href="/index.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4" style="display: none"><i class="fa fa-sign-out w3-margin-right"></i>Back To Login</a>
+        </div>
+    </div>
+
+    <div class="w3-container underNavBar">
         <h2 id="repListTitle"></h2>
         <ul class="w3-ul w3-card-4 w3-hoverable" id="repList"></ul>
     </div>

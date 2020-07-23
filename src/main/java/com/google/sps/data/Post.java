@@ -13,17 +13,17 @@ public final class Post {
     private final Comment question;
     private final Comment answer;
     private final List<Comment> replies;
-    private final String tab;
+    private final List<String> tabs;
     private final long id; 
     private final Map<Reaction, Long> reactions;
     private final long timestamp;  
 
-    public Post(Comment question, Comment answer, List<Comment> replies, String tab, 
+    public Post(Comment question, Comment answer, List<Comment> replies, List<String> tabs, 
                 long id, Map<Reaction, Long> reactions, long timestamp) {
         this.question = question;
         this.answer = answer;
         this.replies = replies;
-        this.tab = tab;
+        this.tabs = tabs;
         this.id = id;
         this.reactions = reactions; 
         this.timestamp = timestamp; 
@@ -45,8 +45,8 @@ public final class Post {
         return new ArrayList<Comment>(replies);
     }
 
-    public String getTab() {
-        return tab;
+    public List<String> getTabs() {
+        return new ArrayList<String> (tabs);
     }
 
     public long getID() {
@@ -79,12 +79,12 @@ public final class Post {
                answerEquality && 
                that.getReplies().equals(this.replies) && 
                that.getReactions().equals(this.reactions) && 
-               that.getTab().equals(this.tab); 
+               that.getTabs().equals(this.tabs); 
     } 
 
     @Override
     public int hashCode() {
-        return Objects.hash(question, answer, replies, tab, reactions);
+        return Objects.hash(question, answer, replies, tabs, reactions);
     }
 
     @Override 
@@ -105,8 +105,10 @@ public final class Post {
             sb.append(entry.getKey().getValue() + ": "); 
             sb.append(String.valueOf(entry.getValue())).append(System.getProperty("line.separator")); 
         }
-        sb.append("Tab: ").append(System.getProperty("line.separator")); 
-        sb.append(tab.toString());         
+        sb.append("Tabs: ").append(System.getProperty("line.separator")); 
+        for (String tab : tabs) {
+            sb.append(tab.toString()); 
+        } 
         return sb.toString();
     }
 
@@ -114,8 +116,8 @@ public final class Post {
         @Override
         public int compare(Post a, Post b) {
             long currTime = System.currentTimeMillis(); 
-            double aRecency = a.getTimestamp()/currTime; 
-            double bRecency = b.getTimestamp()/currTime; 
+            double aRecency = (double)a.getTimestamp() / (double)currTime; 
+            double bRecency = (double)b.getTimestamp() / (double)currTime; 
             return Double.compare(aRecency, bRecency); 
         }
     }
