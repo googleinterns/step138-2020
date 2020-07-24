@@ -78,15 +78,16 @@ async function displayTab() {
         var question = document.getElementById(post.id);
 
         //answer button
-        if (rep.trim() == "true" && addTab != "true") {
-            createAnswerButton(post.id, repName, question);
+        if (rep.trim() === "true" && addTab !== "true") {
+            createAnswerButton(post.id, repName, question, false, tabName);
         }
         else {
-            createReplyButton(post.id, repName, question);
+            createReplyButton(post.id, repName, question, false, tabName);
         }
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
+        displayReactions(post, repName);
     })
 }
 
@@ -133,24 +134,27 @@ async function displayFeed() {
         var question = document.getElementById(post.id);
         //answer button
         if (rep.trim() == "true") {
-            createAnswerButton(post.id, repName, question);
+            createAnswerButton(post.id, repName, question, true, null);
         }
         else {
-            createReplyButton(post.id, repName, question);
+            createReplyButton(post.id, repName, question, true, null);
         }
         displayRepAnswer(post, repName);
         displayReplyList(post);
-
-        //show reaction buttons 
-        var reactionDiv = document.createElement("div");
-        displayReaction(post, repName, reactionDiv, "ANGRY"); 
-        displayReaction(post, repName, reactionDiv, "CRYING"); 
-        displayReaction(post, repName, reactionDiv, "LAUGHING"); 
-        displayReaction(post, repName, reactionDiv, "HEART"); 
-        displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
-        displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
-        document.getElementById(post.id).appendChild(reactionDiv);
+        displayReactions(post, repName);
     })
+}
+
+//function for displaying reactions
+function displayReactions(post, repName) {
+    var reactionDiv = document.createElement("div");
+    displayReaction(post, repName, reactionDiv, "ANGRY"); 
+    displayReaction(post, repName, reactionDiv, "CRYING"); 
+    displayReaction(post, repName, reactionDiv, "LAUGHING"); 
+    displayReaction(post, repName, reactionDiv, "HEART"); 
+    displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
+    displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
+    document.getElementById(post.id).appendChild(reactionDiv);
 }
 
 //Add a link for returning to rep list
@@ -314,7 +318,7 @@ function returnToFeed(repName, feed) {
 }
 
 //Creates an button for representative answer
-function createAnswerButton(postId, repName, question) {
+function createAnswerButton(postId, repName, question, postFromFeed, tabName) {
     var repAnswer = document.createElement("button");
     repAnswer.onclick = function() {
         var answerForm = document.getElementById("answerForm" + postId);
@@ -329,11 +333,11 @@ function createAnswerButton(postId, repName, question) {
     formDiv.id = "answerForm" + postId;
     question.appendChild(repAnswer);
     question.appendChild(formDiv);
-    createAnswerForm(postId, repName);
+    createAnswerForm(postId, repName, postFromFeed, tabName);
 }
 
 //Creates a button for users to respond to a question
-function createReplyButton(postId, repName, question) {
+function createReplyButton(postId, repName, question, postFromFeed, tabName) {
     var replyBtn = document.createElement("button");
     replyBtn.onclick = function() {
         var replyForm = document.getElementById("replyForm" + postId);
@@ -347,7 +351,7 @@ function createReplyButton(postId, repName, question) {
     formDiv.id = "replyForm" + postId;
     question.appendChild(replyBtn);
     question.appendChild(formDiv);
-    createReplyForm(postId, repName);
+    createReplyForm(postId, repName, postFromFeed, tabName);
 }
 
 //Adds tabs to politician page
@@ -375,12 +379,13 @@ function getTab(tab) {
 }
 
 //Creates a reply form
-function createReplyForm(questionID, repName) {
+function createReplyForm(questionID, repName, postFromFeed, tabName) {
     var formDiv = document.getElementById("replyForm" + questionID);
     var nickname = localStorage.getItem("nickname");
 
     var replyForm = document.createElement("form");
-    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}&repName=${encodeURI(repName)}`);
+    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}
+        &repName=${encodeURI(repName)}&feed=${postFromFeed}&tabName=${tabName}`);
     replyForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
@@ -399,11 +404,12 @@ function createReplyForm(questionID, repName) {
 }
 
 //Creates an answer form 
-function createAnswerForm(questionID, repName) {
+function createAnswerForm(questionID, repName, postFromFeed, tabName) {
     var formDiv = document.getElementById("answerForm" + questionID);
 
     var ansForm = document.createElement("form");
-    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${encodeURI(repName)}`);
+    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${encodeURI(repName)}
+        &feed=${postFromFeed}&tabName=${tabName}`);
     ansForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
