@@ -62,6 +62,7 @@ public class ReplyToPostServletTest{
         when(request.getParameter("name")).thenReturn("Alice");
         when(request.getParameter("reply")).thenReturn("Yeah bro, why are you?");
         when(request.getParameter("repName")).thenReturn("Donald Trump");
+        when(request.getParameter("tabName")).thenReturn("Education");
         long repId = DatastoreManager.insertRepresentativeInDatastore("Donald Trump", 
         "President", "username", "password", tabIds);
         DatastoreManager.updateRepresentativePostList(repId, postId); 
