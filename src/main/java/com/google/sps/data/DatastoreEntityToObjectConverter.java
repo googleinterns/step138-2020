@@ -54,8 +54,8 @@ public final class DatastoreEntityToObjectConverter {
     throws EntityNotFoundException {
         long questionId = (long) (postEntity.getProperty(Constants.POST_QUESTION));
         Comment question = convertComment(questionId);
-        long answerId = (long) (postEntity.getProperty(Constants.POST_ANSWER));
-        long timestamp = (long) (postEntity.getProperty(Constants.POST_ANSWER));
+        long answerId = (long) postEntity.getProperty(Constants.POST_ANSWER);
+        long timestamp = (long) postEntity.getProperty(Constants.POST_TIMESTAMP);
         Comment answer = convertComment(answerId);
         List<Comment> comments = convertCommentsFromPost(postEntity); 
         List<String> tabs = (List<String>) postEntity.getProperty(Constants.POST_TABS);

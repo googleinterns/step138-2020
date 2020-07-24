@@ -32,14 +32,14 @@ public final class PostComparatorTest {
             new HashMap<Reaction, Long>(), 15953616479L); 
 
         posts = new ArrayList<>(); 
-        posts.add(newer); 
         posts.add(older); 
+        posts.add(newer); 
     }
 
     @Test
     public void testPostComparator() {
         Collections.sort(posts, new Post.PostComparator());
-        assertTrue(posts.get(0).equals(older)); 
-        assertTrue(posts.get(1).equals(newer)); 
+        assertTrue(posts.get(0).equals(newer)); 
+        assertTrue(posts.get(1).equals(older)); 
     }
 }
