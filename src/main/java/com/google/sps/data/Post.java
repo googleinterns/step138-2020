@@ -114,11 +114,11 @@ public final class Post {
 
     static class PostComparator implements Comparator<Post> {
         @Override
-        public int compare(Post a, Post b) {
+        public int compare(Post a, Post b) { 
             long currTime = System.currentTimeMillis(); 
             double aRecency = (double) a.getTimestamp() / (double) currTime; 
-            double bRecency = (double) b.getTimestamp() / (double) currTime; 
-            return Double.compare(aRecency, bRecency); 
+            double bRecency = (double) b.getTimestamp() / (double) currTime;  
+            return Double.compare(bRecency, aRecency); 
         }
     }
 }

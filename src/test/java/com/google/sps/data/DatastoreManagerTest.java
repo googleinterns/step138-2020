@@ -204,19 +204,14 @@ public final class DatastoreManagerTest {
     public void testQueryForPostObjectWithId() 
     throws EntityNotFoundException {
         long commentId = DatastoreManager.insertCommentInDatastore("Anonymous", "Nice dude");
-        List<Long> commentIds = new ArrayList<>(); 
-        commentIds.add(commentId); 
-        long commentIdQuestion = DatastoreManager.insertCommentInDatastore("Anonymous", 
+        long questionId = DatastoreManager.insertCommentInDatastore("Anonymous", 
             "Why are you in office?");
-        long commentIdAnswer = DatastoreManager.insertCommentInDatastore("Donald Trump", 
-            "Because I want to be.");
-        Entity postEntity = new Entity(Constants.POST_ENTITY_TYPE); 
-        postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
-        postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
-        postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
-        ds.put(postEntity); 
-
-        long postId = postEntity.getKey().getId(); 
+        long answerId = DatastoreManager.insertCommentInDatastore("Donald Trump", 
+            "Because I want to be."); 
+        long postId = DatastoreManager.insertPostInDatastore(questionId, new ArrayList<>());
+        DatastoreManager.updatePostWithComment(postId, commentId); 
+        DatastoreManager.updatePostWithAnswer(postId, answerId); 
+ 
         Post postRetrieved = DatastoreManager.queryForPostObjectWithId(postId);
         Comment question = postRetrieved.getQuestion(); 
         Comment answer = postRetrieved.getAnswer(); 
