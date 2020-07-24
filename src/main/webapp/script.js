@@ -384,7 +384,8 @@ function createReplyForm(questionID, repName, postFromFeed, tabName) {
     var nickname = localStorage.getItem("nickname");
 
     var replyForm = document.createElement("form");
-    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}&repName=${encodeURI(repName)}&feed=${postFromFeed}&tabName=${tabName}`);
+    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}
+        &repName=${encodeURI(repName)}&feed=${postFromFeed}&tabName=${tabName}`);
     replyForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
@@ -407,7 +408,8 @@ function createAnswerForm(questionID, repName, postFromFeed, tabName) {
     var formDiv = document.getElementById("answerForm" + questionID);
 
     var ansForm = document.createElement("form");
-    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${encodeURI(repName)}&feed=${postFromFeed}&tabName=${tabName}`);
+    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${encodeURI(repName)}
+        &feed=${postFromFeed}&tabName=${tabName}`);
     ansForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
