@@ -12,6 +12,8 @@ import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 import java.io.IOException;
 import java.net.URLEncoder; 
+import java.util.Arrays;
+import java.util.List;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -30,6 +32,8 @@ public class RepAnswerServlet extends HttpServlet {
     private static final String POST_ID = "postId";
     private static final String REP_NAME = "repName";
     private static final String ANSWER = "answer";
+    private static final String FEED_BOOLEAN = "feed";
+    private static final String TAB_NAME = "tabName";
 
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -37,8 +41,11 @@ public class RepAnswerServlet extends HttpServlet {
         long postId = Long.parseLong(request.getParameter(POST_ID));
         String repName = request.getParameter(REP_NAME);
         String answer = request.getParameter(ANSWER);
+        String tabName = request.getParameter(TAB_NAME);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         long commentId = DatastoreManager.insertCommentInDatastore(repName, answer);
+        String postMadeFromFeedString = request.getParameter(FEED_BOOLEAN);
+        Boolean postMadeFromFeed = Boolean.parseBoolean(postMadeFromFeedString);
         Entity post;
         try {
             post = DatastoreManager.queryForPostEntityWithId(postId);
@@ -49,7 +56,8 @@ public class RepAnswerServlet extends HttpServlet {
         }
         post.setProperty(Constants.POST_ANSWER, commentId);
         datastore.put(post);
-        String redirect = "feed.html?name=" + URLEncoder.encode(repName);
+        String redirect = postMadeFromFeed ? "feed.html?name=" + URLEncoder.encode(repName) : 
+            "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabName);
         response.sendRedirect(redirect);
     }
 }
