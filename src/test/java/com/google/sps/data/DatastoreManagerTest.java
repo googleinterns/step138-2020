@@ -388,6 +388,6 @@ public final class DatastoreManagerTest {
         DatastoreManager.updatePostTab(postId, "Police");
         Post post = DatastoreManager.queryForPostObjectWithId(postId);
 
-        assertTrue(post.getTab().equals("Police"));
+        assertTrue(post.getTabs().equals(Arrays.asList("Police")));
     }
 }
