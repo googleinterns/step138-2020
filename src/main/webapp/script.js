@@ -78,7 +78,7 @@ async function displayTab() {
         var question = document.getElementById(post.id);
 
         //answer button
-        if (rep.trim() == "true" && addTab != "true") {
+        if (rep.trim() === "true" && addTab !== "true") {
             createAnswerButton(post.id, repName, question, false, tabName);
         }
         else {
