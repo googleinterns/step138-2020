@@ -45,7 +45,7 @@ async function displayTab() {
     document.getElementById("repName").innerText = repName;
     document.getElementById("repContainer").onclick = function() {
         window.location.href = `/politicianPage.html?name=${encodeURI(repName)}`};
-
+    setStatus(representative.status);
     //Add a button to return to feed
     var feedButton = document.getElementById("feed");
     feedButton.onclick = function() {window.location.href = `/feed.html?name=${encodeURI(repName)}`};
@@ -107,6 +107,7 @@ async function displayFeed() {
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
     document.getElementById("repContainer").onclick = function() {
         window.location.href = `/politicianPage.html?name=${encodeURI(repName)}`};
+    setStatus(representative.status);
 
     //Fetches the list of tabs for a particular rep
     var response = await fetch(`rep_tabs?repName=${encodeURI(repName)}`);
@@ -151,9 +152,6 @@ async function displayFeed() {
         displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
         document.getElementById(post.id).appendChild(reactionDiv);
     })
-    
-    //checks if the rep is on or offline
-    setStatus();
 }
 
 //Add a link for returning to rep list
@@ -692,7 +690,6 @@ function addPlatform(){
     platformText.className = "form-control platform";
     platformText.rows = 3;
     platformText.placeholder = "Platform on additional topic";
-
     innerDiv.appendChild(platformText);
     platformDivContainer.appendChild(platformLabel);
     platformDivContainer.appendChild(innerDiv);
@@ -826,19 +823,25 @@ function closeWindow(){
 }
 
 function goOnline(){
-        localStorage.setItem("online", true);
-        localStorage.setItem("offline", false);
-        setStatus();
+    if(localStorage.getItem("rep").trim() == "true") {
+        var urlParams = new URLSearchParams(window.location.search);
+        var repName = decodeURI(urlParams.get('name')); 
+        fetch(`/update_representative_status?repName=${encodeURI(repName)}&status=true`);
+        setStatus("true");
+    }
 }
 
 function goOffline(){
-        localStorage.setItem("online", false);
-        localStorage.setItem("offline", true);
-        setStatus();
+    if(localStorage.getItem("rep").trim() == "true") {
+        var urlParams = new URLSearchParams(window.location.search);
+        var repName = decodeURI(urlParams.get('name')); 
+        fetch(`/update_representative_status?repName=${encodeURI(repName)}&status=false`);
+        setStatus("false");
+    }
 }
 
-function setStatus(){
-     if(localStorage.getItem("online").trim() == "false") {
+function setStatus(status){
+     if(status == "false") {
         var online = document.getElementById("online");
         var offline = document.getElementById("offline");
         offline.style.backgroundColor = "tomato";

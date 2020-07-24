@@ -213,6 +213,15 @@ public class DatastoreManager {
         datastore.put(repEntity);
     }
 
+    public static void updateRepresentativeStatus(long repID, String status)
+    throws EntityNotFoundException{
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key repEntityKey = KeyFactory.createKey(Constants.REP_ENTITY_TYPE, repID);
+        Entity repEntity = (Entity) datastore.get(repEntityKey); 
+        repEntity.setProperty(Constants.REP_STATUS, status);
+        datastore.put(repEntity);
+    }
+
     /**
      * Updates a post entity with a comment in the replies list 
      * @param postId ID of the post entity 
@@ -243,6 +252,8 @@ public class DatastoreManager {
         postEntity.setProperty(Constants.POST_ANSWER, answerId); 
         datastore.put(postEntity);
     }
+
+    
 
     /**
      * Updates the tab associated with a post entity
