@@ -114,11 +114,18 @@ public final class Post {
 
     static class PostComparator implements Comparator<Post> {
         @Override
-        public int compare(Post a, Post b) { 
-            long currTime = System.currentTimeMillis(); 
-            double aRecency = (double) a.getTimestamp() / (double) currTime; 
-            double bRecency = (double) b.getTimestamp() / (double) currTime;  
-            return Double.compare(bRecency, aRecency); 
+        //Orders the most recently posted first 
+        //Reverse timestamp ordering 
+        public int compare(Post a, Post b) {
+            long currTime = System.currentTimeMillis();
+
+            //Cast the timestamps into double between 0 and 1 
+            double aRecency = (double) a.getTimestamp() / (double) currTime;
+            double bRecency = (double) b.getTimestamp() / (double) currTime;
+
+            //Double compare function returns 1 if bRecency is larger than aRecency 
+            //Returns 0 if they're equal and -1 if aRecency is larger 
+            return Double.compare(bRecency, aRecency);
         }
     }
 }
