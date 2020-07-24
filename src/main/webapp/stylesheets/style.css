@@ -1,5 +1,4 @@
 @import url('https://fonts.googleapis.com/css?family=Merriweather:400,400i,700,700i,900,900i');
-@import "compass/css3";
 
 body {
   font-family: 'Merriweather', serif;
@@ -101,7 +100,7 @@ i {
 }
 
 .underNavBar {
-    margin-top:80px
+    margin-top:80px;
 }
 
 #online{

@@ -18,7 +18,7 @@
 <body>
     <div class="container">
     <!-- Navbar -->
-    <div class="w3-top navBar">
+    <div id="navBar" class="w3-top">
         <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
             <a href="/index.html" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-home w3-margin-right"></i>Home</a><h3 id="logo">『𝚅𝙾𝚃𝙸𝙵𝚈』</h3>
         </div>
@@ -28,19 +28,13 @@
         <h2>Login User</h2>
         <form class="form-horizontal" onsubmit="storeZipCodeAndNickname();" method="POST">
             <div class="form-group">
-                <div class="col-sm-10">
-                    <input type="text" id="nickname" name="nickname" placeholder="Nickname"><br>
-                </div>
+                <input type="text" id="nickname" name="nickname" placeholder="Nickname"><br>
             </div>
             <div class="form-group">
-                <div class="col-sm-10">
-                    <input type="text" id="zipcode" name="zipcode" placeholder="Zipcode"><br>
-                </div>
+                <input type="text" id="zipcode" name="zipcode" placeholder="Zipcode"><br>
             </div>
             <div class="form-group">        
-                <div class="col-sm-offset-2 col-sm-10">
-                    <input type="submit">
-                </div>
+                <input type="submit">
             </div>
         </form>
     </div>

@@ -14,13 +14,13 @@ h1{
     float: top;
 }
 
-.navBar{
+#navBar{
     width: 100%;
     float: left;
     margin-left: -15px
 }
 
 #logo{
-    margin-top: 8px;
-    margin-left: 50%;
+    margin-top: 12px;
+    margin-left: 45%;
 }
