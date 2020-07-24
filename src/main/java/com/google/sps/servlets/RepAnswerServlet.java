@@ -32,7 +32,7 @@ public class RepAnswerServlet extends HttpServlet {
     private static final String POST_ID = "postId";
     private static final String REP_NAME = "repName";
     private static final String ANSWER = "answer";
-    private static final String FEED_BOOLEAN = "feed";
+    private static final String ANSWER_MADE_FROM_FEED = "feed";
     private static final String TAB_NAME = "tabName";
 
     @Override
@@ -44,7 +44,7 @@ public class RepAnswerServlet extends HttpServlet {
         String tabName = request.getParameter(TAB_NAME);
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
         long commentId = DatastoreManager.insertCommentInDatastore(repName, answer);
-        String postMadeFromFeedString = request.getParameter(FEED_BOOLEAN);
+        String postMadeFromFeedString = request.getParameter(ANSWER_MADE_FROM_FEED);
         Boolean postMadeFromFeed = Boolean.parseBoolean(postMadeFromFeedString);
         Entity post;
         try {

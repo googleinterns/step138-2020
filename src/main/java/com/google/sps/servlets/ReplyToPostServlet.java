@@ -38,7 +38,7 @@ public class ReplyToPostServlet extends HttpServlet {
     private static final String NICKNAME = "name";
     private static final String REPLY = "reply";
     private static final String REP_NAME = "repName";
-    private static final String FEED_BOOLEAN = "feed";
+    private static final String REPLY_MADE_FROM_FEED = "feed";
     private static final String TAB_NAME = "tabName";
     
     @Override
@@ -49,7 +49,7 @@ public class ReplyToPostServlet extends HttpServlet {
         String comment = request.getParameter(REPLY);
         String repName = request.getParameter(REP_NAME);
         String tabName = request.getParameter(TAB_NAME);
-        String postMadeFromFeedString = request.getParameter(FEED_BOOLEAN);
+        String postMadeFromFeedString = request.getParameter(REPLY_MADE_FROM_FEED);
         Boolean postMadeFromFeed = Boolean.parseBoolean(postMadeFromFeedString);
         
         long commentId; 
