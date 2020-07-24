@@ -528,6 +528,11 @@ function storeRepBooleanAndZipcodeAndRedirect() {
     window.location.href = "/repList.html";
 }
 
+//function for loading indicator for rep list page
+function loadingIndicator() {
+  myVar = setTimeout(getRepList, 3000);
+}
+
 //Makes fetch to repListServlet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList() {
     var rep = localStorage.getItem("rep");
@@ -562,6 +567,8 @@ async function getRepList() {
             representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("list").style.display = "block";
 }
 
 //Adds list element for each rep with link to rep's feed if account created
