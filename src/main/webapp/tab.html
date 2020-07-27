@@ -15,7 +15,7 @@
 <style>
 html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
 </style>
-<body class="w3-theme-l5" onload="displayTab()">
+<body class="w3-theme-l5" onload="displayTab();" onbeforeunload="closeWindow();">
 
     <!-- Navbar -->
     <div class="w3-top">
@@ -41,6 +41,10 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                         <h3 class="w3-center" id="repTitle"></h3>
                         <p class="w3-center"><img id="repProfilePic" class="w3-circle" style="height:106px"></p>
                         <hr>
+                    </div>
+                     <div id="status">
+                        <button class="w3-bar-item w3-button" id="online" onclick="goOnline()">Online</button>
+                        <button class="w3-bar-item w3-button" id="offline" onclick="goOffline()">Offline</button>
                     </div>
                 </div>
                 <br>

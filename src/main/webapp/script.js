@@ -45,7 +45,7 @@ async function displayTab() {
     document.getElementById("repName").innerText = repName;
     document.getElementById("repContainer").onclick = function() {
         window.location.href = `/politicianPage.html?name=${encodeURI(repName)}`};
-
+    setStatus(representative.status);
     //Add a button to return to feed
     var feedButton = document.getElementById("feed");
     feedButton.onclick = function() {window.location.href = `/feed.html?name=${encodeURI(repName)}`};
@@ -107,6 +107,7 @@ async function displayFeed() {
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
     document.getElementById("repContainer").onclick = function() {
         window.location.href = `/politicianPage.html?name=${encodeURI(repName)}`};
+    setStatus(representative.status);
 
     //Fetches the list of tabs for a particular rep
     var response = await fetch(`rep_tabs?repName=${encodeURI(repName)}`);
@@ -689,7 +690,6 @@ function addPlatform(){
     platformText.className = "form-control platform";
     platformText.rows = 3;
     platformText.placeholder = "Platform on additional topic";
-
     innerDiv.appendChild(platformText);
     platformDivContainer.appendChild(platformLabel);
     platformDivContainer.appendChild(innerDiv);
@@ -811,4 +811,50 @@ function zipcodelink() {
 
     var zipcode = document.getElementById("backToRepZipcode");
     zipcode.style.display = isRep.trim() == "true" ? "block" : "none"; 
+}
+
+function closeWindow() {
+    if(localStorage.getItem("rep").trim() == "true") {
+        var exit = confirm("Do you want to go offline?");  
+        if(exit == true) {
+            goOffline();
+        }
+    }
+}
+
+function goOnline() {
+    if(localStorage.getItem("rep").trim() == "true") {
+        var urlParams = new URLSearchParams(window.location.search);
+        var repName = decodeURI(urlParams.get('name')); 
+        fetch(`/update_representative_status?repName=${encodeURI(repName)}&status=true`);
+        setStatus("true");
+    }
+}
+
+function goOffline() {
+    if(localStorage.getItem("rep").trim() == "true") {
+        var urlParams = new URLSearchParams(window.location.search);
+        var repName = decodeURI(urlParams.get('name')); 
+        fetch(`/update_representative_status?repName=${encodeURI(repName)}&status=false`);
+        setStatus("false");
+    }
+}
+
+function setStatus(status) {
+     if(status == "false") {
+        var online = document.getElementById("online");
+        var offline = document.getElementById("offline");
+        offline.style.backgroundColor = "tomato";
+        offline.style.color = "white";
+        online.style.backgroundColor = "white";
+        online.style.color = "lightgreen";
+    }
+    else {
+        var online = document.getElementById("online");
+        var offline = document.getElementById("offline");
+        offline.style.backgroundColor = "white";
+        offline.style.color = "tomato";
+        online.style.backgroundColor = "lightgreen";
+        online.style.color = "white";      
+    }
 }

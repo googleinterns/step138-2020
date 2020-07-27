@@ -79,7 +79,8 @@ public final class DatastoreEntityToObjectConverterTest {
         repEntity.setProperty(Constants.REP_POSTS, postIds);
         repEntity.setProperty(Constants.REP_INTRO, "This is my Intro");
         repEntity.setProperty(Constants.REP_BLOB_KEY_URL, "blobKeyUrl");
-        repEntity.setProperty(Constants.REP_TABS, new ArrayList<Long>(Arrays.asList(tabId))); 
+        repEntity.setProperty(Constants.REP_TABS, new ArrayList<Long>(Arrays.asList(tabId)));
+        repEntity.setProperty(Constants.REP_STATUS, true);
         ds.put(repEntity);
         long repId = repEntity.getKey().getId(); 
 

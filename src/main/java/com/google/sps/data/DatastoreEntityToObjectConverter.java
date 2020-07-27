@@ -40,8 +40,9 @@ public final class DatastoreEntityToObjectConverter {
         String blobKeyUrl = (String) entity.getProperty(Constants.REP_BLOB_KEY_URL);
         List<Tab> tabs = convertTabsFromRep(entity);
         long id = entity.getKey().getId();
+        String status = (String) entity.getProperty(Constants.REP_STATUS);
         return new Representative(
-            name, title, username, password, posts, intro, blobKeyUrl, tabs, id);   
+            name, title, username, password, posts, intro, blobKeyUrl, tabs, id, status);   
     }
     
     /**

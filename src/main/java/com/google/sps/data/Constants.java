@@ -10,6 +10,7 @@ public final class Constants {
     public static final String REP_INTRO = "Intro";
     public static final String REP_BLOB_KEY_URL = "BlobKeyUrl";
     public static final String REP_TABS = "Tabs";
+    public static final String REP_STATUS = "Status";
 
     public static final String PERSPECTIVE_API_KEY = "PERSPECTIVE_API_KEY";
     public static final String POST_ENTITY_TYPE = "Post";

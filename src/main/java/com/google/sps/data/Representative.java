@@ -19,9 +19,10 @@ public final class Representative {
     private final String blobKeyUrl;
     private final List<Tab> tabs;
     private final long id; 
+    private final String status;
 
     public Representative(String name, String title, String username, 
-    String password, List<Post> posts, String intro, String blobKeyUrl, List<Tab> tabs, long id) {
+    String password, List<Post> posts, String intro, String blobKeyUrl, List<Tab> tabs, long id, String status) {
         this.name = name;
         this.title = title;
         this.username = username;
@@ -31,6 +32,7 @@ public final class Representative {
         this.blobKeyUrl = blobKeyUrl;
         this.tabs = tabs;
         this.id = id; 
+        this.status = status;
         Collections.sort(this.posts, new Post.PostComparator()); 
     }
 
@@ -68,6 +70,10 @@ public final class Representative {
 
     public long getID() {
         return id; 
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     @Override
