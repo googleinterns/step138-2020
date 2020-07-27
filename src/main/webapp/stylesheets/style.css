@@ -110,13 +110,3 @@ i {
 #offline{
     color: tomato;
 }
-
-.onlineClicked{
-    background-color: lightgreen;
-    color: white;
-}
-
-offlineClicked{
-    background-color: tomato;
-    color: white;
-}
