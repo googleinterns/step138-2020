@@ -813,7 +813,7 @@ function zipcodelink() {
     zipcode.style.display = isRep.trim() == "true" ? "block" : "none"; 
 }
 
-function closeWindow(){
+function closeWindow() {
     if(localStorage.getItem("rep").trim() == "true") {
         var exit = confirm("Do you want to go offline?");  
         if(exit == true) {
@@ -822,7 +822,7 @@ function closeWindow(){
     }
 }
 
-function goOnline(){
+function goOnline() {
     if(localStorage.getItem("rep").trim() == "true") {
         var urlParams = new URLSearchParams(window.location.search);
         var repName = decodeURI(urlParams.get('name')); 
@@ -831,7 +831,7 @@ function goOnline(){
     }
 }
 
-function goOffline(){
+function goOffline() {
     if(localStorage.getItem("rep").trim() == "true") {
         var urlParams = new URLSearchParams(window.location.search);
         var repName = decodeURI(urlParams.get('name')); 
@@ -840,7 +840,7 @@ function goOffline(){
     }
 }
 
-function setStatus(status){
+function setStatus(status) {
      if(status == "false") {
         var online = document.getElementById("online");
         var offline = document.getElementById("offline");
