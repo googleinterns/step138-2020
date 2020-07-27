@@ -13,8 +13,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /** 
-The RepInDatastore Servlet class checks to see whether or not a particular
-representative has made an account by querying for their name in datastore
+The UpdateRepresentativeStatus Servlet allows for the updating of the representative's status on the web page
+at their discretion.
 */
 @WebServlet ("/update_representative_status")
 public class UpdateRepresentativeStatusServlet extends HttpServlet {
@@ -22,7 +22,6 @@ public class UpdateRepresentativeStatusServlet extends HttpServlet {
     private static final String REP_NAME = "repName";
     private static final String REP_STATUS = "status";
     
-
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) 
     throws IOException, ServletException {

@@ -253,8 +253,6 @@ public class DatastoreManager {
         datastore.put(postEntity);
     }
 
-    
-
     /**
      * Updates the tab associated with a post entity
      * @param postId ID of the post entity 

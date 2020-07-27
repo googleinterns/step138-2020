@@ -72,7 +72,7 @@ public final class Representative {
         return id; 
     }
 
-    public String getStatus(){
+    public String getStatus() {
         return status;
     }
 
