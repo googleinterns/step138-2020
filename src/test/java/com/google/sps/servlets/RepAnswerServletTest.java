@@ -56,6 +56,7 @@ public class RepAnswerServletTest{
         when(request.getParameter("postId")).thenReturn(postID);
         when(request.getParameter("repName")).thenReturn("Donald Trump");
         when(request.getParameter("answer")).thenReturn("I am well");
+        when(request.getParameter("tabName")).thenReturn("Education");
     
         StringWriter stringWriter = new StringWriter();
         PrintWriter writer = new PrintWriter(stringWriter);

@@ -17,6 +17,7 @@ import com.google.sps.data.Representative;
 import com.google.sps.data.ToxicCommentException;
 import java.io.IOException;
 import java.net.URLEncoder; 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.annotation.WebServlet;
@@ -37,6 +38,8 @@ public class ReplyToPostServlet extends HttpServlet {
     private static final String NICKNAME = "name";
     private static final String REPLY = "reply";
     private static final String REP_NAME = "repName";
+    private static final String REPLY_MADE_FROM_FEED = "feed";
+    private static final String TAB_NAME = "tabName";
     
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) 
@@ -45,14 +48,16 @@ public class ReplyToPostServlet extends HttpServlet {
         String nickName = request.getParameter(NICKNAME);
         String comment = request.getParameter(REPLY);
         String repName = request.getParameter(REP_NAME);
+        String tabName = request.getParameter(TAB_NAME);
+        String postMadeFromFeedString = request.getParameter(REPLY_MADE_FROM_FEED);
+        Boolean postMadeFromFeed = Boolean.parseBoolean(postMadeFromFeedString);
         
         long commentId; 
         try {
             commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(nickName, comment);
         } catch(ToxicCommentException e) {
             logger.error(e);
-            String redirect = "feed.html?name=" + URLEncoder.encode(repName);
-            response.sendRedirect(redirect);
+            response.sendRedirect("/errors/toxicComment.html");
             return;
         }
 
@@ -63,7 +68,8 @@ public class ReplyToPostServlet extends HttpServlet {
             logger.error(e);
             throw new ServletException("Error: " + e.getMessage(), e);
         }
-        String redirect = "feed.html?name=" + URLEncoder.encode(repName);
+        String redirect = postMadeFromFeed ? "feed.html?name=" + URLEncoder.encode(repName) : 
+            "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabName);
         response.sendRedirect(redirect);
     }
 }

@@ -64,9 +64,7 @@ public class NewPostServlet extends HttpServlet {
             commentId = DatastoreManager.insertCommentInDatastoreIfNonToxic(name, comment);
         } catch(ToxicCommentException e) {
             logger.error(e);
-            String redirect = postMadeFromFeed ? "feed.html?name=" + URLEncoder.encode(repName) : 
-                "tab.html?name=" + URLEncoder.encode(repName) + "&tab=" + URLEncoder.encode(tabs.get(0));
-            response.sendRedirect(redirect);
+            response.sendRedirect("/errors/toxicComment.html");
             return;
         }
         

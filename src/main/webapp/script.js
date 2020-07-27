@@ -78,15 +78,16 @@ async function displayTab() {
         var question = document.getElementById(post.id);
 
         //answer button
-        if (rep.trim() == "true" && addTab != "true") {
-            createAnswerButton(post.id, repName, question);
+        if (rep.trim() === "true" && addTab !== "true") {
+            createAnswerButton(post.id, repName, question, false, tabName);
         }
         else {
-            createReplyButton(post.id, repName, question);
+            createReplyButton(post.id, repName, question, false, tabName);
         }
 
         displayRepAnswer(post, repName);
         displayReplyList(post);
+        displayReactions(post, repName);
     })
 }
 
@@ -134,24 +135,27 @@ async function displayFeed() {
         var question = document.getElementById(post.id);
         //answer button
         if (rep.trim() == "true") {
-            createAnswerButton(post.id, repName, question);
+            createAnswerButton(post.id, repName, question, true, null);
         }
         else {
-            createReplyButton(post.id, repName, question);
+            createReplyButton(post.id, repName, question, true, null);
         }
         displayRepAnswer(post, repName);
         displayReplyList(post);
-
-        //show reaction buttons 
-        var reactionDiv = document.createElement("div");
-        displayReaction(post, repName, reactionDiv, "ANGRY"); 
-        displayReaction(post, repName, reactionDiv, "CRYING"); 
-        displayReaction(post, repName, reactionDiv, "LAUGHING"); 
-        displayReaction(post, repName, reactionDiv, "HEART"); 
-        displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
-        displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
-        document.getElementById(post.id).appendChild(reactionDiv);
+        displayReactions(post, repName);
     })
+}
+
+//function for displaying reactions
+function displayReactions(post, repName) {
+    var reactionDiv = document.createElement("div");
+    displayReaction(post, repName, reactionDiv, "ANGRY"); 
+    displayReaction(post, repName, reactionDiv, "CRYING"); 
+    displayReaction(post, repName, reactionDiv, "LAUGHING"); 
+    displayReaction(post, repName, reactionDiv, "HEART"); 
+    displayReaction(post, repName, reactionDiv, "THUMBS_UP"); 
+    displayReaction(post, repName, reactionDiv, "THUMBS_DOWN"); 
+    document.getElementById(post.id).appendChild(reactionDiv);
 }
 
 //Add a link for returning to rep list
@@ -171,16 +175,15 @@ function addTabButton(tabName, container, repName) {
 //Displays specified reaction button in post 
 function displayReaction(post, repName, reactionDiv, reaction) {
     var btn = document.createElement("button");
+    btn.id = post.id + reaction; 
     var reactionCount = parseInt(post.reactions[reaction]);
     localStorage.setItem(post.id + reaction, reactionCount);
     if (localStorage.getItem(post.id) === reaction) {
-        reactedBtn = btn; 
         setReactionButtonContent(btn, reaction, reactionCount, "selected");
     }
     else {
         setReactionButtonContent(btn, reaction, reactionCount, "notselected");
     }
-
     btn.onclick = function() {reactToPost(btn, reaction, post.id, repName);}; 
     reactionDiv.appendChild(btn); 
 }
@@ -203,7 +206,6 @@ async function reactToPost(btn, reaction, postId, repName) {
     if (oldReaction === null || oldReaction === "null") { 
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
-        reactedBtn = btn; 
         localStorage.setItem(postId, reaction);
         localStorage.setItem(postId + reaction, reactionCount + 1); 
         setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
@@ -217,7 +219,6 @@ async function reactToPost(btn, reaction, postId, repName) {
             await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
                 ${postId}&reaction=${reaction}`);
             localStorage.setItem(postId, null);
-            reactedBtn = null; 
             localStorage.setItem(postId + reaction, reactionCount - 1); 
             setReactionButtonContent(btn, reaction, reactionCount - 1, "notselected"); 
         }
@@ -227,6 +228,7 @@ async function reactToPost(btn, reaction, postId, repName) {
             await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
                 ${postId}&reaction=${oldReaction}`);
             localStorage.setItem(postId + oldReaction, oldReactionCount - 1); 
+            var reactedBtn = document.getElementById(postId + oldReaction); 
             setReactionButtonContent(reactedBtn, oldReaction, oldReactionCount - 1, "notselected"); 
         }
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
@@ -234,7 +236,6 @@ async function reactToPost(btn, reaction, postId, repName) {
         localStorage.setItem(postId + reaction, reactionCount + 1); 
         setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
         localStorage.setItem(postId, reaction);
-        reactedBtn = btn; 
     }
 }
 
@@ -315,7 +316,7 @@ function returnToFeed(repName, feed) {
 }
 
 //Creates an button for representative answer
-function createAnswerButton(postId, repName, question) {
+function createAnswerButton(postId, repName, question, postFromFeed, tabName) {
     var repAnswer = document.createElement("button");
     repAnswer.onclick = function() {
         var answerForm = document.getElementById("answerForm" + postId);
@@ -330,11 +331,11 @@ function createAnswerButton(postId, repName, question) {
     formDiv.id = "answerForm" + postId;
     question.appendChild(repAnswer);
     question.appendChild(formDiv);
-    createAnswerForm(postId, repName);
+    createAnswerForm(postId, repName, postFromFeed, tabName);
 }
 
 //Creates a button for users to respond to a question
-function createReplyButton(postId, repName, question) {
+function createReplyButton(postId, repName, question, postFromFeed, tabName) {
     var replyBtn = document.createElement("button");
     replyBtn.onclick = function() {
         var replyForm = document.getElementById("replyForm" + postId);
@@ -348,7 +349,7 @@ function createReplyButton(postId, repName, question) {
     formDiv.id = "replyForm" + postId;
     question.appendChild(replyBtn);
     question.appendChild(formDiv);
-    createReplyForm(postId, repName);
+    createReplyForm(postId, repName, postFromFeed, tabName);
 }
 
 //Adds tabs to politician page
@@ -376,12 +377,13 @@ function getTab(tab) {
 }
 
 //Creates a reply form
-function createReplyForm(questionID, repName) {
+function createReplyForm(questionID, repName, postFromFeed, tabName) {
     var formDiv = document.getElementById("replyForm" + questionID);
     var nickname = localStorage.getItem("nickname");
 
     var replyForm = document.createElement("form");
-    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}&repName=${encodeURI(repName)}`);
+    replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}
+        &repName=${encodeURI(repName)}&feed=${postFromFeed}&tabName=${tabName}`);
     replyForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
@@ -400,11 +402,12 @@ function createReplyForm(questionID, repName) {
 }
 
 //Creates an answer form 
-function createAnswerForm(questionID, repName) {
+function createAnswerForm(questionID, repName, postFromFeed, tabName) {
     var formDiv = document.getElementById("answerForm" + questionID);
 
     var ansForm = document.createElement("form");
-    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${encodeURI(repName)}`);
+    ansForm.setAttribute("action", `/rep_answer?postId=${questionID}&repName=${encodeURI(repName)}
+        &feed=${postFromFeed}&tabName=${tabName}`);
     ansForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
@@ -523,6 +526,11 @@ function storeRepBooleanAndZipcodeAndRedirect() {
     window.location.href = "/repList.html";
 }
 
+//function for loading indicator for rep list page
+function loadingIndicator() {
+  myVar = setTimeout(getRepList, 3000);
+}
+
 //Makes fetch to repListServlet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
 async function getRepList() {
     var rep = localStorage.getItem("rep");
@@ -557,6 +565,8 @@ async function getRepList() {
             representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
+    document.getElementById("loader").style.display = "none";
+    document.getElementById("list").style.display = "block";
 }
 
 //Adds list element for each rep with link to rep's feed if account created

@@ -65,6 +65,7 @@ public final class DatastoreEntityToObjectConverterTest {
         postEntity.setProperty(Constants.POST_QUESTION, commentIdQuestion); 
         postEntity.setProperty(Constants.POST_ANSWER, commentIdAnswer); 
         postEntity.setProperty(Constants.POST_REPLIES, commentIds); 
+        postEntity.setProperty(Constants.POST_TIMESTAMP, System.currentTimeMillis());
         postEntity.setProperty(Constants.POST_TABS, Arrays.asList("Education"));
         ds.put(postEntity); 
         long postId = postEntity.getKey().getId(); 
