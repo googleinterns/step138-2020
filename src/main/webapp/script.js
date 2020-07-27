@@ -849,7 +849,7 @@ function setStatus(status){
         online.style.backgroundColor = "white";
         online.style.color = "lightgreen";
     }
-    else{
+    else {
         var online = document.getElementById("online");
         var offline = document.getElementById("offline");
         offline.style.backgroundColor = "white";
