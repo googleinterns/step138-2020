@@ -3,6 +3,7 @@
 <head>
     <title>Representative List</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="stylesheets/repList.css">
     <link rel="stylesheet" href="stylesheets/style.css">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
@@ -11,7 +12,7 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <script src="script.js"></script>
 </head>
-<body onload="getRepList();">
+<body onload="loadingIndicator();">
     <!-- Navbar -->
     <div class="w3-top">
         <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
@@ -20,7 +21,9 @@
         </div>
     </div>
 
-    <div class="w3-container underNavBar">
+    <div id="loader"></div>
+
+    <div id="list" style="display: none" class="w3-container underNavBar animate-bottom">
         <h2 id="repListTitle"></h2>
         <ul class="w3-ul w3-card-4 w3-hoverable" id="repList"></ul>
     </div>
