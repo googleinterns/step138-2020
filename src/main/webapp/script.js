@@ -174,16 +174,15 @@ function addTabButton(tabName, container, repName) {
 //Displays specified reaction button in post 
 function displayReaction(post, repName, reactionDiv, reaction) {
     var btn = document.createElement("button");
+    btn.id = post.id + reaction; 
     var reactionCount = parseInt(post.reactions[reaction]);
     localStorage.setItem(post.id + reaction, reactionCount);
     if (localStorage.getItem(post.id) === reaction) {
-        reactedBtn = btn; 
         setReactionButtonContent(btn, reaction, reactionCount, "selected");
     }
     else {
         setReactionButtonContent(btn, reaction, reactionCount, "notselected");
     }
-
     btn.onclick = function() {reactToPost(btn, reaction, post.id, repName);}; 
     reactionDiv.appendChild(btn); 
 }
@@ -206,7 +205,6 @@ async function reactToPost(btn, reaction, postId, repName) {
     if (oldReaction === null || oldReaction === "null") { 
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
             ${postId}&reaction=${reaction}`);
-        reactedBtn = btn; 
         localStorage.setItem(postId, reaction);
         localStorage.setItem(postId + reaction, reactionCount + 1); 
         setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
@@ -220,7 +218,6 @@ async function reactToPost(btn, reaction, postId, repName) {
             await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
                 ${postId}&reaction=${reaction}`);
             localStorage.setItem(postId, null);
-            reactedBtn = null; 
             localStorage.setItem(postId + reaction, reactionCount - 1); 
             setReactionButtonContent(btn, reaction, reactionCount - 1, "notselected"); 
         }
@@ -230,6 +227,7 @@ async function reactToPost(btn, reaction, postId, repName) {
             await fetch(`/unreact_to_post?repName=${encodeURI(repName)}&postId=
                 ${postId}&reaction=${oldReaction}`);
             localStorage.setItem(postId + oldReaction, oldReactionCount - 1); 
+            var reactedBtn = document.getElementById(postId + oldReaction); 
             setReactionButtonContent(reactedBtn, oldReaction, oldReactionCount - 1, "notselected"); 
         }
         await fetch(`/react_to_post?repName=${encodeURI(repName)}&postId=
@@ -237,7 +235,6 @@ async function reactToPost(btn, reaction, postId, repName) {
         localStorage.setItem(postId + reaction, reactionCount + 1); 
         setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
         localStorage.setItem(postId, reaction);
-        reactedBtn = btn; 
     }
 }
 
