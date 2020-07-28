@@ -528,7 +528,7 @@ function storeRepBooleanAndZipcodeAndRedirect() {
 
 //function for loading indicator for rep list page
 function loadingIndicator() {
-  myVar = setTimeout(getRepList, 3000);
+  myVar = setTimeout(getRepList, 125);
 }
 
 //Makes fetch to repListServlet and pulls list of reps, makes calls to displayRepList to render html elements with rep names
