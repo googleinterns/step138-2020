@@ -568,9 +568,14 @@ async function getRepList() {
             representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
     }
-    if (repsInDatastore == 0) {
+    if (repsInDatastore == 0 && rep.trim() != "true") {
         var listElement = document.createElement('li');
         listElement.innerText = "Sorry, no representatives under your zip code have made an account yet :( ";
+        representativeList.appendChild(listElement);
+    }
+    if (repsInDatastore == officials.length && rep.trim() == "true") {
+        var listElement = document.createElement('li');
+        listElement.innerText = "Sorry, all representatives under this zip code already have accounts";
         representativeList.appendChild(listElement);
     }
     document.getElementById("loader").style.display = "none";
