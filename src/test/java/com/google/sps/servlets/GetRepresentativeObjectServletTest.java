@@ -11,7 +11,7 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.sps.data.DatastoreManager;
-import com.google.sps.servlets.FeedServlet;
+import com.google.sps.servlets.GetRepresentativeObjectServlet;
 import java.io.StringWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -29,8 +29,8 @@ import org.junit.runners.JUnit4;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(JUnit4.class)
-public class FeedServletTest{
-    private FeedServlet servlet;
+public class GetRepresentativeObjectServletTest{
+    private GetRepresentativeObjectServlet servlet;
     private HttpServletRequest request;
     private HttpServletResponse response;
     private LocalServiceTestHelper helper;
@@ -38,7 +38,7 @@ public class FeedServletTest{
 
     @Before
     public void setUp() {
-        servlet = new FeedServlet();
+        servlet = new GetRepresentativeObjectServlet();
         request = mock(HttpServletRequest.class);
         response = mock(HttpServletResponse.class);
         helper = new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
