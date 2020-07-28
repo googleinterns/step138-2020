@@ -554,16 +554,28 @@ async function getRepList() {
     var representativeList = document.getElementById("repList");
     var offices = representatives.offices;
     var officials = representatives.officials;
+    var repsInDatastore = 0;
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]) {
             var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
             var rep;
             if (repInDatastore) {
+                repsInDatastore += 1;
                 var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
                 rep = await repResponse.json();
             }
             representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
+    }
+    if (repsInDatastore == 0 && rep.trim() != "true") {
+        var listElement = document.createElement('li');
+        listElement.innerText = "Sorry, no representatives under your zip code have made an account yet :( ";
+        representativeList.appendChild(listElement);
+    }
+    if (repsInDatastore == officials.length && rep.trim() == "true") {
+        var listElement = document.createElement('li');
+        listElement.innerText = "Sorry, all representatives under this zip code already have accounts";
+        representativeList.appendChild(listElement);
     }
     document.getElementById("loader").style.display = "none";
     document.getElementById("list").style.display = "block";
