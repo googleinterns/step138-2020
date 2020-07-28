@@ -9,11 +9,6 @@
     float: left;
 }
 
-h1 {
-    padding-left: 50%;
-    float: top;
-}
-
 #navBar {
     width: 100%;
     float: left;
@@ -22,5 +17,5 @@ h1 {
 
 #logo {
     margin-top: 12px;
-    margin-left: 45%;
+    margin-left: 46%;
 }
