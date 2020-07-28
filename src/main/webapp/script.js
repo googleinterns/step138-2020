@@ -550,20 +550,28 @@ async function getRepList() {
         window.location.href = `/errors/zipcodeNotFound.html?rep=${rep.trim()}`;
         return;
     }
+    console.log(representatives);
     document.getElementById("repListTitle").innerText = "Representative List";
     var representativeList = document.getElementById("repList");
     var offices = representatives.offices;
     var officials = representatives.officials;
+    var repsInDatastore = 0;
     for (var i = 0; i < offices.length; i++) {
         for (number of offices[i]["officialIndices"]) {
             var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
             var rep;
             if (repInDatastore) {
+                repsInDatastore += 1;
                 var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
                 rep = await repResponse.json();
             }
             representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
         }
+    }
+    if (repsInDatastore == 0) {
+        var listElement = document.createElement('li');
+        listElement.innerText = "Sorry, no representatives under your zip code have made an account yet :( ";
+        representativeList.appendChild(listElement);
     }
     document.getElementById("loader").style.display = "none";
     document.getElementById("list").style.display = "block";
