@@ -29,7 +29,7 @@ async function displayTab() {
     });
 
     //fetch the representative entity corresponding to repName
-    var response = await fetch(`/feed?repName=${encodeURI(repName)}`);
+    var response = await fetch(`/get_rep_object?repName=${encodeURI(repName)}`);
     var representative = await response.json();
 
     //fetch the tabEntity corresponding to tabName
@@ -102,7 +102,7 @@ async function displayFeed() {
     document.getElementById("repName").innerText = repName;
 
     //Fetches the representative entity associated with name
-    var response = await fetch(`/feed?repName=${encodeURI(repName)}`);
+    var response = await fetch(`/get_rep_object?repName=${encodeURI(repName)}`);
     var representative = await response.json();
     document.getElementById("repTitle").innerText = representative.title;
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
@@ -559,7 +559,7 @@ async function getRepList() {
             var repInDatastore = await checkIfRepInDatastore(officials[number]["name"]);
             var rep;
             if (repInDatastore) {
-                var repResponse = await fetch(`/feed?repName=${officials[number]["name"]}`);
+                var repResponse = await fetch(`/get_rep_object?repName=${officials[number]["name"]}`);
                 rep = await repResponse.json();
             }
             representativeList.appendChild(displayFunction(offices[i]["name"], officials[number]["name"], repInDatastore, rep.blobKeyUrl));
@@ -784,7 +784,7 @@ function fetchBlobstoreUrlAndShowForm() {
 async function displayPoliticianPage(imgUrl) {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
-    var representativeResponse = await fetch(`/feed?repName=${encodeURI(repName)}`)
+    var representativeResponse = await fetch(`/get_rep_object?repName=${encodeURI(repName)}`)
     var repJson = await representativeResponse.json();
     
     const titleElement = document.getElementById("title");

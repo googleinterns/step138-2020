@@ -26,8 +26,8 @@ import javax.servlet.ServletException;
  * Servlet for fetching a representative object used to create the feed page 
  * for a particular representative 
  */ 
-@WebServlet ("/feed")
-public class FeedServlet extends HttpServlet {
+@WebServlet ("/get_rep_object")
+public class GetRepresentativeObjectServlet extends HttpServlet {
     private static final String REP_NAME = "repName";
     
     @Override
