@@ -18,7 +18,6 @@ public final class Post {
     private final long id; 
     private final Map<Reaction, Long> reactions;
     private final long timestamp;  
-    private final long reactionCount; 
 
     public Post(Comment question, Comment answer, List<Comment> replies, List<String> tabs, 
                 long id, Map<Reaction, Long> reactions, long timestamp) {
@@ -29,7 +28,6 @@ public final class Post {
         this.id = id;
         this.reactions = reactions; 
         this.timestamp = timestamp; 
-        this.reactionCount= 0; 
     }
 
     public Map<Reaction, Long> getReactions() {
