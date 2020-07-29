@@ -1,5 +1,6 @@
 package com.google.sps.data;
 
+import java.lang.Math; 
 import java.util.ArrayList;
 import java.util.Comparator; 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public final class Post {
     private final long id; 
     private final Map<Reaction, Long> reactions;
     private final long timestamp;  
+    private final long reactionCount; 
 
     public Post(Comment question, Comment answer, List<Comment> replies, List<String> tabs, 
                 long id, Map<Reaction, Long> reactions, long timestamp) {
@@ -27,6 +29,7 @@ public final class Post {
         this.id = id;
         this.reactions = reactions; 
         this.timestamp = timestamp; 
+        this.reactionCount= 0; 
     }
 
     public Map<Reaction, Long> getReactions() {
@@ -55,6 +58,14 @@ public final class Post {
 
     public long getTimestamp() {
         return timestamp; 
+    }
+
+    public long totalReactionCount() {
+        long count = 0; 
+        for (Map.Entry<Reaction, Long> entry : this.reactions.entrySet()) {
+            count += entry.getValue(); 
+        }
+        return count; 
     }
 
     @Override
@@ -114,18 +125,36 @@ public final class Post {
 
     static class PostComparator implements Comparator<Post> {
         @Override
-        //Orders the most recently posted first 
-        //Reverse timestamp ordering 
         public int compare(Post a, Post b) {
             long currTime = System.currentTimeMillis();
 
             //Cast the timestamps into double between 0 and 1 
-            double aRecency = (double) a.getTimestamp() / (double) currTime;
-            double bRecency = (double) b.getTimestamp() / (double) currTime;
+            double aScore = (double) a.getTimestamp() / (double) currTime;
+            double bScore = (double) b.getTimestamp() / (double) currTime;
 
-            //Double compare function returns 1 if bRecency is larger than aRecency 
-            //Returns 0 if they're equal and -1 if aRecency is larger 
-            return Double.compare(bRecency, aRecency);
+            long reactionCountDifference = Math.abs(a.totalReactionCount() - b.totalReactionCount());
+            double reactionBoost = -1.0;
+            for (int i = 0; i < Constants.REACTION_COUNT_BUCKETS.length; i++) {
+                if (reactionCountDifference <= Constants.REACTION_COUNT_BUCKETS[i]) {
+                    reactionBoost = Constants.REACTION_BUCKET_BOOSTS[i]; 
+                    break; 
+                }
+            } 
+            if (reactionBoost == -1.0) {
+                reactionBoost = Constants.REACTION_BUCKET_BOOSTS
+                    [Constants.REACTION_BUCKET_BOOSTS.length - 1]; 
+            }
+
+            if (a.totalReactionCount() >= b.totalReactionCount()) {
+                aScore += reactionBoost; 
+            }
+            else {
+                bScore += reactionBoost; 
+            }
+
+            //Want to sort in descending order of scores 
+            //Post with bigger timestamp and more reactions at top of feed 
+            return Double.compare(bScore, aScore); 
         }
     }
 }
