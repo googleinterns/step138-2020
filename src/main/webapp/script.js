@@ -299,6 +299,7 @@ function displayPost(post, firstPost) {
     hrElement.className = "w3-clear";
     var question = document.createElement("p");
     question.innerText = post.question.comment;
+    question.className = "bold";
     linebreak = document.createElement("br");
     hrElement.appendChild(linebreak);
 
@@ -431,7 +432,7 @@ function displayReplyList(post) {
     replyList = post.replies;
     replyList.forEach((reply)=> {
         var postElement = document.getElementById(post.id);
-        var newReply = document.createElement("p");
+        var newReply = document.createElement("h4");
         displayCommentWithLinking(postElement, newReply, reply);
     })
 }
@@ -442,6 +443,7 @@ function displayRepAnswer(post, repName) {
     if (answer != undefined) {    
         var postElement = document.getElementById(post.id);
         var repAnswer = document.createElement("p");
+        repAnswer.className = "bold";
         displayCommentWithLinking(postElement, repAnswer, answer);
     }
 }

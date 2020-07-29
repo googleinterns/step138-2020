@@ -52,7 +52,7 @@ body {
   background-color: white;
 }
 
-p {
+.bold {
   color: #383838;
   font-size: 1.5em;
   font-weight: 900;
