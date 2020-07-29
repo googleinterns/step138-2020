@@ -1,6 +1,6 @@
 package com.google.sps.data;
 
-import java.lang.Math; 
+import static java.lang.Math.abs; 
 import java.util.ArrayList;
 import java.util.Comparator; 
 import java.util.HashMap;
@@ -58,9 +58,9 @@ public final class Post {
         return timestamp; 
     }
 
-    public long totalReactionCount() {
+    public static long totalReactionCount(Post post) {
         long count = 0; 
-        for (Map.Entry<Reaction, Long> entry : this.reactions.entrySet()) {
+        for (Map.Entry<Reaction, Long> entry : post.getReactions().entrySet()) {
             count += entry.getValue(); 
         }
         return count; 
@@ -130,20 +130,19 @@ public final class Post {
             double aScore = (double) a.getTimestamp() / (double) currTime;
             double bScore = (double) b.getTimestamp() / (double) currTime;
 
-            long reactionCountDifference = Math.abs(a.totalReactionCount() - b.totalReactionCount());
-            double reactionBoost = -1.0;
-            for (int i = 0; i < Constants.REACTION_COUNT_BUCKETS.length; i++) {
-                if (reactionCountDifference <= Constants.REACTION_COUNT_BUCKETS[i]) {
-                    reactionBoost = Constants.REACTION_BUCKET_BOOSTS[i]; 
+            //Difference between number of reactions in a post falls into a particular bucket
+            //which shows how much of a boost should be given to the post with more reactions 
+            long deltaReactions = abs(Post.totalReactionCount(a) - Post.totalReactionCount(b));
+            int reactionBoostIndex = Constants.REACTION_BUCKET_BOOSTS.length - 1;
+            for (int i = 0; i < Constants.REACTION_DELTA_BUCKETS.length; i++) {
+                if (deltaReactions <= Constants.REACTION_DELTA_BUCKETS[i]) {
+                    reactionBoostIndex = i; 
                     break; 
                 }
             } 
-            if (reactionBoost == -1.0) {
-                reactionBoost = Constants.REACTION_BUCKET_BOOSTS
-                    [Constants.REACTION_BUCKET_BOOSTS.length - 1]; 
-            }
 
-            if (a.totalReactionCount() >= b.totalReactionCount()) {
+            double reactionBoost = Constants.REACTION_BUCKET_BOOSTS[reactionBoostIndex]; 
+            if (Post.totalReactionCount(a) >= Post.totalReactionCount(b)) {
                 aScore += reactionBoost; 
             }
             else {
