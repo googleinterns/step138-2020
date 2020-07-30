@@ -5,19 +5,20 @@ async function displayTab() {
     var urlParams = new URLSearchParams(window.location.search);
 
     //Pull values from the url
-    var repName = decodeURI(urlParams.get('name')); 
+    var repName = decodeURI(urlParams.get('name'));
+    var tabName = decodeURI(urlParams.get('tab')); 
     if (rep.trim() == "true") {
         localStorage.setItem("nickname", repName);
-    }
-    var tabName = decodeURI(urlParams.get('tab'));
-    if (tabName.includes("Other") && rep.trim() == "true") {
-        var addTab = document.getElementById("addTab");
-        addTab.style.display = "block";
-        addTab.onclick = function() {
-            window.location.href = window.location.href + "&addTab=true"
+        if (tabName.includes("Other")) {
+            var addTab = document.getElementById("addTab");
+            addTab.style.display = "block";
+            addTab.onclick = function() {
+                window.location.href = window.location.href + "&addTab=true"
+            }
+        } else {
+            document.getElementById("platformFormButton").style.display = "block";
         }
     }
-
     //Add tabs the sidebar
     var response = await fetch(`rep_tabs?repName=${encodeURI(repName.trim())}`);
     var tabList = await response.json();
@@ -89,6 +90,21 @@ async function displayTab() {
         displayReplyList(post);
         displayReactions(post, repName);
     })
+}
+
+//Update tab platform
+async function updatePlatform() {
+    var platform = document.getElementById("newPlatform").value;
+    var urlParams = new URLSearchParams(window.location.search);
+    var tabName = decodeURI(urlParams.get('tab'));
+    await fetch(`/update_tab_platform?tabName=${tabName}&platform=${platform}`);
+    location.reload();
+}
+
+//display updateTabPlatform form
+function displayPlatformForm() {
+    var platformForm = document.getElementById("platformForm");
+    platformForm.style.display = (platformForm.style.display == "none") ? "block" : "none";
 }
 
 //display the feed
@@ -794,12 +810,32 @@ function fetchBlobstoreUrlAndShowForm() {
         });
 }
 
+//Update rep intro
+async function updateIntro() {
+    var intro = document.getElementById("intro").value;
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = decodeURI(urlParams.get('name'));
+    await fetch(`/update_rep_intro?repName=${repName}&intro=${intro}`);
+    location.reload();
+}
+
+//display updateintroForm
+function displayIntroForm() {
+    var introForm = document.getElementById("introForm");
+    introForm.style.display = (introForm.style.display == "none") ? "block" : "none";
+}
+
 //Populated beyond the politician page
 async function displayPoliticianPage(imgUrl) {
+    var rep = localStorage.getItem("rep");
+    if (rep.trim() == "true") {
+        document.getElementById("introFormButton").style.display = "block";
+    }
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
     var representativeResponse = await fetch(`/get_rep_object?repName=${encodeURI(repName.trim())}`)
     var repJson = await representativeResponse.json();
+
     
     const titleElement = document.getElementById("title");
     titleElement.innerText = repJson.title;

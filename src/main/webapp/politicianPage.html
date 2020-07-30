@@ -37,8 +37,13 @@
             </header>
 
             <!-- About Section -->
-            <div class="w3-content w3-justify w3-text-grey w3-padding-32 " >
+            <div class="w3-content w3-justify w3-text-grey w3-padding-32 ">
                 <h2>About</h2>
+                <button style="display: none" type="button" id="introFormButton" class="w3-button w3-theme-d2 w3-margin-bottom" onclick="displayIntroForm()"><i class="fa fa-edit"></i></button>
+                <form style="display: none" id="introForm" method="POST" onsubmit="updateIntro()">
+                    <input type="text" id="intro">
+                    <input type="submit">
+                </form>
                 <hr class="w3-opacity">
                 <h3 id="about"></h3>
             </div>
