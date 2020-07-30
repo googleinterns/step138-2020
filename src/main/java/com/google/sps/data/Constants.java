@@ -1,6 +1,12 @@
 package com.google.sps.data;
 
 public final class Constants {
+    private static final double EPSILON = 0.00001;
+    public static final long[] REACTION_DELTA_BUCKETS = 
+        new long[]{25, 50, 75, 100}; 
+    public static final double[] REACTION_BUCKET_BOOSTS = 
+        new double[]{0.0, 0.05, 0.1, 0.15, 0.2}; 
+
     public static final String REP_ENTITY_TYPE = "Representative";
     public static final String REP_NAME = "Name";
     public static final String REP_TITLE = "Official Title";

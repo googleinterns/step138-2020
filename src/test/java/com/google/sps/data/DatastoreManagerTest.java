@@ -61,7 +61,7 @@ public final class DatastoreManagerTest {
     }
 
     @Test
-    public void testInsertCommentInDatastoreIfNonToxic() 
+    public void testInsertCommentInDatastoreIfToxic() 
     throws EntityNotFoundException{
         String toxicComment = "I hate you and everything you stand for."; 
         assertThrows(ToxicCommentException.class, () -> {

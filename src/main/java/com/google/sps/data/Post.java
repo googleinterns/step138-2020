@@ -1,5 +1,6 @@
 package com.google.sps.data;
 
+import static java.lang.Math.abs; 
 import java.util.ArrayList;
 import java.util.Comparator; 
 import java.util.HashMap;
@@ -55,6 +56,14 @@ public final class Post {
 
     public long getTimestamp() {
         return timestamp; 
+    }
+
+    public static long totalReactionCount(Post post) {
+        long count = 0; 
+        for (Map.Entry<Reaction, Long> entry : post.getReactions().entrySet()) {
+            count += entry.getValue(); 
+        }
+        return count; 
     }
 
     @Override
@@ -114,18 +123,35 @@ public final class Post {
 
     static class PostComparator implements Comparator<Post> {
         @Override
-        //Orders the most recently posted first 
-        //Reverse timestamp ordering 
         public int compare(Post a, Post b) {
             long currTime = System.currentTimeMillis();
 
             //Cast the timestamps into double between 0 and 1 
-            double aRecency = (double) a.getTimestamp() / (double) currTime;
-            double bRecency = (double) b.getTimestamp() / (double) currTime;
+            double aScore = (double) a.getTimestamp() / (double) currTime;
+            double bScore = (double) b.getTimestamp() / (double) currTime;
 
-            //Double compare function returns 1 if bRecency is larger than aRecency 
-            //Returns 0 if they're equal and -1 if aRecency is larger 
-            return Double.compare(bRecency, aRecency);
+            //Difference between number of reactions in a post falls into a particular bucket
+            //which shows how much of a boost should be given to the post with more reactions 
+            long deltaReactions = abs(Post.totalReactionCount(a) - Post.totalReactionCount(b));
+            int reactionBoostIndex = Constants.REACTION_BUCKET_BOOSTS.length - 1;
+            for (int i = 0; i < Constants.REACTION_DELTA_BUCKETS.length; i++) {
+                if (deltaReactions <= Constants.REACTION_DELTA_BUCKETS[i]) {
+                    reactionBoostIndex = i; 
+                    break; 
+                }
+            }
+
+            double reactionBoost = Constants.REACTION_BUCKET_BOOSTS[reactionBoostIndex]; 
+            if (Post.totalReactionCount(a) >= Post.totalReactionCount(b)) {
+                aScore += reactionBoost; 
+            }
+            else {
+                bScore += reactionBoost; 
+            }
+
+            //Want to sort in descending order of scores 
+            //Post with bigger timestamp and more reactions at top of feed 
+            return Double.compare(bScore, aScore); 
         }
     }
 }
