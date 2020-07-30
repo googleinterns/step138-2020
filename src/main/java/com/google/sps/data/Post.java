@@ -139,7 +139,7 @@ public final class Post {
                     reactionBoostIndex = i; 
                     break; 
                 }
-            } 
+            }
 
             double reactionBoost = Constants.REACTION_BUCKET_BOOSTS[reactionBoostIndex]; 
             if (Post.totalReactionCount(a) >= Post.totalReactionCount(b)) {
