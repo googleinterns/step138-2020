@@ -5,21 +5,23 @@ async function displayTab() {
     var urlParams = new URLSearchParams(window.location.search);
 
     //Pull values from the url
-    var repName = decodeURI(urlParams.get('name')); 
+    var repName = decodeURI(urlParams.get('name'));
+    var tabName = decodeURIComponent(urlParams.get('tab'));
+    console.log(tabName);
     if (rep.trim() == "true") {
         localStorage.setItem("nickname", repName);
-    }
-    var tabName = decodeURI(urlParams.get('tab'));
-    if (tabName.includes("Other") && rep.trim() == "true") {
-        var addTab = document.getElementById("addTab");
-        addTab.style.display = "block";
-        addTab.onclick = function() {
-            window.location.href = window.location.href + "&addTab=true"
+        if (tabName.includes("Other")) {
+            var addTab = document.getElementById("addTab");
+            addTab.style.display = "block";
+            addTab.onclick = function() {
+                window.location.href = window.location.href + "&addTab=true"
+            }
+        } else {
+            document.getElementById("platformFormButton").style.display = "block";
         }
     }
-
     //Add tabs the sidebar
-    var response = await fetch(`rep_tabs?repName=${encodeURI(repName.trim())}`);
+    var response = await fetch(`rep_tabs?repName=${encodeURIComponent(repName.trim())}`);
     var tabList = await response.json();
     var tabs = document.getElementById("tabs");
     tabList.forEach((tab) => {
@@ -29,11 +31,11 @@ async function displayTab() {
     });
 
     //fetch the representative entity corresponding to repName
-    var response = await fetch(`/get_rep_object?repName=${encodeURI(repName.trim())}`);
+    var response = await fetch(`/get_rep_object?repName=${encodeURIComponent(repName.trim())}`);
     var representative = await response.json();
 
     //fetch the tabEntity corresponding to tabName
-    var tabResponse = await fetch(`tab_entity?tabName=${encodeURI(tabName)}`);
+    var tabResponse = await fetch(`tab_entity?tabName=${encodeURIComponent(tabName)}`);
     var tabEntity = await tabResponse.json();
 
     //Set values for tabname, title, image, and platform
@@ -44,14 +46,15 @@ async function displayTab() {
     document.getElementById("platform").innerText = tabEntity.propertyMap.Platform;
     document.getElementById("repName").innerText = repName;
     document.getElementById("repContainer").onclick = function() {
-        window.location.href = `/politicianPage.html?name=${encodeURI(repName.trim())}`};
+        window.location.href = `/politicianPage.html?name=${encodeURIComponent(repName.trim())}`};
     setStatus(representative.status);
     //Add a button to return to feed
     var feedButton = document.getElementById("feed");
-    feedButton.onclick = function() {window.location.href = `/feed.html?name=${encodeURI(repName.trim())}`};
+    feedButton.onclick = function() {
+        window.location.href = `/feed.html?name=${encodeURIComponent(repName.trim())}`};
 
     //Pull the posts under a particular tag
-    var tabPostsResponse = await fetch(`/tab_posts?repName=${encodeURI(repName.trim())}&tab=${tabName}`);
+    var tabPostsResponse = await fetch(`/tab_posts?repName=${encodeURIComponent(repName.trim())}&tab=${tabName}`);
     var posts = await tabPostsResponse.json();
 
     if (rep.trim() != "true") {
@@ -91,6 +94,21 @@ async function displayTab() {
     })
 }
 
+//Update tab platform
+async function updatePlatform() {
+    var platform = document.getElementById("newPlatform").value;
+    var urlParams = new URLSearchParams(window.location.search);
+    var tabName = decodeURI(urlParams.get('tab'));
+    await fetch(`/update_tab_platform?tabName=${tabName}&platform=${platform}`);
+    location.reload();
+}
+
+//display updateTabPlatform form
+function displayPlatformForm() {
+    var platformForm = document.getElementById("platformForm");
+    platformForm.style.display = (platformForm.style.display == "none") ? "block" : "none";
+}
+
 //display the feed
 async function displayFeed() {
     var rep = localStorage.getItem("rep");
@@ -102,16 +120,16 @@ async function displayFeed() {
     document.getElementById("repName").innerText = repName;
 
     //Fetches the representative entity associated with name
-    var response = await fetch(`/get_rep_object?repName=${encodeURI(repName.trim())}`);
+    var response = await fetch(`/get_rep_object?repName=${encodeURIComponent(repName.trim())}`);
     var representative = await response.json();
     document.getElementById("repTitle").innerText = representative.title;
     document.getElementById("repProfilePic").src = representative.blobKeyUrl;
     document.getElementById("repContainer").onclick = function() {
-        window.location.href = `/politicianPage.html?name=${encodeURI(repName.trim())}`};
+        window.location.href = `/politicianPage.html?name=${encodeURIComponent(repName.trim())}`};
     setStatus(representative.status);
 
     //Fetches the list of tabs for a particular rep
-    var response = await fetch(`rep_tabs?repName=${encodeURI(repName.trim())}`);
+    var response = await fetch(`rep_tabs?repName=${encodeURIComponent(repName.trim())}`);
     var tabList = await response.json();
     var tabs = document.getElementById("tabs");
     tabList.forEach((tab) => {
@@ -204,7 +222,7 @@ async function reactToPost(btn, reaction, postId, repName) {
     var oldReaction = localStorage.getItem(postId);
     var reactionCount = parseInt(localStorage.getItem(postId + reaction)); 
     if (oldReaction === null || oldReaction === "null") { 
-        await fetch(`/react_to_post?repName=${encodeURI(repName.trim())}&postId=
+        await fetch(`/react_to_post?repName=${encodeURIComponent(repName.trim())}&postId=
             ${postId}&reaction=${reaction}`);
         localStorage.setItem(postId, reaction);
         localStorage.setItem(postId + reaction, reactionCount + 1); 
@@ -216,7 +234,7 @@ async function reactToPost(btn, reaction, postId, repName) {
 
     if (oldReaction === reaction) {
         if (reactionCount > 0) {
-            await fetch(`/unreact_to_post?repName=${encodeURI(repName.trim())}&postId=
+            await fetch(`/unreact_to_post?repName=${encodeURIComponent(repName.trim())}&postId=
                 ${postId}&reaction=${reaction}`);
             localStorage.setItem(postId, null);
             localStorage.setItem(postId + reaction, reactionCount - 1); 
@@ -225,13 +243,13 @@ async function reactToPost(btn, reaction, postId, repName) {
     }
     else {
         if (oldReactionCount > 0) {
-            await fetch(`/unreact_to_post?repName=${encodeURI(repName.trim())}&postId=
+            await fetch(`/unreact_to_post?repName=${encodeURIComponent(repName.trim())}&postId=
                 ${postId}&reaction=${oldReaction}`);
             localStorage.setItem(postId + oldReaction, oldReactionCount - 1); 
             var reactedBtn = document.getElementById(postId + oldReaction); 
             setReactionButtonContent(reactedBtn, oldReaction, oldReactionCount - 1, "notselected"); 
         }
-        await fetch(`/react_to_post?repName=${encodeURI(repName.trim())}&postId=
+        await fetch(`/react_to_post?repName=${encodeURIComponent(repName.trim())}&postId=
             ${postId}&reaction=${reaction}`);
         localStorage.setItem(postId + reaction, reactionCount + 1); 
         setReactionButtonContent(btn, reaction, reactionCount + 1, "selected"); 
@@ -278,7 +296,7 @@ async function addNewTab() {
         }
     }
     var response = await fetch(`/add_new_tab?tabName=${tabName}&platform=${platform}&posts=${checked}&repName=${repName}`);
-    window.location.href = "/feed.html?name=" + encodeURI(repName.trim());
+    window.location.href = "/feed.html?name=" + encodeURIComponent(repName.trim());
 }
 
 //Abstract out display of Post
@@ -313,7 +331,7 @@ function displayPost(post, firstPost) {
 
 //Creates anchor tag that links back to representative's feed
 function returnToFeed(repName, feed) {
-    feed.href = "feed.html?name=" + encodeURI(repName.trim());    
+    feed.href = "feed.html?name=" + encodeURIComponent(repName.trim());    
 }
 
 //Creates an button for representative answer
@@ -361,7 +379,7 @@ function addPoliticianTab(tabName, repName){
     var span = document.createElement("span");
     span.setAttribute("class", "w3-xlarge");
     var tabAnchor = document.createElement("a");
-    tabAnchor.href = `tab.html?name=${encodeURI(repName.trim())}&tab=${encodeURI(tabName)}`;
+    tabAnchor.href = `tab.html?name=${encodeURIComponent(repName.trim())}&tab=${encodeURIComponent(tabName)}`;
     tabAnchor.innerText = tabName.replace(repName.replace(/\s/g, ''), "");
     span.appendChild(tabAnchor);
     linebreak = document.createElement("br");
@@ -374,7 +392,7 @@ function addPoliticianTab(tabName, repName){
 function getTab(tab) {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
-    window.location.href = `tab.html?name=${encodeURI(repName.trim())}&tab=${tab}`;
+    window.location.href = `tab.html?name=${encodeURIComponent(repName.trim())}&tab=${encodeURIComponent(tab)}`;
 }
 
 //Creates a reply form
@@ -384,7 +402,7 @@ function createReplyForm(questionID, repName, postFromFeed, tabName) {
 
     var replyForm = document.createElement("form");
     replyForm.setAttribute("action", `/reply_to_post?postId=${questionID}&name=${nickname}
-        &repName=${encodeURI(repName.trim())}&feed=${postFromFeed}&tabName=${tabName}`);
+        &repName=${encodeURIComponent(repName.trim())}&feed=${postFromFeed}&tabName=${tabName}`);
     replyForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
@@ -408,7 +426,7 @@ function createAnswerForm(questionID, repName, postFromFeed, tabName) {
 
     var ansForm = document.createElement("form");
     ansForm.setAttribute("action", 
-        `/rep_answer?postId=${questionID}&repName=${encodeURI(repName.trim())}&feed=${postFromFeed}&tabName=${tabName}`);
+        `/rep_answer?postId=${questionID}&repName=${encodeURIComponent(repName.trim())}&feed=${postFromFeed}&tabName=${tabName}`);
     ansForm.setAttribute("method", "post");
 
     var inputElement = document.createElement("input");
@@ -478,7 +496,7 @@ function createQuestionForm(repName, tabList, feedBool) {
     var nickname = localStorage.getItem("nickname");
 
     var newQuestionForm = document.getElementById("newQuestionForm");
-    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${encodeURI(repName.trim())}&feed=${feedBool}`);
+    newQuestionForm.setAttribute("action", `/new_post?name=${nickname}&repName=${encodeURIComponent(repName.trim())}&feed=${feedBool}`);
     newQuestionForm.setAttribute("method", "post");
 
     var tabDropdown = document.getElementById("tabDropDown");
@@ -593,7 +611,8 @@ function displayRepListUser(title, name, inDatastore, image) {
         imageElement.className = "w3-bar-item w3-circle w3-hide-small ";
         imageElement.style = "width:85px";
 
-        listElement.onclick = function() {window.location.href = `feed.html?name=${encodeURI(name)}`};
+        listElement.onclick = function() {
+            window.location.href = `feed.html?name=${encodeURIComponent(name)}`};
         imageElement.src = image;
         return displayRepList(listElement, imageElement, title, name);
     }
@@ -609,7 +628,8 @@ function displayRepListLogin(title, name, inDatastore, image) {
         const imageElement = document.createElement("img");
         imageElement.className = "w3-bar-item w3-circle w3-hide-small";
         imageElement.style = "width:85px";
-        listElement.onclick = function() {window.location.href = `repUsernamePassword.html?name=${encodeURI(name)}&title=${title}`};
+        listElement.onclick = function() {
+            window.location.href = `repUsernamePassword.html?name=${encodeURIComponent(name)}&title=${title}`};
         imageElement.src = "/images/defaultProfilePicture.png";
 
         return displayRepList(listElement, imageElement, title, name);
@@ -655,7 +675,7 @@ function createRepAccount() {
 
 //Makes call to repInDatastoreServlet to check if rep has made an account
 async function checkIfRepInDatastore(repName) {
-    var response = await fetch(`/rep_in_datastore?repName=${encodeURI(repName.trim())}`)
+    var response = await fetch(`/rep_in_datastore?repName=${encodeURIComponent(repName.trim())}`)
     var json = await response.json();
     return (json === true);
 }
@@ -669,9 +689,9 @@ async function insertRepDatastore() {
     var repName = document.getElementById("repName").value;
     var title = document.getElementById("title").value;
     var usernameTaken = await fetch(`/insert_rep_datastore?username=${username}&password=
-    ${password}&repName=${encodeURI(repName.trim())}&title=${title}`).then(response => response.text());
+    ${password}&repName=${encodeURIComponent(repName.trim())}&title=${title}`).then(response => response.text());
     window.location.href = (usernameTaken.trim() == "true") ?  
-    "/errors/usernameTaken.html" : `repQuestionnaire.html?name=${encodeURI(repName.trim())}`;
+    "/errors/usernameTaken.html" : `repQuestionnaire.html?name=${encodeURIComponent(repName.trim())}`;
 }
 
 //Go to previous page
@@ -768,8 +788,9 @@ async function submitRepQuestionnaire() {
         lastPlatform.substring(0, lastPlatform.length - 1): lastPlatform;
         listOfPlatforms[listOfPlatforms.length - 1] = lastPlatform;
     }
-    var response = await fetch(`rep_submit_questionnaire?topicList=${listOfTopics}&platformList=
-        ${listOfPlatforms}&intro=${intro}&repName=${encodeURI(repName.trim())}`);
+    console.log(listOfPlatforms);
+    var response = await fetch(`rep_submit_questionnaire?topicList=${encodeURIComponent(listOfTopics)}&platformList=
+        ${encodeURIComponent(listOfPlatforms)}&intro=${encodeURIComponent(intro)}&repName=${encodeURIComponent(repName.trim())}`);
     if (document.getElementById("imageUpload") != null) {
         return true;
     }
@@ -784,7 +805,7 @@ async function submitRepQuestionnaire() {
 function fetchBlobstoreUrlAndShowForm() {
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
-    fetch(`/blobstore-upload-url?repName=${encodeURI(repName.trim())}`)
+    fetch(`/blobstore-upload-url?repName=${encodeURIComponent(repName.trim())}`)
         .then((response) => {
             return response.text();
         })
@@ -794,12 +815,32 @@ function fetchBlobstoreUrlAndShowForm() {
         });
 }
 
+//Update rep intro
+async function updateIntro() {
+    var intro = document.getElementById("intro").value;
+    var urlParams = new URLSearchParams(window.location.search);
+    var repName = decodeURI(urlParams.get('name'));
+    await fetch(`/update_rep_intro?repName=${repName}&intro=${intro}`);
+    location.reload();
+}
+
+//display updateintroForm
+function displayIntroForm() {
+    var introForm = document.getElementById("introForm");
+    introForm.style.display = (introForm.style.display == "none") ? "block" : "none";
+}
+
 //Populated beyond the politician page
 async function displayPoliticianPage(imgUrl) {
+    var rep = localStorage.getItem("rep");
+    if (rep.trim() == "true") {
+        document.getElementById("introFormButton").style.display = "block";
+    }
     var urlParams = new URLSearchParams(window.location.search);
     var repName = decodeURI(urlParams.get('name')); 
-    var representativeResponse = await fetch(`/get_rep_object?repName=${encodeURI(repName.trim())}`)
+    var representativeResponse = await fetch(`/get_rep_object?repName=${encodeURIComponent(repName.trim())}`)
     var repJson = await representativeResponse.json();
+
     
     const titleElement = document.getElementById("title");
     titleElement.innerText = repJson.title;
@@ -850,7 +891,7 @@ function goOnline() {
     if(localStorage.getItem("rep").trim() == "true") {
         var urlParams = new URLSearchParams(window.location.search);
         var repName = decodeURI(urlParams.get('name')); 
-        fetch(`/update_representative_status?repName=${encodeURI(repName.trim())}&status=true`);
+        fetch(`/update_representative_status?repName=${encodeURIComponent(repName.trim())}&status=true`);
         setStatus("true");
     }
 }
@@ -859,7 +900,7 @@ function goOffline() {
     if(localStorage.getItem("rep").trim() == "true") {
         var urlParams = new URLSearchParams(window.location.search);
         var repName = decodeURI(urlParams.get('name')); 
-        fetch(`/update_representative_status?repName=${encodeURI(repName.trim())}&status=false`);
+        fetch(`/update_representative_status?repName=${encodeURIComponent(repName.trim())}&status=false`);
         setStatus("false");
     }
 }

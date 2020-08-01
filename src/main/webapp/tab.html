@@ -70,6 +70,11 @@ html, body, h1, h2, h3, h4, h5 {font-family: "Open Sans", sans-serif}
                 </div>
                 <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
                     <h4>Platform</h4><br>
+                    <button style="display: none" type="button" id="platformFormButton" class="w3-button w3-theme-d2 w3-margin-bottom" onclick="displayPlatformForm()"><i class="fa fa-edit"></i></button>
+                    <form style="display: none" id="platformForm" method="POST" onsubmit="updatePlatform()">
+                        <textarea class="form-control platform" rows="3" type="text" id="newPlatform"></textarea><br>
+                        <input type="submit">
+                    </form>
                     <hr class="w3-clear">
                     <p class="bold" id="platform"></p>
                 </div>

@@ -223,6 +223,20 @@ public class DatastoreManager {
     }
 
     /**
+     * Updates a tab's platform
+     * @param tabId name of tab whose platform needs to be updated
+     * @param platform new platform
+     */ 
+    public static void updateTabPlatform(long tabId, String platform) 
+    throws EntityNotFoundException {
+        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+        Key tabEntityKey = KeyFactory.createKey(Constants.TAB_ENTITY_TYPE, tabId);
+        Entity tabEntity = (Entity) datastore.get(tabEntityKey); 
+        tabEntity.setProperty(Constants.TAB_PLATFORM, platform); 
+        datastore.put(tabEntity);
+    }
+
+    /**
      * Updates a post entity with a comment in the replies list 
      * @param postId ID of the post entity 
      * @param commentId ID of the comment being added as a reply 
